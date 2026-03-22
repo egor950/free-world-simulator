@@ -2,6 +2,9 @@ import Foundation
 
 extension GameViewModel {
     var streetCarInteractionDistance: Int { 2 }
+    var currentTraversalMode: RoomMovementMode {
+        roomTraversalMachine.isGridTraversal ? .freeGrid4Way : .linearPath
+    }
 
     func syncGameplayStateMachines() {
         roomTraversalMachine.sync(mode: currentRoom.movementMode)

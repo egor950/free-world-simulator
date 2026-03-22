@@ -23,7 +23,7 @@ extension GameViewModel {
             return
         }
 
-        switch currentRoom.movementMode {
+        switch currentTraversalMode {
         case .linearPath:
             moveAlongRoom(command)
         case .freeGrid4Way:
@@ -51,7 +51,7 @@ extension GameViewModel {
     }
 
     func blockedText(for command: GameCommand) -> String {
-        if currentRoom.movementMode == .freeGrid4Way {
+        if currentTraversalMode == .freeGrid4Way {
             switch command {
             case .moveForward:
                 return "Дальше только край дороги."
@@ -330,7 +330,7 @@ extension GameViewModel {
     }
 
     func shouldPassThroughDoor(_ door: DoorDefinition, on command: GameCommand) -> Bool {
-        if currentRoom.movementMode == .freeGrid4Way {
+        if currentTraversalMode == .freeGrid4Way {
             let position = state.player.roomPosition
             var validCommands: [GameCommand] = []
 
