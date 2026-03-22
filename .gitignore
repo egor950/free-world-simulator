@@ -1,0 +1,14 @@
+.DS_Store
+
+.derived/
+.deriveddata/
+DerivedData/
+
+build/
+Build/
+
+*.xcuserstate
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+
+playtest_logs/

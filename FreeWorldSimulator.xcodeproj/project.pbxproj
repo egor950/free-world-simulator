@@ -1,0 +1,1368 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		00A4F81B924BAF27A644C397 /* item_place_metal_01.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 24E913316391B2F8CC2F781F /* item_place_metal_01.m4a */; };
+		00EC229E595D63CFFE14871C /* GameViewModel+Neighbor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCAC02804772D8A2B627A8 /* GameViewModel+Neighbor.swift */; };
+		01C8654E428094301DC06313 /* GameViewModel+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECED716DFE265F2CA62A1D35 /* GameViewModel+Actions.swift */; };
+		02069B0B8C3CD9CDE7959689 /* step_asphalt_02.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = BB34C26A1A78412AC745A63A /* step_asphalt_02.mp3 */; };
+		02B73E37E5AF9482542AA97A /* step_asphalt_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A1B571977C738DA838527836 /* step_asphalt_01.mp3 */; };
+		030E71D8BA96E8C7FDBE053F /* MacKeyboardCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D09413D01B5CA78E4D48500 /* MacKeyboardCapture.swift */; };
+		0378B9FCE9E1762FC3C9314A /* traffic_engine_sedan.wav in Resources */ = {isa = PBXBuildFile; fileRef = D8A3648B39035FCD7FB63C48 /* traffic_engine_sedan.wav */; };
+		04E7C30595DBD8BAFCF81352 /* traffic_engine_roadster.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8839E3FB941B90991AE53BCE /* traffic_engine_roadster.wav */; };
+		0572751CF4281917C8003C02 /* punch_hit.wav in Resources */ = {isa = PBXBuildFile; fileRef = 204993DDC77CE778610428AF /* punch_hit.wav */; };
+		0896C9778693C7466B92E1FC /* city_street_bed.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 043450244A81A3749DCE01DF /* city_street_bed.mp3 */; };
+		0B41224E53AF454595A699FD /* item_place_metal_01.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 24E913316391B2F8CC2F781F /* item_place_metal_01.m4a */; };
+		0BD3B6EF902E4B4EB7E4E5E7 /* GameViewModel+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECED716DFE265F2CA62A1D35 /* GameViewModel+Actions.swift */; };
+		0D068C3AC3C2BFE998893B86 /* Pillow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC8A4A3F6568C9EFDDF3E75 /* Pillow.swift */; };
+		0E2B2B9A458092C345C82D8D /* doorbell_main.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8F2A1EEA92A9058319B37BE2 /* doorbell_main.wav */; };
+		0EDF9C246047AE9BC87B2B1E /* Bed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77D0566229DA2669BEC252FE /* Bed.swift */; };
+		0F280BA5EB35D8FDF569ABF9 /* step_carpet_02.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DB2B915989252BC9445E62EF /* step_carpet_02.mp3 */; };
+		10799D189F62F070F8750AB8 /* BathroomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE17EF1B5947855F9092B857 /* BathroomRoom.swift */; };
+		10BF2FA5D00667A348E52AE9 /* city_street_bed.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 043450244A81A3749DCE01DF /* city_street_bed.mp3 */; };
+		1100E43E896CA59C5C8D7C81 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4998B68D44D89C20C715E6A /* AVFoundation.framework */; };
+		12EC23DEB39B2B4E3E196F85 /* item_place_metal_01.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 24E913316391B2F8CC2F781F /* item_place_metal_01.m4a */; };
+		13E38ECB4F3E50A0F4627338 /* traffic_engine_light.wav in Resources */ = {isa = PBXBuildFile; fileRef = A8249E518C89328D18940F0A /* traffic_engine_light.wav */; };
+		14C6044BD8B93832ED1B6365 /* LiveGameBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5959BD7C1D6739EAC43657B /* LiveGameBridge.swift */; };
+		16C83658CE10545D10C313B8 /* cabinet_smash.wav in Resources */ = {isa = PBXBuildFile; fileRef = 206EC78B10A9164FD3EC0FB2 /* cabinet_smash.wav */; };
+		17C9EE5A09FFD6B113212FEE /* cabinet_smash.wav in Resources */ = {isa = PBXBuildFile; fileRef = 206EC78B10A9164FD3EC0FB2 /* cabinet_smash.wav */; };
+		17F208DECF27941773617082 /* step_asphalt_05.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 45A806FB972EF77BDDD2C7BD /* step_asphalt_05.mp3 */; };
+		180A3B9F7F20F4214DFE69CE /* traffic_engine_roadster.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8839E3FB941B90991AE53BCE /* traffic_engine_roadster.wav */; };
+		19C9D26E2FFA0C69676C8F4A /* AudioCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422AE568411A45281AB086DC /* AudioCoordinator.swift */; };
+		1A0C98B5F37824194D218BFE /* WorldBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAF5C38A20B5069BEC2DAA /* WorldBuilder.swift */; };
+		1ABE08B0E085EBAD11BB5317 /* step_asphalt_03.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CD382F6DF0AD992404D5624A /* step_asphalt_03.mp3 */; };
+		1B48B76EFD20098DF6E34876 /* KitchenRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73399F4F81E6955153AB198C /* KitchenRoom.swift */; };
+		2004207E5AE50BB025E17B49 /* step_carpet_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2443C6417F9E025DFC0F565D /* step_carpet_01.mp3 */; };
+		20EA9D6BAF56EE0094695E18 /* punch_hit.wav in Resources */ = {isa = PBXBuildFile; fileRef = 204993DDC77CE778610428AF /* punch_hit.wav */; };
+		2127FAD3C3CA627DFF63FF75 /* step_carpet_02.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DB2B915989252BC9445E62EF /* step_carpet_02.mp3 */; };
+		21D25CAA2059033D3BE46181 /* step_carpet_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2443C6417F9E025DFC0F565D /* step_carpet_01.mp3 */; };
+		234BF9CDAEB9B1A30B3328A9 /* city_street_bed.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 043450244A81A3749DCE01DF /* city_street_bed.mp3 */; };
+		2386DCCE3CED378403120964 /* ambient_room_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1B5DD9BE823FBDFDB4E6A9D8 /* ambient_room_01.mp3 */; };
+		243DFB4579CCC2B12B0B7C8C /* traffic_engine_light.wav in Resources */ = {isa = PBXBuildFile; fileRef = A8249E518C89328D18940F0A /* traffic_engine_light.wav */; };
+		2474DD008134A33D1E0173A2 /* step_asphalt_05.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 45A806FB972EF77BDDD2C7BD /* step_asphalt_05.mp3 */; };
+		2957E64306D456E35A51F674 /* step_asphalt_05.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 45A806FB972EF77BDDD2C7BD /* step_asphalt_05.mp3 */; };
+		2A31CBF37F48BD523DA2D027 /* traffic_engine_sport.wav in Resources */ = {isa = PBXBuildFile; fileRef = E468E6DBD0931FD588C9FBA2 /* traffic_engine_sport.wav */; };
+		2BDD4FD5C8E1E8C3761458D2 /* traffic_engine_sedan.wav in Resources */ = {isa = PBXBuildFile; fileRef = D8A3648B39035FCD7FB63C48 /* traffic_engine_sedan.wav */; };
+		2C09AB1E1110E7BAAF516148 /* door_break_heavy.wav in Resources */ = {isa = PBXBuildFile; fileRef = BD4D3183B8DA6D995B2B996A /* door_break_heavy.wav */; };
+		2C5DC3893E83A78A6E02EF95 /* Mirror.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7C4A955FBD5B1997BA364D /* Mirror.swift */; };
+		2DC8620DB07FA42AAB5F04D1 /* LiveGameBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5959BD7C1D6739EAC43657B /* LiveGameBridge.swift */; };
+		2E314106069F8E2820CEA7AC /* traffic_engine_coupe.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8305143CA420C2CF0B356BBC /* traffic_engine_coupe.wav */; };
+		2FEF89F6240C9A747CABDC2F /* FlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CC80B06B3F049B82729EDFD /* FlowController.swift */; };
+		30F16B293107A6905291CC03 /* punch_hit.wav in Resources */ = {isa = PBXBuildFile; fileRef = 204993DDC77CE778610428AF /* punch_hit.wav */; };
+		3129D1D65E7B848B1C65C447 /* doorbell_main.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8F2A1EEA92A9058319B37BE2 /* doorbell_main.wav */; };
+		316A89B17A3A33055CFC5AB7 /* glass_break_small.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0FE30E30380E983F6AD14081 /* glass_break_small.wav */; };
+		33279D70467089D510183875 /* GameViewModel+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECED716DFE265F2CA62A1D35 /* GameViewModel+Actions.swift */; };
+		3376D1C2553FE55463E6E32F /* step_asphalt_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A1B571977C738DA838527836 /* step_asphalt_01.mp3 */; };
+		3434BBD18E6FF569B12AB488 /* CoatRack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98525CCA15D0CA51155B23A /* CoatRack.swift */; };
+		348E82CD9A49642C64D66A39 /* heartbeat_fast.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9D0CFB0ABCAB78C1210B2920 /* heartbeat_fast.wav */; };
+		35E3A47B85C4158006DAED4F /* cabinet_smash.wav in Resources */ = {isa = PBXBuildFile; fileRef = 206EC78B10A9164FD3EC0FB2 /* cabinet_smash.wav */; };
+		35FB9FAC43B86BAE03FD8DA3 /* step_asphalt_04.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AFA7372A8234FABA9214063C /* step_asphalt_04.mp3 */; };
+		37B9EDE886F69943B6C5FC55 /* step_asphalt_02.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = BB34C26A1A78412AC745A63A /* step_asphalt_02.mp3 */; };
+		39188333D2C8A624F1EE9A4F /* GameViewModel+World.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F26AFFB3A12129B23B1A8F2 /* GameViewModel+World.swift */; };
+		39918C2DB262B4095E0A1079 /* traffic_engine_sport.wav in Resources */ = {isa = PBXBuildFile; fileRef = E468E6DBD0931FD588C9FBA2 /* traffic_engine_sport.wav */; };
+		3B4B02294B813E424C88E604 /* traffic_engine_base.wav in Resources */ = {isa = PBXBuildFile; fileRef = 40816B25521BB3370EA06B48 /* traffic_engine_base.wav */; };
+		3CF2595E090559A079BDE052 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 222982F14D2F777539752E99 /* Network.framework */; };
+		3D22B9346A9DEE135C23422F /* BedroomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02F4D3EB9FAF56BB2133D62 /* BedroomRoom.swift */; };
+		3DECFE06BDC3CA9F9B8F00E7 /* Table.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943828DE7B0D9D3B024F5285 /* Table.swift */; };
+		403DF2DF37EE437F25AEDCC9 /* MacKeyboardCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D09413D01B5CA78E4D48500 /* MacKeyboardCapture.swift */; };
+		422677F6AF90D5EE102D92B7 /* GameViewModel+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE4C98E8EF4F75E13ACBC6B /* GameViewModel+Audio.swift */; };
+		422EBB9EBAC30C096D5F0655 /* ambient_room_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1B5DD9BE823FBDFDB4E6A9D8 /* ambient_room_01.mp3 */; };
+		433DC47D0A49ED407B2EDEFD /* RootGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C0E8D3613B8C88562A375 /* RootGameView.swift */; };
+		43BB0C0CB1ADFB67CC41F944 /* GameViewModel+World.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F26AFFB3A12129B23B1A8F2 /* GameViewModel+World.swift */; };
+		455BC5428FBDF31079B3714B /* cabinet_smash.wav in Resources */ = {isa = PBXBuildFile; fileRef = 206EC78B10A9164FD3EC0FB2 /* cabinet_smash.wav */; };
+		46474118F183EBB4555C6406 /* GameViewModel+Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = B730C6D651C4C2D06ADA9FED /* GameViewModel+Session.swift */; };
+		46D18243D6DA5B5832BBE9E6 /* step_carpet_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2443C6417F9E025DFC0F565D /* step_carpet_01.mp3 */; };
+		48034D5C6DBB82B1758B0A97 /* door_banging_hard.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5CDFE8966DBF84B33E2B05CC /* door_banging_hard.wav */; };
+		4A953D617011C20D792408D2 /* HallwayRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7369C9785D4D3F5F19763804 /* HallwayRoom.swift */; };
+		4B16099F81CF019BB76CD944 /* glass_break_small.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0FE30E30380E983F6AD14081 /* glass_break_small.wav */; };
+		4D0CDDF353C967D6500053E2 /* WorldModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF953433DC7FB50056534A6 /* WorldModels.swift */; };
+		4D35B4CD054C8F2C74B5BBE6 /* step_asphalt_02.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = BB34C26A1A78412AC745A63A /* step_asphalt_02.mp3 */; };
+		4D71BB30CD85CEEEC8BAB2BF /* step_carpet_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2443C6417F9E025DFC0F565D /* step_carpet_01.mp3 */; };
+		519ED49F97CEEC904DBABD4B /* AudioCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422AE568411A45281AB086DC /* AudioCoordinator.swift */; };
+		525C7565090F6B21452349AA /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 222982F14D2F777539752E99 /* Network.framework */; };
+		5331829BCEB978189ED2CA7F /* GameViewModel+Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = B730C6D651C4C2D06ADA9FED /* GameViewModel+Session.swift */; };
+		53EC71F04DB1071445E5A63B /* StreetTrafficCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94EA3A91C6537F093A33C0BA /* StreetTrafficCoordinator.swift */; };
+		55D0827FAF503FED6E131168 /* GameViewModel+Movement.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD85185B7E2D807BEACC5E3A /* GameViewModel+Movement.swift */; };
+		55DBAC9D841156194BCAC075 /* BathroomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE17EF1B5947855F9092B857 /* BathroomRoom.swift */; };
+		56BCFEB1EB59711493E08A45 /* step_asphalt_02.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = BB34C26A1A78412AC745A63A /* step_asphalt_02.mp3 */; };
+		581A3DEBDA354C03A5055FA3 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 222982F14D2F777539752E99 /* Network.framework */; };
+		589193FF565098CBD5ADA043 /* LivingRoomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB9865D6A5C834A60036B4C /* LivingRoomRoom.swift */; };
+		5E700CC638C684F635D57F91 /* SpeechCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 339CBAB2EBF45D24F500CA5E /* SpeechCoordinator.swift */; };
+		5F179A85FF8BD13C9CCEB59A /* GameViewModel+Movement.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD85185B7E2D807BEACC5E3A /* GameViewModel+Movement.swift */; };
+		6060BA3738E51D7BE72162AA /* WorldBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAF5C38A20B5069BEC2DAA /* WorldBuilder.swift */; };
+		614ED8AB255C91B1F10AF66F /* Mirror.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7C4A955FBD5B1997BA364D /* Mirror.swift */; };
+		62AF71B7DE41D6C3034CA487 /* door_break_heavy.wav in Resources */ = {isa = PBXBuildFile; fileRef = BD4D3183B8DA6D995B2B996A /* door_break_heavy.wav */; };
+		64138C849E413BDAE051BB82 /* Mirror.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7C4A955FBD5B1997BA364D /* Mirror.swift */; };
+		64E0B0E33B78021E9333A4AC /* door_break_heavy.wav in Resources */ = {isa = PBXBuildFile; fileRef = BD4D3183B8DA6D995B2B996A /* door_break_heavy.wav */; };
+		6600C43EB93A720A1D9AEC15 /* Bed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77D0566229DA2669BEC252FE /* Bed.swift */; };
+		67BD6E8B9CC61A1D590B031C /* traffic_engine_sport.wav in Resources */ = {isa = PBXBuildFile; fileRef = E468E6DBD0931FD588C9FBA2 /* traffic_engine_sport.wav */; };
+		68824214912636BBB5283FCB /* GameViewModel+Neighbor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCAC02804772D8A2B627A8 /* GameViewModel+Neighbor.swift */; };
+		688694846D641206B38261FC /* traffic_engine_sport.wav in Resources */ = {isa = PBXBuildFile; fileRef = E468E6DBD0931FD588C9FBA2 /* traffic_engine_sport.wav */; };
+		6989951CFFD53D6ABEF75D0A /* Mirror.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7C4A955FBD5B1997BA364D /* Mirror.swift */; };
+		70BE0A213B33A9FEA9EBADFA /* traffic_engine_coupe.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8305143CA420C2CF0B356BBC /* traffic_engine_coupe.wav */; };
+		70D602524CA979789F35B13E /* step_asphalt_05.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 45A806FB972EF77BDDD2C7BD /* step_asphalt_05.mp3 */; };
+		70DFD68C35484AD923ED9124 /* KitchenRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73399F4F81E6955153AB198C /* KitchenRoom.swift */; };
+		71FA5754602CBADE4306586B /* step_asphalt_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A1B571977C738DA838527836 /* step_asphalt_01.mp3 */; };
+		742AE0CF2282F81A715ED4E7 /* GameViewModel+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE4C98E8EF4F75E13ACBC6B /* GameViewModel+Audio.swift */; };
+		74ECEB168E2DDD99F5D7A55A /* AudioCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422AE568411A45281AB086DC /* AudioCoordinator.swift */; };
+		755517E456B48FAC6F4949B9 /* HallwayRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7369C9785D4D3F5F19763804 /* HallwayRoom.swift */; };
+		776FE8A50104F9CC09F88486 /* GameViewModel+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECED716DFE265F2CA62A1D35 /* GameViewModel+Actions.swift */; };
+		7A38329361A4BA4085D70BF6 /* city_street_bed.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 043450244A81A3749DCE01DF /* city_street_bed.mp3 */; };
+		7BCE1D36567FEC77BDBDB05F /* GameViewModel+World.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F26AFFB3A12129B23B1A8F2 /* GameViewModel+World.swift */; };
+		7C81548FCFD1DFB9010F420B /* BedroomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02F4D3EB9FAF56BB2133D62 /* BedroomRoom.swift */; };
+		7C9D79011DC06D5535DC8C3F /* GameViewModel+Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = B730C6D651C4C2D06ADA9FED /* GameViewModel+Session.swift */; };
+		7CA621402966A56B0F0C884D /* step_asphalt_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A1B571977C738DA838527836 /* step_asphalt_01.mp3 */; };
+		7D8AA16DB68876174221769C /* ambient_room_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1B5DD9BE823FBDFDB4E6A9D8 /* ambient_room_01.mp3 */; };
+		7E042BB7C294E31A90F46F68 /* FreeWorldIOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 997A77E2FDC306A746781D1D /* FreeWorldIOSApp.swift */; };
+		7E60C9DB80444881C9A8747C /* Fridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0396C37B0938F73C6B4F7A19 /* Fridge.swift */; };
+		7F3B5516D1C2C56062D98819 /* Bed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77D0566229DA2669BEC252FE /* Bed.swift */; };
+		7F610B8A3616885C6FFD113B /* FlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CC80B06B3F049B82729EDFD /* FlowController.swift */; };
+		7FB097BD2447C7DE89E79D8B /* BedroomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02F4D3EB9FAF56BB2133D62 /* BedroomRoom.swift */; };
+		7FBE77564C895025568C0893 /* ambient_room_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1B5DD9BE823FBDFDB4E6A9D8 /* ambient_room_01.mp3 */; };
+		809791C78E4B6CB204857F2C /* door_banging_hard.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5CDFE8966DBF84B33E2B05CC /* door_banging_hard.wav */; };
+		810DEB21A67CB21C0B75D02B /* punch_hit.wav in Resources */ = {isa = PBXBuildFile; fileRef = 204993DDC77CE778610428AF /* punch_hit.wav */; };
+		82514783F3A95110C778061A /* Table.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943828DE7B0D9D3B024F5285 /* Table.swift */; };
+		828802744AE5C8A12171B51E /* step_asphalt_04.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AFA7372A8234FABA9214063C /* step_asphalt_04.mp3 */; };
+		84504948FCEEEF205E22BA85 /* heartbeat_fast.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9D0CFB0ABCAB78C1210B2920 /* heartbeat_fast.wav */; };
+		84DFB801D5A2860F6B9895DF /* GameViewModel+Movement.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD85185B7E2D807BEACC5E3A /* GameViewModel+Movement.swift */; };
+		854B1F56D54A56E81DF42AE1 /* traffic_engine_light.wav in Resources */ = {isa = PBXBuildFile; fileRef = A8249E518C89328D18940F0A /* traffic_engine_light.wav */; };
+		85C33F916FD714A58CAC3779 /* GameViewModel+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE4C98E8EF4F75E13ACBC6B /* GameViewModel+Audio.swift */; };
+		86C4FC4E3C59431E5CEF5BD7 /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A672BF4FDE31AD4B9CC373A1 /* GameViewModel.swift */; };
+		872AC5E00F18863882572E39 /* step_carpet_02.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DB2B915989252BC9445E62EF /* step_carpet_02.mp3 */; };
+		8733326AA167E75400AF562D /* doorbell_main.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8F2A1EEA92A9058319B37BE2 /* doorbell_main.wav */; };
+		89D77AF207742BAF2CFAC103 /* heartbeat_fast.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9D0CFB0ABCAB78C1210B2920 /* heartbeat_fast.wav */; };
+		8A819076CF1891E76362568D /* KitchenRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73399F4F81E6955153AB198C /* KitchenRoom.swift */; };
+		8AE8FE6566FD71C555665BF3 /* GameViewModel+Neighbor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCAC02804772D8A2B627A8 /* GameViewModel+Neighbor.swift */; };
+		8C3532D484AA26AA60402DDD /* GameplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 605335D08F7BCF03C3D0F04E /* GameplayKit.framework */; };
+		8D638F0010C85FB80175C213 /* step_asphalt_04.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AFA7372A8234FABA9214063C /* step_asphalt_04.mp3 */; };
+		8E27DF45A5D7F9AF51FC1F2A /* LiveGameBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5959BD7C1D6739EAC43657B /* LiveGameBridge.swift */; };
+		91F719DDFFFFA6D5F2923372 /* traffic_engine_base.wav in Resources */ = {isa = PBXBuildFile; fileRef = 40816B25521BB3370EA06B48 /* traffic_engine_base.wav */; };
+		926863478A0391CF6D866A45 /* glass_break_small.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0FE30E30380E983F6AD14081 /* glass_break_small.wav */; };
+		9311C5F4B05045CED30EFCA5 /* GameViewModel+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE4C98E8EF4F75E13ACBC6B /* GameViewModel+Audio.swift */; };
+		93885645B3199973D1FCD7DF /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4998B68D44D89C20C715E6A /* AVFoundation.framework */; };
+		942F31315D307DA194E4A35B /* LiveGameBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5959BD7C1D6739EAC43657B /* LiveGameBridge.swift */; };
+		964726287A0B4B402806950D /* traffic_engine_sedan.wav in Resources */ = {isa = PBXBuildFile; fileRef = D8A3648B39035FCD7FB63C48 /* traffic_engine_sedan.wav */; };
+		965C4228D1219438891AEC8F /* RootGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C0E8D3613B8C88562A375 /* RootGameView.swift */; };
+		96CC5214CC7607005C2409AF /* step_carpet_02.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DB2B915989252BC9445E62EF /* step_carpet_02.mp3 */; };
+		96F97AEFE30DD4EA2CE16FE0 /* traffic_engine_base.wav in Resources */ = {isa = PBXBuildFile; fileRef = 40816B25521BB3370EA06B48 /* traffic_engine_base.wav */; };
+		97910ED814756E69EC759C9E /* Fridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0396C37B0938F73C6B4F7A19 /* Fridge.swift */; };
+		97D0E5773E94F2F4519BAD94 /* Pillow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC8A4A3F6568C9EFDDF3E75 /* Pillow.swift */; };
+		98A02C8F93D5F11558009025 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4998B68D44D89C20C715E6A /* AVFoundation.framework */; };
+		98DB83DA837BE7C7E8CE919A /* Table.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943828DE7B0D9D3B024F5285 /* Table.swift */; };
+		9995E3C1283662BC57CE234A /* traffic_engine_coupe.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8305143CA420C2CF0B356BBC /* traffic_engine_coupe.wav */; };
+		99F0AE344401923C95A7A598 /* CoatRack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98525CCA15D0CA51155B23A /* CoatRack.swift */; };
+		9B1AF6A7A9F8672A785EA39B /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 222982F14D2F777539752E99 /* Network.framework */; };
+		9C3761E29D5DDBB15535046A /* BathroomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE17EF1B5947855F9092B857 /* BathroomRoom.swift */; };
+		9E57678096E2771A5317C40A /* AudioCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422AE568411A45281AB086DC /* AudioCoordinator.swift */; };
+		A004A86EF7C685F49A059D76 /* StreetTrafficCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94EA3A91C6537F093A33C0BA /* StreetTrafficCoordinator.swift */; };
+		A0708EE09457A2611F65D7E3 /* Fridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0396C37B0938F73C6B4F7A19 /* Fridge.swift */; };
+		A0E9FF9678386EEA255B39D8 /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A672BF4FDE31AD4B9CC373A1 /* GameViewModel.swift */; };
+		A149E2A90768C66C285C8F1F /* step_carpet_02.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DB2B915989252BC9445E62EF /* step_carpet_02.mp3 */; };
+		A16EBEB3BF03CAB918412BD5 /* traffic_engine_roadster.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8839E3FB941B90991AE53BCE /* traffic_engine_roadster.wav */; };
+		A2B07FF8865D42614B26F585 /* step_asphalt_04.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AFA7372A8234FABA9214063C /* step_asphalt_04.mp3 */; };
+		A5FAD5636406F0DB0A5B9F06 /* step_asphalt_03.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CD382F6DF0AD992404D5624A /* step_asphalt_03.mp3 */; };
+		A61841EA929EF0A49A132A64 /* GameplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 605335D08F7BCF03C3D0F04E /* GameplayKit.framework */; };
+		A6500A40E23C4CEDB51B5616 /* punch_hit.wav in Resources */ = {isa = PBXBuildFile; fileRef = 204993DDC77CE778610428AF /* punch_hit.wav */; };
+		A6C0CC669E95D02A61898EF5 /* ambient_room_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1B5DD9BE823FBDFDB4E6A9D8 /* ambient_room_01.mp3 */; };
+		A83165FB32CBCFE088109B1A /* WorldModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF953433DC7FB50056534A6 /* WorldModels.swift */; };
+		A89DB8997518AF09ACBF0E45 /* heartbeat_fast.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9D0CFB0ABCAB78C1210B2920 /* heartbeat_fast.wav */; };
+		AA7B70C7AE4D65E06E08D77D /* door_break_heavy.wav in Resources */ = {isa = PBXBuildFile; fileRef = BD4D3183B8DA6D995B2B996A /* door_break_heavy.wav */; };
+		AAE6D58270A1F81B88E63825 /* step_asphalt_05.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 45A806FB972EF77BDDD2C7BD /* step_asphalt_05.mp3 */; };
+		AB06131EBBEC1EFCEB2451D7 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4998B68D44D89C20C715E6A /* AVFoundation.framework */; };
+		AD2B0EE7CAA772685F60E966 /* KitchenRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73399F4F81E6955153AB198C /* KitchenRoom.swift */; };
+		AD2F6C0F14B5DF565A8EBB12 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8D28E1A92D404222AB9161 /* main.swift */; };
+		ADED175A2AD0F06DF21EB971 /* StreetTrafficCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94EA3A91C6537F093A33C0BA /* StreetTrafficCoordinator.swift */; };
+		AFA61F4134CF2388BE6DBC3D /* GameplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 605335D08F7BCF03C3D0F04E /* GameplayKit.framework */; };
+		AFEF9D6B88CB83EFFD94F4C7 /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A672BF4FDE31AD4B9CC373A1 /* GameViewModel.swift */; };
+		B0289ECBC1ACCF2B9D9184C8 /* step_asphalt_02.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = BB34C26A1A78412AC745A63A /* step_asphalt_02.mp3 */; };
+		B3DA952B38BE9E9CED37962D /* city_street_bed.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 043450244A81A3749DCE01DF /* city_street_bed.mp3 */; };
+		B41ECB1874C95AFC1D4D5C48 /* traffic_engine_base.wav in Resources */ = {isa = PBXBuildFile; fileRef = 40816B25521BB3370EA06B48 /* traffic_engine_base.wav */; };
+		B76953B324B387FB28670685 /* HallwayRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7369C9785D4D3F5F19763804 /* HallwayRoom.swift */; };
+		B8933D077A835F819612594F /* traffic_engine_sedan.wav in Resources */ = {isa = PBXBuildFile; fileRef = D8A3648B39035FCD7FB63C48 /* traffic_engine_sedan.wav */; };
+		B8989D1E269FEE19791F9CBA /* traffic_engine_sedan.wav in Resources */ = {isa = PBXBuildFile; fileRef = D8A3648B39035FCD7FB63C48 /* traffic_engine_sedan.wav */; };
+		B89F08244ED38425467A061B /* heartbeat_fast.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9D0CFB0ABCAB78C1210B2920 /* heartbeat_fast.wav */; };
+		B9F10373F18003DFF691C9EF /* traffic_engine_base.wav in Resources */ = {isa = PBXBuildFile; fileRef = 40816B25521BB3370EA06B48 /* traffic_engine_base.wav */; };
+		B9FC44C7EFEF09620222EFD4 /* step_asphalt_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A1B571977C738DA838527836 /* step_asphalt_01.mp3 */; };
+		BA604B14D614C4E5A1C427C0 /* RootGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C0E8D3613B8C88562A375 /* RootGameView.swift */; };
+		BB3EF7995262583D3DE99262 /* LivingRoomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB9865D6A5C834A60036B4C /* LivingRoomRoom.swift */; };
+		BD90520E1C7A0D3260146262 /* LivingRoomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB9865D6A5C834A60036B4C /* LivingRoomRoom.swift */; };
+		BEFB3BABFC6CBB23FA5C7A89 /* HallwayRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7369C9785D4D3F5F19763804 /* HallwayRoom.swift */; };
+		C0ADC63AF13F5B45BA9162AB /* traffic_engine_roadster.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8839E3FB941B90991AE53BCE /* traffic_engine_roadster.wav */; };
+		C0CA6D10E46E4CB3E0F43F87 /* doorbell_main.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8F2A1EEA92A9058319B37BE2 /* doorbell_main.wav */; };
+		C100F71A99154F34F4CEF346 /* LivingRoomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB9865D6A5C834A60036B4C /* LivingRoomRoom.swift */; };
+		C102F292D6A2B7EE3FB0C081 /* step_asphalt_03.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CD382F6DF0AD992404D5624A /* step_asphalt_03.mp3 */; };
+		C1A97849D2FDAC2F87A5B8D9 /* GameViewModel+Movement.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD85185B7E2D807BEACC5E3A /* GameViewModel+Movement.swift */; };
+		C25E9C9B9B8E458750887498 /* FlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CC80B06B3F049B82729EDFD /* FlowController.swift */; };
+		C26D46834B9C6D57F8A46AC6 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C30DE97987846316974C7D1F /* main.swift */; };
+		C2FF440805D0B24163049821 /* StreetTrafficCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94EA3A91C6537F093A33C0BA /* StreetTrafficCoordinator.swift */; };
+		C30BA2F94D75D702AAFE6EF8 /* WorldModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF953433DC7FB50056534A6 /* WorldModels.swift */; };
+		C76A2052F2DA1D0A4B29FA75 /* step_asphalt_03.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CD382F6DF0AD992404D5624A /* step_asphalt_03.mp3 */; };
+		C794AD0B128CED6268342C4D /* Table.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943828DE7B0D9D3B024F5285 /* Table.swift */; };
+		C957F844D858FB2130783656 /* glass_break_small.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0FE30E30380E983F6AD14081 /* glass_break_small.wav */; };
+		CA8789CC0E96975C709A78EC /* Pillow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC8A4A3F6568C9EFDDF3E75 /* Pillow.swift */; };
+		CE696006557037ED0F5F7815 /* step_asphalt_04.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AFA7372A8234FABA9214063C /* step_asphalt_04.mp3 */; };
+		D12A27065CD7994A6687F26A /* traffic_engine_sport.wav in Resources */ = {isa = PBXBuildFile; fileRef = E468E6DBD0931FD588C9FBA2 /* traffic_engine_sport.wav */; };
+		D37D39FF8DB1773EBDF8C788 /* door_banging_hard.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5CDFE8966DBF84B33E2B05CC /* door_banging_hard.wav */; };
+		D4B66A50A396635085F11000 /* CoatRack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98525CCA15D0CA51155B23A /* CoatRack.swift */; };
+		D5866D93FBC8864F3DE6BDA5 /* item_place_metal_01.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 24E913316391B2F8CC2F781F /* item_place_metal_01.m4a */; };
+		D60CB00AFD54E54434508C30 /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A672BF4FDE31AD4B9CC373A1 /* GameViewModel.swift */; };
+		D68352C544E69FF7E9B9E4EE /* glass_break_small.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0FE30E30380E983F6AD14081 /* glass_break_small.wav */; };
+		D838D267BA47D822F5D9A556 /* FlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CC80B06B3F049B82729EDFD /* FlowController.swift */; };
+		D963D1E4721A2F230FC7024E /* door_banging_hard.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5CDFE8966DBF84B33E2B05CC /* door_banging_hard.wav */; };
+		DA9B79C287116CDF732CCB02 /* Pillow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC8A4A3F6568C9EFDDF3E75 /* Pillow.swift */; };
+		DACD5D8919CFF2DA0D2B6DBB /* SpeechCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 339CBAB2EBF45D24F500CA5E /* SpeechCoordinator.swift */; };
+		DCCA17F10E5D6A8DD9A007C6 /* GameViewModel+Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = B730C6D651C4C2D06ADA9FED /* GameViewModel+Session.swift */; };
+		DF1522477968C9A1E3537399 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89390D5364A83D472482F771 /* main.swift */; };
+		DF846E6797AF88DD9E636AC0 /* step_carpet_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2443C6417F9E025DFC0F565D /* step_carpet_01.mp3 */; };
+		DFBB980D507B207A474A555E /* SpeechCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 339CBAB2EBF45D24F500CA5E /* SpeechCoordinator.swift */; };
+		E05DB667D6AC7C500BDEBA24 /* cabinet_smash.wav in Resources */ = {isa = PBXBuildFile; fileRef = 206EC78B10A9164FD3EC0FB2 /* cabinet_smash.wav */; };
+		E4CF476BDDE9C07D02533DA4 /* BedroomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02F4D3EB9FAF56BB2133D62 /* BedroomRoom.swift */; };
+		E4DC9DBEC373F1E6EE987066 /* traffic_engine_coupe.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8305143CA420C2CF0B356BBC /* traffic_engine_coupe.wav */; };
+		E5EB303196D93DF6ABB6F47B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4998B68D44D89C20C715E6A /* AVFoundation.framework */; };
+		E65B531639BB98E1708D1F78 /* CoatRack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98525CCA15D0CA51155B23A /* CoatRack.swift */; };
+		E8A5D22A5D5DECD797F013AB /* SpeechCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 339CBAB2EBF45D24F500CA5E /* SpeechCoordinator.swift */; };
+		E8CA54EBAF07C5C474BB5288 /* step_asphalt_03.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CD382F6DF0AD992404D5624A /* step_asphalt_03.mp3 */; };
+		E93A6B7FACD8245C5EF89C84 /* Bed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77D0566229DA2669BEC252FE /* Bed.swift */; };
+		EB60EF7283C7EC5CD29947BD /* BathroomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE17EF1B5947855F9092B857 /* BathroomRoom.swift */; };
+		ED3C7005636D04DEF465C813 /* door_banging_hard.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5CDFE8966DBF84B33E2B05CC /* door_banging_hard.wav */; };
+		EDA5B3857B2FB7A727C72318 /* GameplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 605335D08F7BCF03C3D0F04E /* GameplayKit.framework */; };
+		EEAD11DD5ABC011C1F898348 /* WorldBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAF5C38A20B5069BEC2DAA /* WorldBuilder.swift */; };
+		EFE1573E1A5402C919B12D41 /* traffic_engine_roadster.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8839E3FB941B90991AE53BCE /* traffic_engine_roadster.wav */; };
+		F2A7F2E62E7053F709848CE0 /* Fridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0396C37B0938F73C6B4F7A19 /* Fridge.swift */; };
+		F40B541F02C740E98276EE61 /* traffic_engine_light.wav in Resources */ = {isa = PBXBuildFile; fileRef = A8249E518C89328D18940F0A /* traffic_engine_light.wav */; };
+		F54BDF245131E890ABCB5A96 /* FreeWorldMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0AF23670BC9F08B94B6DAB /* FreeWorldMacApp.swift */; };
+		F565756E090ED06DA64E3E2E /* GameViewModel+Neighbor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCAC02804772D8A2B627A8 /* GameViewModel+Neighbor.swift */; };
+		F69751497FC213B3C1086D1E /* traffic_engine_light.wav in Resources */ = {isa = PBXBuildFile; fileRef = A8249E518C89328D18940F0A /* traffic_engine_light.wav */; };
+		F6E6033AD7AFEE6976922689 /* doorbell_main.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8F2A1EEA92A9058319B37BE2 /* doorbell_main.wav */; };
+		F96EF911249CCC90451B09C2 /* door_break_heavy.wav in Resources */ = {isa = PBXBuildFile; fileRef = BD4D3183B8DA6D995B2B996A /* door_break_heavy.wav */; };
+		FB787F1B17A5441890B65C4B /* traffic_engine_coupe.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8305143CA420C2CF0B356BBC /* traffic_engine_coupe.wav */; };
+		FBF0A20A74B89745C78D2B92 /* WorldModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF953433DC7FB50056534A6 /* WorldModels.swift */; };
+		FC7D97060DC85A38AA5160D8 /* WorldBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAF5C38A20B5069BEC2DAA /* WorldBuilder.swift */; };
+		FCC93A63EF5FD1403143D272 /* item_place_metal_01.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 24E913316391B2F8CC2F781F /* item_place_metal_01.m4a */; };
+		FEE410CCD477007933078F31 /* GameViewModel+World.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F26AFFB3A12129B23B1A8F2 /* GameViewModel+World.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0396C37B0938F73C6B4F7A19 /* Fridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fridge.swift; sourceTree = "<group>"; };
+		043450244A81A3749DCE01DF /* city_street_bed.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = city_street_bed.mp3; sourceTree = "<group>"; };
+		0FE30E30380E983F6AD14081 /* glass_break_small.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = glass_break_small.wav; sourceTree = "<group>"; };
+		1020C00C7711917266A0F7ED /* FreeWorldMCP */ = {isa = PBXFileReference; includeInIndex = 0; path = FreeWorldMCP; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B5DD9BE823FBDFDB4E6A9D8 /* ambient_room_01.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ambient_room_01.mp3; sourceTree = "<group>"; };
+		1C8D28E1A92D404222AB9161 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		204993DDC77CE778610428AF /* punch_hit.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = punch_hit.wav; sourceTree = "<group>"; };
+		206EC78B10A9164FD3EC0FB2 /* cabinet_smash.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = cabinet_smash.wav; sourceTree = "<group>"; };
+		222982F14D2F777539752E99 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = System/Library/Frameworks/Network.framework; sourceTree = SDKROOT; };
+		2443C6417F9E025DFC0F565D /* step_carpet_01.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = step_carpet_01.mp3; sourceTree = "<group>"; };
+		24E913316391B2F8CC2F781F /* item_place_metal_01.m4a */ = {isa = PBXFileReference; path = item_place_metal_01.m4a; sourceTree = "<group>"; };
+		2D09413D01B5CA78E4D48500 /* MacKeyboardCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacKeyboardCapture.swift; sourceTree = "<group>"; };
+		339CBAB2EBF45D24F500CA5E /* SpeechCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechCoordinator.swift; sourceTree = "<group>"; };
+		3DEAF5C38A20B5069BEC2DAA /* WorldBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldBuilder.swift; sourceTree = "<group>"; };
+		3FB9865D6A5C834A60036B4C /* LivingRoomRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivingRoomRoom.swift; sourceTree = "<group>"; };
+		40816B25521BB3370EA06B48 /* traffic_engine_base.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = traffic_engine_base.wav; sourceTree = "<group>"; };
+		422AE568411A45281AB086DC /* AudioCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioCoordinator.swift; sourceTree = "<group>"; };
+		45A806FB972EF77BDDD2C7BD /* step_asphalt_05.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = step_asphalt_05.mp3; sourceTree = "<group>"; };
+		4AE4C98E8EF4F75E13ACBC6B /* GameViewModel+Audio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameViewModel+Audio.swift"; sourceTree = "<group>"; };
+		4BCCAC02804772D8A2B627A8 /* GameViewModel+Neighbor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameViewModel+Neighbor.swift"; sourceTree = "<group>"; };
+		5CDFE8966DBF84B33E2B05CC /* door_banging_hard.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = door_banging_hard.wav; sourceTree = "<group>"; };
+		605335D08F7BCF03C3D0F04E /* GameplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameplayKit.framework; path = System/Library/Frameworks/GameplayKit.framework; sourceTree = SDKROOT; };
+		6EF953433DC7FB50056534A6 /* WorldModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldModels.swift; sourceTree = "<group>"; };
+		73399F4F81E6955153AB198C /* KitchenRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenRoom.swift; sourceTree = "<group>"; };
+		7369C9785D4D3F5F19763804 /* HallwayRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HallwayRoom.swift; sourceTree = "<group>"; };
+		77D0566229DA2669BEC252FE /* Bed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bed.swift; sourceTree = "<group>"; };
+		7A0AF23670BC9F08B94B6DAB /* FreeWorldMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeWorldMacApp.swift; sourceTree = "<group>"; };
+		7F26AFFB3A12129B23B1A8F2 /* GameViewModel+World.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameViewModel+World.swift"; sourceTree = "<group>"; };
+		811C0B200A2DA7C3A5CF2356 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		8305143CA420C2CF0B356BBC /* traffic_engine_coupe.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = traffic_engine_coupe.wav; sourceTree = "<group>"; };
+		8839E3FB941B90991AE53BCE /* traffic_engine_roadster.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = traffic_engine_roadster.wav; sourceTree = "<group>"; };
+		89390D5364A83D472482F771 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		8A7C4A955FBD5B1997BA364D /* Mirror.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mirror.swift; sourceTree = "<group>"; };
+		8F2A1EEA92A9058319B37BE2 /* doorbell_main.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = doorbell_main.wav; sourceTree = "<group>"; };
+		8F3C0E8D3613B8C88562A375 /* RootGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootGameView.swift; sourceTree = "<group>"; };
+		92BEE0C99314BC4B06044385 /* FreeWorldiOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = FreeWorldiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		943828DE7B0D9D3B024F5285 /* Table.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Table.swift; sourceTree = "<group>"; };
+		94EA3A91C6537F093A33C0BA /* StreetTrafficCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreetTrafficCoordinator.swift; sourceTree = "<group>"; };
+		997A77E2FDC306A746781D1D /* FreeWorldIOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeWorldIOSApp.swift; sourceTree = "<group>"; };
+		9CC80B06B3F049B82729EDFD /* FlowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowController.swift; sourceTree = "<group>"; };
+		9D0CFB0ABCAB78C1210B2920 /* heartbeat_fast.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = heartbeat_fast.wav; sourceTree = "<group>"; };
+		A1B571977C738DA838527836 /* step_asphalt_01.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = step_asphalt_01.mp3; sourceTree = "<group>"; };
+		A672BF4FDE31AD4B9CC373A1 /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = "<group>"; };
+		A8249E518C89328D18940F0A /* traffic_engine_light.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = traffic_engine_light.wav; sourceTree = "<group>"; };
+		AFA7372A8234FABA9214063C /* step_asphalt_04.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = step_asphalt_04.mp3; sourceTree = "<group>"; };
+		B5959BD7C1D6739EAC43657B /* LiveGameBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveGameBridge.swift; sourceTree = "<group>"; };
+		B730C6D651C4C2D06ADA9FED /* GameViewModel+Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameViewModel+Session.swift"; sourceTree = "<group>"; };
+		BB34C26A1A78412AC745A63A /* step_asphalt_02.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = step_asphalt_02.mp3; sourceTree = "<group>"; };
+		BD4D3183B8DA6D995B2B996A /* door_break_heavy.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = door_break_heavy.wav; sourceTree = "<group>"; };
+		C30DE97987846316974C7D1F /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		C46D184F0064168FBA634A8A /* FreeWorldMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreeWorldMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C602295D5D1B0532B44E8DF7 /* FreeWorldVarispeedProbe */ = {isa = PBXFileReference; includeInIndex = 0; path = FreeWorldVarispeedProbe; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD382F6DF0AD992404D5624A /* step_asphalt_03.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = step_asphalt_03.mp3; sourceTree = "<group>"; };
+		D2567EC239A6892408B2D43F /* FreeWorldPlaytests */ = {isa = PBXFileReference; includeInIndex = 0; path = FreeWorldPlaytests; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8A3648B39035FCD7FB63C48 /* traffic_engine_sedan.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = traffic_engine_sedan.wav; sourceTree = "<group>"; };
+		DB2B915989252BC9445E62EF /* step_carpet_02.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = step_carpet_02.mp3; sourceTree = "<group>"; };
+		DD85185B7E2D807BEACC5E3A /* GameViewModel+Movement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameViewModel+Movement.swift"; sourceTree = "<group>"; };
+		DE17EF1B5947855F9092B857 /* BathroomRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BathroomRoom.swift; sourceTree = "<group>"; };
+		DE8D88B581D99C270F315A43 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		E468E6DBD0931FD588C9FBA2 /* traffic_engine_sport.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = traffic_engine_sport.wav; sourceTree = "<group>"; };
+		E4998B68D44D89C20C715E6A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		E98525CCA15D0CA51155B23A /* CoatRack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoatRack.swift; sourceTree = "<group>"; };
+		ECED716DFE265F2CA62A1D35 /* GameViewModel+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameViewModel+Actions.swift"; sourceTree = "<group>"; };
+		F02F4D3EB9FAF56BB2133D62 /* BedroomRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BedroomRoom.swift; sourceTree = "<group>"; };
+		FBC8A4A3F6568C9EFDDF3E75 /* Pillow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pillow.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		200DB090B854E3A95CFE9307 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EDA5B3857B2FB7A727C72318 /* GameplayKit.framework in Frameworks */,
+				AB06131EBBEC1EFCEB2451D7 /* AVFoundation.framework in Frameworks */,
+				3CF2595E090559A079BDE052 /* Network.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		331F0BF978D3B6E076AC0B6C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A61841EA929EF0A49A132A64 /* GameplayKit.framework in Frameworks */,
+				1100E43E896CA59C5C8D7C81 /* AVFoundation.framework in Frameworks */,
+				525C7565090F6B21452349AA /* Network.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3929F2AF807E07271197025F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8C3532D484AA26AA60402DDD /* GameplayKit.framework in Frameworks */,
+				98A02C8F93D5F11558009025 /* AVFoundation.framework in Frameworks */,
+				581A3DEBDA354C03A5055FA3 /* Network.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		55C22C6B8D20C8AA0E80778F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AFA61F4134CF2388BE6DBC3D /* GameplayKit.framework in Frameworks */,
+				93885645B3199973D1FCD7DF /* AVFoundation.framework in Frameworks */,
+				9B1AF6A7A9F8672A785EA39B /* Network.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DBCF4995DC5B13EC78026061 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E5EB303196D93DF6ABB6F47B /* AVFoundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		235CD07A6C13C691B34375F3 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C4E1563A6E2D3CF959F04901 /* Audio */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		338C110A1BDCBDD6042718FC /* Bathroom */ = {
+			isa = PBXGroup;
+			children = (
+				DE17EF1B5947855F9092B857 /* BathroomRoom.swift */,
+				8A7C4A955FBD5B1997BA364D /* Mirror.swift */,
+			);
+			path = Bathroom;
+			sourceTree = "<group>";
+		};
+		3CE499DD208E05059F5B047A /* MCPServer */ = {
+			isa = PBXGroup;
+			children = (
+				89390D5364A83D472482F771 /* main.swift */,
+			);
+			name = MCPServer;
+			path = Sources/MCPServer;
+			sourceTree = "<group>";
+		};
+		5054D181F8CE16C6922F38D9 /* Kitchen */ = {
+			isa = PBXGroup;
+			children = (
+				0396C37B0938F73C6B4F7A19 /* Fridge.swift */,
+				73399F4F81E6955153AB198C /* KitchenRoom.swift */,
+			);
+			path = Kitchen;
+			sourceTree = "<group>";
+		};
+		56B1F508EC7B590390BCD3F7 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				422AE568411A45281AB086DC /* AudioCoordinator.swift */,
+				A672BF4FDE31AD4B9CC373A1 /* GameViewModel.swift */,
+				ECED716DFE265F2CA62A1D35 /* GameViewModel+Actions.swift */,
+				4AE4C98E8EF4F75E13ACBC6B /* GameViewModel+Audio.swift */,
+				DD85185B7E2D807BEACC5E3A /* GameViewModel+Movement.swift */,
+				4BCCAC02804772D8A2B627A8 /* GameViewModel+Neighbor.swift */,
+				B730C6D651C4C2D06ADA9FED /* GameViewModel+Session.swift */,
+				7F26AFFB3A12129B23B1A8F2 /* GameViewModel+World.swift */,
+				B5959BD7C1D6739EAC43657B /* LiveGameBridge.swift */,
+				8F3C0E8D3613B8C88562A375 /* RootGameView.swift */,
+				339CBAB2EBF45D24F500CA5E /* SpeechCoordinator.swift */,
+				94EA3A91C6537F093A33C0BA /* StreetTrafficCoordinator.swift */,
+				A6CE612062DD1BB55A6FCFEA /* Rooms */,
+				FC18D6EB2C998BD89D21A239 /* WorldCore */,
+			);
+			name = Shared;
+			path = Sources/Shared;
+			sourceTree = "<group>";
+		};
+		5FF52FF1E045B9CDD9E0F92C /* Bedroom */ = {
+			isa = PBXGroup;
+			children = (
+				77D0566229DA2669BEC252FE /* Bed.swift */,
+				F02F4D3EB9FAF56BB2133D62 /* BedroomRoom.swift */,
+				FBC8A4A3F6568C9EFDDF3E75 /* Pillow.swift */,
+			);
+			path = Bedroom;
+			sourceTree = "<group>";
+		};
+		72CFA428184BAD8614EA38AC /* Hallway */ = {
+			isa = PBXGroup;
+			children = (
+				E98525CCA15D0CA51155B23A /* CoatRack.swift */,
+				7369C9785D4D3F5F19763804 /* HallwayRoom.swift */,
+			);
+			path = Hallway;
+			sourceTree = "<group>";
+		};
+		82533843A43C2EB2B954BEA5 /* macOSApp */ = {
+			isa = PBXGroup;
+			children = (
+				7A0AF23670BC9F08B94B6DAB /* FreeWorldMacApp.swift */,
+				DE8D88B581D99C270F315A43 /* Info.plist */,
+				2D09413D01B5CA78E4D48500 /* MacKeyboardCapture.swift */,
+			);
+			name = macOSApp;
+			path = Sources/macOSApp;
+			sourceTree = "<group>";
+		};
+		A6CE612062DD1BB55A6FCFEA /* Rooms */ = {
+			isa = PBXGroup;
+			children = (
+				338C110A1BDCBDD6042718FC /* Bathroom */,
+				5FF52FF1E045B9CDD9E0F92C /* Bedroom */,
+				72CFA428184BAD8614EA38AC /* Hallway */,
+				5054D181F8CE16C6922F38D9 /* Kitchen */,
+				D174E8BA947A9C476ACC0FDC /* LivingRoom */,
+			);
+			path = Rooms;
+			sourceTree = "<group>";
+		};
+		B0CE7EC591542581FACBBCEE /* Playtests */ = {
+			isa = PBXGroup;
+			children = (
+				C30DE97987846316974C7D1F /* main.swift */,
+			);
+			name = Playtests;
+			path = Sources/Playtests;
+			sourceTree = "<group>";
+		};
+		BD6D554A1D1441CFFEEDB076 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E4998B68D44D89C20C715E6A /* AVFoundation.framework */,
+				605335D08F7BCF03C3D0F04E /* GameplayKit.framework */,
+				222982F14D2F777539752E99 /* Network.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C4E1563A6E2D3CF959F04901 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				1B5DD9BE823FBDFDB4E6A9D8 /* ambient_room_01.mp3 */,
+				206EC78B10A9164FD3EC0FB2 /* cabinet_smash.wav */,
+				043450244A81A3749DCE01DF /* city_street_bed.mp3 */,
+				5CDFE8966DBF84B33E2B05CC /* door_banging_hard.wav */,
+				BD4D3183B8DA6D995B2B996A /* door_break_heavy.wav */,
+				8F2A1EEA92A9058319B37BE2 /* doorbell_main.wav */,
+				0FE30E30380E983F6AD14081 /* glass_break_small.wav */,
+				9D0CFB0ABCAB78C1210B2920 /* heartbeat_fast.wav */,
+				24E913316391B2F8CC2F781F /* item_place_metal_01.m4a */,
+				204993DDC77CE778610428AF /* punch_hit.wav */,
+				A1B571977C738DA838527836 /* step_asphalt_01.mp3 */,
+				BB34C26A1A78412AC745A63A /* step_asphalt_02.mp3 */,
+				CD382F6DF0AD992404D5624A /* step_asphalt_03.mp3 */,
+				AFA7372A8234FABA9214063C /* step_asphalt_04.mp3 */,
+				45A806FB972EF77BDDD2C7BD /* step_asphalt_05.mp3 */,
+				2443C6417F9E025DFC0F565D /* step_carpet_01.mp3 */,
+				DB2B915989252BC9445E62EF /* step_carpet_02.mp3 */,
+				40816B25521BB3370EA06B48 /* traffic_engine_base.wav */,
+				8305143CA420C2CF0B356BBC /* traffic_engine_coupe.wav */,
+				A8249E518C89328D18940F0A /* traffic_engine_light.wav */,
+				8839E3FB941B90991AE53BCE /* traffic_engine_roadster.wav */,
+				D8A3648B39035FCD7FB63C48 /* traffic_engine_sedan.wav */,
+				E468E6DBD0931FD588C9FBA2 /* traffic_engine_sport.wav */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+		CFAE1B4C6D539140D5EA3235 = {
+			isa = PBXGroup;
+			children = (
+				E5F47BC739841491D803E0E5 /* iOSApp */,
+				82533843A43C2EB2B954BEA5 /* macOSApp */,
+				3CE499DD208E05059F5B047A /* MCPServer */,
+				B0CE7EC591542581FACBBCEE /* Playtests */,
+				235CD07A6C13C691B34375F3 /* Resources */,
+				56B1F508EC7B590390BCD3F7 /* Shared */,
+				E53978470D13DA66D6446D09 /* VarispeedProbe */,
+				BD6D554A1D1441CFFEEDB076 /* Frameworks */,
+				DE0EBCA419C5003FFF41B04A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D174E8BA947A9C476ACC0FDC /* LivingRoom */ = {
+			isa = PBXGroup;
+			children = (
+				3FB9865D6A5C834A60036B4C /* LivingRoomRoom.swift */,
+				943828DE7B0D9D3B024F5285 /* Table.swift */,
+			);
+			path = LivingRoom;
+			sourceTree = "<group>";
+		};
+		DE0EBCA419C5003FFF41B04A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				92BEE0C99314BC4B06044385 /* FreeWorldiOS.app */,
+				C46D184F0064168FBA634A8A /* FreeWorldMac.app */,
+				1020C00C7711917266A0F7ED /* FreeWorldMCP */,
+				D2567EC239A6892408B2D43F /* FreeWorldPlaytests */,
+				C602295D5D1B0532B44E8DF7 /* FreeWorldVarispeedProbe */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E53978470D13DA66D6446D09 /* VarispeedProbe */ = {
+			isa = PBXGroup;
+			children = (
+				1C8D28E1A92D404222AB9161 /* main.swift */,
+			);
+			name = VarispeedProbe;
+			path = Sources/VarispeedProbe;
+			sourceTree = "<group>";
+		};
+		E5F47BC739841491D803E0E5 /* iOSApp */ = {
+			isa = PBXGroup;
+			children = (
+				997A77E2FDC306A746781D1D /* FreeWorldIOSApp.swift */,
+				811C0B200A2DA7C3A5CF2356 /* Info.plist */,
+			);
+			name = iOSApp;
+			path = Sources/iOSApp;
+			sourceTree = "<group>";
+		};
+		FC18D6EB2C998BD89D21A239 /* WorldCore */ = {
+			isa = PBXGroup;
+			children = (
+				9CC80B06B3F049B82729EDFD /* FlowController.swift */,
+				3DEAF5C38A20B5069BEC2DAA /* WorldBuilder.swift */,
+				6EF953433DC7FB50056534A6 /* WorldModels.swift */,
+			);
+			path = WorldCore;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1ED443C60A88A3F4D494F5A7 /* FreeWorldMCP */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 94B3448781434A1E39D71F24 /* Build configuration list for PBXNativeTarget "FreeWorldMCP" */;
+			buildPhases = (
+				62CA4728AE482FEE2A227FB7 /* Sources */,
+				83EA899A8BE532DEB39A160C /* Resources */,
+				3929F2AF807E07271197025F /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FreeWorldMCP;
+			packageProductDependencies = (
+			);
+			productName = FreeWorldMCP;
+			productReference = 1020C00C7711917266A0F7ED /* FreeWorldMCP */;
+			productType = "com.apple.product-type.tool";
+		};
+		65F0363134B1D7A04FC29B5D /* FreeWorldPlaytests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1731E0A99DC8881F68B649C /* Build configuration list for PBXNativeTarget "FreeWorldPlaytests" */;
+			buildPhases = (
+				8E526ABF2B33D59330CC2FD2 /* Sources */,
+				4281C772332A964C844020FF /* Resources */,
+				55C22C6B8D20C8AA0E80778F /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FreeWorldPlaytests;
+			packageProductDependencies = (
+			);
+			productName = FreeWorldPlaytests;
+			productReference = D2567EC239A6892408B2D43F /* FreeWorldPlaytests */;
+			productType = "com.apple.product-type.tool";
+		};
+		6BB4C44782344DEC35772802 /* FreeWorldVarispeedProbe */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 11F0C45114185D4C9B1E61AD /* Build configuration list for PBXNativeTarget "FreeWorldVarispeedProbe" */;
+			buildPhases = (
+				2CFE31D93D62E862F2FA9484 /* Sources */,
+				C3D40D514ED013E7355D5042 /* Resources */,
+				DBCF4995DC5B13EC78026061 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FreeWorldVarispeedProbe;
+			packageProductDependencies = (
+			);
+			productName = FreeWorldVarispeedProbe;
+			productReference = C602295D5D1B0532B44E8DF7 /* FreeWorldVarispeedProbe */;
+			productType = "com.apple.product-type.tool";
+		};
+		77A933E0E1C3007299A20D6F /* FreeWorldMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E4A7639A8F1F87F60BB6E82E /* Build configuration list for PBXNativeTarget "FreeWorldMac" */;
+			buildPhases = (
+				B91449898F03B370331431AD /* Sources */,
+				E00D9B6D2E2FEA551FBB3D98 /* Resources */,
+				331F0BF978D3B6E076AC0B6C /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FreeWorldMac;
+			packageProductDependencies = (
+			);
+			productName = FreeWorldMac;
+			productReference = C46D184F0064168FBA634A8A /* FreeWorldMac.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F80ACF08391ACB8D5D406F73 /* FreeWorldiOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 293AC24136CB6EE6D960186E /* Build configuration list for PBXNativeTarget "FreeWorldiOS" */;
+			buildPhases = (
+				C110F36124A96971D08346B8 /* Sources */,
+				14131CB1B48C9B5B90647B43 /* Resources */,
+				200DB090B854E3A95CFE9307 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FreeWorldiOS;
+			packageProductDependencies = (
+			);
+			productName = FreeWorldiOS;
+			productReference = 92BEE0C99314BC4B06044385 /* FreeWorldiOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B60278A53BFC2E78B8A5443E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					77A933E0E1C3007299A20D6F = {
+						DevelopmentTeam = 75WT3FT4Z5;
+						ProvisioningStyle = Automatic;
+					};
+					F80ACF08391ACB8D5D406F73 = {
+						DevelopmentTeam = 75WT3FT4Z5;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 7140A0B72C252DB67450AA15 /* Build configuration list for PBXProject "FreeWorldSimulator" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = CFAE1B4C6D539140D5EA3235;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1ED443C60A88A3F4D494F5A7 /* FreeWorldMCP */,
+				77A933E0E1C3007299A20D6F /* FreeWorldMac */,
+				65F0363134B1D7A04FC29B5D /* FreeWorldPlaytests */,
+				6BB4C44782344DEC35772802 /* FreeWorldVarispeedProbe */,
+				F80ACF08391ACB8D5D406F73 /* FreeWorldiOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		14131CB1B48C9B5B90647B43 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7FBE77564C895025568C0893 /* ambient_room_01.mp3 in Resources */,
+				E05DB667D6AC7C500BDEBA24 /* cabinet_smash.wav in Resources */,
+				234BF9CDAEB9B1A30B3328A9 /* city_street_bed.mp3 in Resources */,
+				48034D5C6DBB82B1758B0A97 /* door_banging_hard.wav in Resources */,
+				62AF71B7DE41D6C3034CA487 /* door_break_heavy.wav in Resources */,
+				3129D1D65E7B848B1C65C447 /* doorbell_main.wav in Resources */,
+				D68352C544E69FF7E9B9E4EE /* glass_break_small.wav in Resources */,
+				84504948FCEEEF205E22BA85 /* heartbeat_fast.wav in Resources */,
+				0B41224E53AF454595A699FD /* item_place_metal_01.m4a in Resources */,
+				0572751CF4281917C8003C02 /* punch_hit.wav in Resources */,
+				3376D1C2553FE55463E6E32F /* step_asphalt_01.mp3 in Resources */,
+				02069B0B8C3CD9CDE7959689 /* step_asphalt_02.mp3 in Resources */,
+				C76A2052F2DA1D0A4B29FA75 /* step_asphalt_03.mp3 in Resources */,
+				CE696006557037ED0F5F7815 /* step_asphalt_04.mp3 in Resources */,
+				2957E64306D456E35A51F674 /* step_asphalt_05.mp3 in Resources */,
+				21D25CAA2059033D3BE46181 /* step_carpet_01.mp3 in Resources */,
+				96CC5214CC7607005C2409AF /* step_carpet_02.mp3 in Resources */,
+				3B4B02294B813E424C88E604 /* traffic_engine_base.wav in Resources */,
+				E4DC9DBEC373F1E6EE987066 /* traffic_engine_coupe.wav in Resources */,
+				F69751497FC213B3C1086D1E /* traffic_engine_light.wav in Resources */,
+				180A3B9F7F20F4214DFE69CE /* traffic_engine_roadster.wav in Resources */,
+				0378B9FCE9E1762FC3C9314A /* traffic_engine_sedan.wav in Resources */,
+				39918C2DB262B4095E0A1079 /* traffic_engine_sport.wav in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4281C772332A964C844020FF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				422EBB9EBAC30C096D5F0655 /* ambient_room_01.mp3 in Resources */,
+				16C83658CE10545D10C313B8 /* cabinet_smash.wav in Resources */,
+				0896C9778693C7466B92E1FC /* city_street_bed.mp3 in Resources */,
+				809791C78E4B6CB204857F2C /* door_banging_hard.wav in Resources */,
+				AA7B70C7AE4D65E06E08D77D /* door_break_heavy.wav in Resources */,
+				F6E6033AD7AFEE6976922689 /* doorbell_main.wav in Resources */,
+				4B16099F81CF019BB76CD944 /* glass_break_small.wav in Resources */,
+				A89DB8997518AF09ACBF0E45 /* heartbeat_fast.wav in Resources */,
+				D5866D93FBC8864F3DE6BDA5 /* item_place_metal_01.m4a in Resources */,
+				A6500A40E23C4CEDB51B5616 /* punch_hit.wav in Resources */,
+				7CA621402966A56B0F0C884D /* step_asphalt_01.mp3 in Resources */,
+				56BCFEB1EB59711493E08A45 /* step_asphalt_02.mp3 in Resources */,
+				1ABE08B0E085EBAD11BB5317 /* step_asphalt_03.mp3 in Resources */,
+				A2B07FF8865D42614B26F585 /* step_asphalt_04.mp3 in Resources */,
+				AAE6D58270A1F81B88E63825 /* step_asphalt_05.mp3 in Resources */,
+				46D18243D6DA5B5832BBE9E6 /* step_carpet_01.mp3 in Resources */,
+				0F280BA5EB35D8FDF569ABF9 /* step_carpet_02.mp3 in Resources */,
+				B41ECB1874C95AFC1D4D5C48 /* traffic_engine_base.wav in Resources */,
+				2E314106069F8E2820CEA7AC /* traffic_engine_coupe.wav in Resources */,
+				F40B541F02C740E98276EE61 /* traffic_engine_light.wav in Resources */,
+				04E7C30595DBD8BAFCF81352 /* traffic_engine_roadster.wav in Resources */,
+				964726287A0B4B402806950D /* traffic_engine_sedan.wav in Resources */,
+				2A31CBF37F48BD523DA2D027 /* traffic_engine_sport.wav in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		83EA899A8BE532DEB39A160C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A6C0CC669E95D02A61898EF5 /* ambient_room_01.mp3 in Resources */,
+				35E3A47B85C4158006DAED4F /* cabinet_smash.wav in Resources */,
+				10BF2FA5D00667A348E52AE9 /* city_street_bed.mp3 in Resources */,
+				D963D1E4721A2F230FC7024E /* door_banging_hard.wav in Resources */,
+				2C09AB1E1110E7BAAF516148 /* door_break_heavy.wav in Resources */,
+				0E2B2B9A458092C345C82D8D /* doorbell_main.wav in Resources */,
+				316A89B17A3A33055CFC5AB7 /* glass_break_small.wav in Resources */,
+				89D77AF207742BAF2CFAC103 /* heartbeat_fast.wav in Resources */,
+				00A4F81B924BAF27A644C397 /* item_place_metal_01.m4a in Resources */,
+				810DEB21A67CB21C0B75D02B /* punch_hit.wav in Resources */,
+				02B73E37E5AF9482542AA97A /* step_asphalt_01.mp3 in Resources */,
+				4D35B4CD054C8F2C74B5BBE6 /* step_asphalt_02.mp3 in Resources */,
+				C102F292D6A2B7EE3FB0C081 /* step_asphalt_03.mp3 in Resources */,
+				828802744AE5C8A12171B51E /* step_asphalt_04.mp3 in Resources */,
+				17F208DECF27941773617082 /* step_asphalt_05.mp3 in Resources */,
+				2004207E5AE50BB025E17B49 /* step_carpet_01.mp3 in Resources */,
+				2127FAD3C3CA627DFF63FF75 /* step_carpet_02.mp3 in Resources */,
+				B9F10373F18003DFF691C9EF /* traffic_engine_base.wav in Resources */,
+				70BE0A213B33A9FEA9EBADFA /* traffic_engine_coupe.wav in Resources */,
+				854B1F56D54A56E81DF42AE1 /* traffic_engine_light.wav in Resources */,
+				EFE1573E1A5402C919B12D41 /* traffic_engine_roadster.wav in Resources */,
+				B8933D077A835F819612594F /* traffic_engine_sedan.wav in Resources */,
+				D12A27065CD7994A6687F26A /* traffic_engine_sport.wav in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C3D40D514ED013E7355D5042 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2386DCCE3CED378403120964 /* ambient_room_01.mp3 in Resources */,
+				455BC5428FBDF31079B3714B /* cabinet_smash.wav in Resources */,
+				B3DA952B38BE9E9CED37962D /* city_street_bed.mp3 in Resources */,
+				ED3C7005636D04DEF465C813 /* door_banging_hard.wav in Resources */,
+				F96EF911249CCC90451B09C2 /* door_break_heavy.wav in Resources */,
+				C0CA6D10E46E4CB3E0F43F87 /* doorbell_main.wav in Resources */,
+				926863478A0391CF6D866A45 /* glass_break_small.wav in Resources */,
+				B89F08244ED38425467A061B /* heartbeat_fast.wav in Resources */,
+				FCC93A63EF5FD1403143D272 /* item_place_metal_01.m4a in Resources */,
+				30F16B293107A6905291CC03 /* punch_hit.wav in Resources */,
+				71FA5754602CBADE4306586B /* step_asphalt_01.mp3 in Resources */,
+				37B9EDE886F69943B6C5FC55 /* step_asphalt_02.mp3 in Resources */,
+				A5FAD5636406F0DB0A5B9F06 /* step_asphalt_03.mp3 in Resources */,
+				8D638F0010C85FB80175C213 /* step_asphalt_04.mp3 in Resources */,
+				2474DD008134A33D1E0173A2 /* step_asphalt_05.mp3 in Resources */,
+				4D71BB30CD85CEEEC8BAB2BF /* step_carpet_01.mp3 in Resources */,
+				872AC5E00F18863882572E39 /* step_carpet_02.mp3 in Resources */,
+				96F97AEFE30DD4EA2CE16FE0 /* traffic_engine_base.wav in Resources */,
+				9995E3C1283662BC57CE234A /* traffic_engine_coupe.wav in Resources */,
+				243DFB4579CCC2B12B0B7C8C /* traffic_engine_light.wav in Resources */,
+				A16EBEB3BF03CAB918412BD5 /* traffic_engine_roadster.wav in Resources */,
+				B8989D1E269FEE19791F9CBA /* traffic_engine_sedan.wav in Resources */,
+				688694846D641206B38261FC /* traffic_engine_sport.wav in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E00D9B6D2E2FEA551FBB3D98 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D8AA16DB68876174221769C /* ambient_room_01.mp3 in Resources */,
+				17C9EE5A09FFD6B113212FEE /* cabinet_smash.wav in Resources */,
+				7A38329361A4BA4085D70BF6 /* city_street_bed.mp3 in Resources */,
+				D37D39FF8DB1773EBDF8C788 /* door_banging_hard.wav in Resources */,
+				64E0B0E33B78021E9333A4AC /* door_break_heavy.wav in Resources */,
+				8733326AA167E75400AF562D /* doorbell_main.wav in Resources */,
+				C957F844D858FB2130783656 /* glass_break_small.wav in Resources */,
+				348E82CD9A49642C64D66A39 /* heartbeat_fast.wav in Resources */,
+				12EC23DEB39B2B4E3E196F85 /* item_place_metal_01.m4a in Resources */,
+				20EA9D6BAF56EE0094695E18 /* punch_hit.wav in Resources */,
+				B9FC44C7EFEF09620222EFD4 /* step_asphalt_01.mp3 in Resources */,
+				B0289ECBC1ACCF2B9D9184C8 /* step_asphalt_02.mp3 in Resources */,
+				E8CA54EBAF07C5C474BB5288 /* step_asphalt_03.mp3 in Resources */,
+				35FB9FAC43B86BAE03FD8DA3 /* step_asphalt_04.mp3 in Resources */,
+				70D602524CA979789F35B13E /* step_asphalt_05.mp3 in Resources */,
+				DF846E6797AF88DD9E636AC0 /* step_carpet_01.mp3 in Resources */,
+				A149E2A90768C66C285C8F1F /* step_carpet_02.mp3 in Resources */,
+				91F719DDFFFFA6D5F2923372 /* traffic_engine_base.wav in Resources */,
+				FB787F1B17A5441890B65C4B /* traffic_engine_coupe.wav in Resources */,
+				13E38ECB4F3E50A0F4627338 /* traffic_engine_light.wav in Resources */,
+				C0ADC63AF13F5B45BA9162AB /* traffic_engine_roadster.wav in Resources */,
+				2BDD4FD5C8E1E8C3761458D2 /* traffic_engine_sedan.wav in Resources */,
+				67BD6E8B9CC61A1D590B031C /* traffic_engine_sport.wav in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2CFE31D93D62E862F2FA9484 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AD2F6C0F14B5DF565A8EBB12 /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		62CA4728AE482FEE2A227FB7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9E57678096E2771A5317C40A /* AudioCoordinator.swift in Sources */,
+				9C3761E29D5DDBB15535046A /* BathroomRoom.swift in Sources */,
+				E93A6B7FACD8245C5EF89C84 /* Bed.swift in Sources */,
+				3D22B9346A9DEE135C23422F /* BedroomRoom.swift in Sources */,
+				D4B66A50A396635085F11000 /* CoatRack.swift in Sources */,
+				D838D267BA47D822F5D9A556 /* FlowController.swift in Sources */,
+				F2A7F2E62E7053F709848CE0 /* Fridge.swift in Sources */,
+				0BD3B6EF902E4B4EB7E4E5E7 /* GameViewModel+Actions.swift in Sources */,
+				422677F6AF90D5EE102D92B7 /* GameViewModel+Audio.swift in Sources */,
+				55D0827FAF503FED6E131168 /* GameViewModel+Movement.swift in Sources */,
+				F565756E090ED06DA64E3E2E /* GameViewModel+Neighbor.swift in Sources */,
+				5331829BCEB978189ED2CA7F /* GameViewModel+Session.swift in Sources */,
+				7BCE1D36567FEC77BDBDB05F /* GameViewModel+World.swift in Sources */,
+				A0E9FF9678386EEA255B39D8 /* GameViewModel.swift in Sources */,
+				B76953B324B387FB28670685 /* HallwayRoom.swift in Sources */,
+				1B48B76EFD20098DF6E34876 /* KitchenRoom.swift in Sources */,
+				2DC8620DB07FA42AAB5F04D1 /* LiveGameBridge.swift in Sources */,
+				BD90520E1C7A0D3260146262 /* LivingRoomRoom.swift in Sources */,
+				64138C849E413BDAE051BB82 /* Mirror.swift in Sources */,
+				97D0E5773E94F2F4519BAD94 /* Pillow.swift in Sources */,
+				DACD5D8919CFF2DA0D2B6DBB /* SpeechCoordinator.swift in Sources */,
+				C2FF440805D0B24163049821 /* StreetTrafficCoordinator.swift in Sources */,
+				3DECFE06BDC3CA9F9B8F00E7 /* Table.swift in Sources */,
+				FC7D97060DC85A38AA5160D8 /* WorldBuilder.swift in Sources */,
+				C30BA2F94D75D702AAFE6EF8 /* WorldModels.swift in Sources */,
+				DF1522477968C9A1E3537399 /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8E526ABF2B33D59330CC2FD2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				74ECEB168E2DDD99F5D7A55A /* AudioCoordinator.swift in Sources */,
+				EB60EF7283C7EC5CD29947BD /* BathroomRoom.swift in Sources */,
+				0EDF9C246047AE9BC87B2B1E /* Bed.swift in Sources */,
+				7FB097BD2447C7DE89E79D8B /* BedroomRoom.swift in Sources */,
+				E65B531639BB98E1708D1F78 /* CoatRack.swift in Sources */,
+				C25E9C9B9B8E458750887498 /* FlowController.swift in Sources */,
+				7E60C9DB80444881C9A8747C /* Fridge.swift in Sources */,
+				01C8654E428094301DC06313 /* GameViewModel+Actions.swift in Sources */,
+				742AE0CF2282F81A715ED4E7 /* GameViewModel+Audio.swift in Sources */,
+				C1A97849D2FDAC2F87A5B8D9 /* GameViewModel+Movement.swift in Sources */,
+				68824214912636BBB5283FCB /* GameViewModel+Neighbor.swift in Sources */,
+				DCCA17F10E5D6A8DD9A007C6 /* GameViewModel+Session.swift in Sources */,
+				43BB0C0CB1ADFB67CC41F944 /* GameViewModel+World.swift in Sources */,
+				AFEF9D6B88CB83EFFD94F4C7 /* GameViewModel.swift in Sources */,
+				755517E456B48FAC6F4949B9 /* HallwayRoom.swift in Sources */,
+				70DFD68C35484AD923ED9124 /* KitchenRoom.swift in Sources */,
+				8E27DF45A5D7F9AF51FC1F2A /* LiveGameBridge.swift in Sources */,
+				C100F71A99154F34F4CEF346 /* LivingRoomRoom.swift in Sources */,
+				403DF2DF37EE437F25AEDCC9 /* MacKeyboardCapture.swift in Sources */,
+				6989951CFFD53D6ABEF75D0A /* Mirror.swift in Sources */,
+				0D068C3AC3C2BFE998893B86 /* Pillow.swift in Sources */,
+				433DC47D0A49ED407B2EDEFD /* RootGameView.swift in Sources */,
+				5E700CC638C684F635D57F91 /* SpeechCoordinator.swift in Sources */,
+				ADED175A2AD0F06DF21EB971 /* StreetTrafficCoordinator.swift in Sources */,
+				82514783F3A95110C778061A /* Table.swift in Sources */,
+				1A0C98B5F37824194D218BFE /* WorldBuilder.swift in Sources */,
+				A83165FB32CBCFE088109B1A /* WorldModels.swift in Sources */,
+				C26D46834B9C6D57F8A46AC6 /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B91449898F03B370331431AD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				19C9D26E2FFA0C69676C8F4A /* AudioCoordinator.swift in Sources */,
+				55DBAC9D841156194BCAC075 /* BathroomRoom.swift in Sources */,
+				6600C43EB93A720A1D9AEC15 /* Bed.swift in Sources */,
+				E4CF476BDDE9C07D02533DA4 /* BedroomRoom.swift in Sources */,
+				99F0AE344401923C95A7A598 /* CoatRack.swift in Sources */,
+				2FEF89F6240C9A747CABDC2F /* FlowController.swift in Sources */,
+				F54BDF245131E890ABCB5A96 /* FreeWorldMacApp.swift in Sources */,
+				97910ED814756E69EC759C9E /* Fridge.swift in Sources */,
+				33279D70467089D510183875 /* GameViewModel+Actions.swift in Sources */,
+				9311C5F4B05045CED30EFCA5 /* GameViewModel+Audio.swift in Sources */,
+				84DFB801D5A2860F6B9895DF /* GameViewModel+Movement.swift in Sources */,
+				8AE8FE6566FD71C555665BF3 /* GameViewModel+Neighbor.swift in Sources */,
+				7C9D79011DC06D5535DC8C3F /* GameViewModel+Session.swift in Sources */,
+				FEE410CCD477007933078F31 /* GameViewModel+World.swift in Sources */,
+				D60CB00AFD54E54434508C30 /* GameViewModel.swift in Sources */,
+				4A953D617011C20D792408D2 /* HallwayRoom.swift in Sources */,
+				8A819076CF1891E76362568D /* KitchenRoom.swift in Sources */,
+				942F31315D307DA194E4A35B /* LiveGameBridge.swift in Sources */,
+				BB3EF7995262583D3DE99262 /* LivingRoomRoom.swift in Sources */,
+				030E71D8BA96E8C7FDBE053F /* MacKeyboardCapture.swift in Sources */,
+				2C5DC3893E83A78A6E02EF95 /* Mirror.swift in Sources */,
+				CA8789CC0E96975C709A78EC /* Pillow.swift in Sources */,
+				BA604B14D614C4E5A1C427C0 /* RootGameView.swift in Sources */,
+				E8A5D22A5D5DECD797F013AB /* SpeechCoordinator.swift in Sources */,
+				A004A86EF7C685F49A059D76 /* StreetTrafficCoordinator.swift in Sources */,
+				98DB83DA837BE7C7E8CE919A /* Table.swift in Sources */,
+				6060BA3738E51D7BE72162AA /* WorldBuilder.swift in Sources */,
+				4D0CDDF353C967D6500053E2 /* WorldModels.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C110F36124A96971D08346B8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				519ED49F97CEEC904DBABD4B /* AudioCoordinator.swift in Sources */,
+				10799D189F62F070F8750AB8 /* BathroomRoom.swift in Sources */,
+				7F3B5516D1C2C56062D98819 /* Bed.swift in Sources */,
+				7C81548FCFD1DFB9010F420B /* BedroomRoom.swift in Sources */,
+				3434BBD18E6FF569B12AB488 /* CoatRack.swift in Sources */,
+				7F610B8A3616885C6FFD113B /* FlowController.swift in Sources */,
+				7E042BB7C294E31A90F46F68 /* FreeWorldIOSApp.swift in Sources */,
+				A0708EE09457A2611F65D7E3 /* Fridge.swift in Sources */,
+				776FE8A50104F9CC09F88486 /* GameViewModel+Actions.swift in Sources */,
+				85C33F916FD714A58CAC3779 /* GameViewModel+Audio.swift in Sources */,
+				5F179A85FF8BD13C9CCEB59A /* GameViewModel+Movement.swift in Sources */,
+				00EC229E595D63CFFE14871C /* GameViewModel+Neighbor.swift in Sources */,
+				46474118F183EBB4555C6406 /* GameViewModel+Session.swift in Sources */,
+				39188333D2C8A624F1EE9A4F /* GameViewModel+World.swift in Sources */,
+				86C4FC4E3C59431E5CEF5BD7 /* GameViewModel.swift in Sources */,
+				BEFB3BABFC6CBB23FA5C7A89 /* HallwayRoom.swift in Sources */,
+				AD2B0EE7CAA772685F60E966 /* KitchenRoom.swift in Sources */,
+				14C6044BD8B93832ED1B6365 /* LiveGameBridge.swift in Sources */,
+				589193FF565098CBD5ADA043 /* LivingRoomRoom.swift in Sources */,
+				614ED8AB255C91B1F10AF66F /* Mirror.swift in Sources */,
+				DA9B79C287116CDF732CCB02 /* Pillow.swift in Sources */,
+				965C4228D1219438891AEC8F /* RootGameView.swift in Sources */,
+				DFBB980D507B207A474A555E /* SpeechCoordinator.swift in Sources */,
+				53EC71F04DB1071445E5A63B /* StreetTrafficCoordinator.swift in Sources */,
+				C794AD0B128CED6268342C4D /* Table.swift in Sources */,
+				EEAD11DD5ABC011C1F898348 /* WorldBuilder.swift in Sources */,
+				FBF0A20A74B89745C78D2B92 /* WorldModels.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		035E392F46D5A255BBF87F6B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Sources/macOSApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_MODULE_NAME = FreeWorldPlaytests;
+				PRODUCT_NAME = FreeWorldPlaytests;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		053C36B9DB52C331B1F49FFC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 75WT3FT4Z5;
+				INFOPLIST_FILE = Sources/macOSApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.egor.freeworld.mac;
+				PRODUCT_MODULE_NAME = FreeWorldMac;
+				PRODUCT_NAME = FreeWorldMac;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		151779E4A18CB0D5C7386916 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 75WT3FT4Z5;
+				INFOPLIST_FILE = Sources/iOSApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.egor.freeworld.ios;
+				PRODUCT_MODULE_NAME = FreeWorldiOS;
+				PRODUCT_NAME = FreeWorldiOS;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		33670C332663D9DF96D45E8E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_MODULE_NAME = FreeWorldVarispeedProbe;
+				PRODUCT_NAME = FreeWorldVarispeedProbe;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		55EC69C7D1333B517ADE7C29 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.10;
+			};
+			name = Debug;
+		};
+		64E44D575A14F3B3B7285535 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Sources/macOSApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_MODULE_NAME = FreeWorldPlaytests;
+				PRODUCT_NAME = FreeWorldPlaytests;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		8F12DAE80E91E92A26E88F27 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 75WT3FT4Z5;
+				INFOPLIST_FILE = Sources/macOSApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.egor.freeworld.mac;
+				PRODUCT_MODULE_NAME = FreeWorldMac;
+				PRODUCT_NAME = FreeWorldMac;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		9214B73D9D35B415741696AD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_MODULE_NAME = FreeWorldMCP;
+				PRODUCT_NAME = FreeWorldMCP;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		C04CB5FE7CCA4BB3339BBC24 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_MODULE_NAME = FreeWorldVarispeedProbe;
+				PRODUCT_NAME = FreeWorldVarispeedProbe;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		E57555CBA3B73A95CB936181 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.10;
+			};
+			name = Release;
+		};
+		F4E2E097480D3E47B3706CED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_MODULE_NAME = FreeWorldMCP;
+				PRODUCT_NAME = FreeWorldMCP;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F6624B51777DDC8BF32C0E1E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 75WT3FT4Z5;
+				INFOPLIST_FILE = Sources/iOSApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.egor.freeworld.ios;
+				PRODUCT_MODULE_NAME = FreeWorldiOS;
+				PRODUCT_NAME = FreeWorldiOS;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		11F0C45114185D4C9B1E61AD /* Build configuration list for PBXNativeTarget "FreeWorldVarispeedProbe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C04CB5FE7CCA4BB3339BBC24 /* Debug */,
+				33670C332663D9DF96D45E8E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		293AC24136CB6EE6D960186E /* Build configuration list for PBXNativeTarget "FreeWorldiOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				151779E4A18CB0D5C7386916 /* Debug */,
+				F6624B51777DDC8BF32C0E1E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7140A0B72C252DB67450AA15 /* Build configuration list for PBXProject "FreeWorldSimulator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				55EC69C7D1333B517ADE7C29 /* Debug */,
+				E57555CBA3B73A95CB936181 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		94B3448781434A1E39D71F24 /* Build configuration list for PBXNativeTarget "FreeWorldMCP" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F4E2E097480D3E47B3706CED /* Debug */,
+				9214B73D9D35B415741696AD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A1731E0A99DC8881F68B649C /* Build configuration list for PBXNativeTarget "FreeWorldPlaytests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				64E44D575A14F3B3B7285535 /* Debug */,
+				035E392F46D5A255BBF87F6B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E4A7639A8F1F87F60BB6E82E /* Build configuration list for PBXNativeTarget "FreeWorldMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				053C36B9DB52C331B1F49FFC /* Debug */,
+				8F12DAE80E91E92A26E88F27 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B60278A53BFC2E78B8A5443E /* Project object */;
+}

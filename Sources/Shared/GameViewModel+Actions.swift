@@ -1,0 +1,263 @@
+import Foundation
+
+extension GameViewModel {
+    func performPrimaryAction() {
+        if let door = currentFocusDoor {
+            handleDoorAction(door)
+            return
+        }
+
+        performAction(for: .primary, missingText: "Сейчас здесь нет основного действия.")
+    }
+
+    func performAction(for trigger: ActionTrigger, missingText: String) {
+        guard let action = action(for: trigger) else {
+            announce(missingText)
+            return
+        }
+
+        apply(action)
+    }
+
+    func handleDoorAction(_ door: DoorDefinition) {
+        if door.id == HallwayRoom.neighborDoorID {
+            handleNeighborDoor()
+            return
+        }
+
+        guard door.state != .locked else {
+            addLog("Дверь заперта: \(door.name)")
+            announce(door.lockedText)
+            return
+        }
+
+        if isDoorOpened(door) {
+            openedDoorLinks.remove(doorLinkID(for: door))
+            audioCoordinator.playEffect(door.sound ?? .obstacleThud)
+            addLog("Закрыл дверь: \(door.name)")
+            announce("Закрыл \(door.name).")
+            refreshScreenState()
+            return
+        }
+
+        openedDoorLinks.insert(doorLinkID(for: door))
+        audioCoordinator.playEffect(door.sound ?? .obstacleThud)
+        addLog("Открыл дверь: \(door.name)")
+        announce("Открыл \(door.name). Чтобы пройти, нажми вперед.")
+        refreshScreenState()
+    }
+
+    func tryPassThroughDoor(_ door: DoorDefinition) {
+        guard door.state != .locked else {
+            addLog("Дверь заперта: \(door.name)")
+            audioCoordinator.playBlockedMovement()
+            announce(door.lockedText)
+            return
+        }
+
+        guard isDoorOpened(door) else {
+            audioCoordinator.playBlockedMovement()
+            announce("Дверь закрыта. Сначала открой ее.")
+            return
+        }
+
+        let targetRoom = rooms[door.targetRoomID] ?? currentRoom
+        state.player.roomID = door.targetRoomID
+        state.player.roomPosition = door.targetRoomPosition ?? targetRoom.spawnPosition
+        state.player.focusedTarget = .none
+        state.player.pose = .standing
+        bedAnchorPosition = nil
+        audioCoordinator.playEffect(door.sound)
+        refreshScreenState()
+        addLog("Переход: \(targetRoom.title)")
+        let prompt = currentShortPrompt()
+        let text = prompt.isEmpty
+            ? "Ты прошел через \(door.name). \(targetRoom.entryAnnouncement)"
+            : "Ты прошел через \(door.name). \(targetRoom.entryAnnouncement) \(prompt)"
+        announce(text)
+    }
+
+    func describeCurrentFocus() {
+        let text: String
+        let focusedStreetCar = currentFocusStreetCarSnapshot()
+
+        if let item = currentFocusItem {
+            text = item.fullDescriptionProvider(state)
+        } else if let door = currentFocusDoor {
+            let stateText: String
+            if door.state == .locked {
+                stateText = "Она заперта."
+            } else if isDoorOpened(door) {
+                stateText = "Она открыта. Нажми вперед, чтобы пройти, или действие, чтобы закрыть."
+            } else {
+                stateText = "Она закрыта. Нажми действие, чтобы открыть."
+            }
+            text = "Перед тобой \(door.name). \(stateText)"
+        } else {
+            if let focusedStreetCar, focusedStreetCar.isInspectable {
+                text = focusedStreetCar.fullDescription
+                audioCoordinator.triggerStreetCarDeparture(focusedStreetCar.id)
+            } else {
+                text = currentFocusNode?.fullDescription ?? roomEmptyDescription()
+            }
+        }
+
+        addLog("Описание: \(focusTitle)")
+        announce(text)
+    }
+
+    func action(for trigger: ActionTrigger) -> ItemAction? {
+        if trigger == .placeHeldItem,
+           let action = bedItemWhileOnBed?.actionsProvider(state).first(where: { $0.trigger == trigger }) {
+            return action
+        }
+
+        if let action = currentFocusItem?.actionsProvider(state).first(where: { $0.trigger == trigger }) {
+            return action
+        }
+
+        return bedItemWhileOnBed?.actionsProvider(state).first(where: { $0.trigger == trigger })
+    }
+
+    func heldItemAction(for trigger: ActionTrigger) -> ItemAction? {
+        guard state.player.heldItem?.itemID == BedroomPillow.itemID else {
+            return nil
+        }
+
+        return BedroomPillow.heldActions(for: state).first(where: { $0.trigger == trigger })
+    }
+
+    func inventoryQuickAction() -> ItemAction? {
+        heldItemAction(for: .placeHeldItem) ?? heldItemAction(for: .throwItem)
+    }
+
+    func toggleInventory() {
+        isInventoryOpen.toggle()
+        refreshScreenState()
+
+        if isInventoryOpen {
+            if let heldItem = state.player.heldItem {
+                announce("Открыт инвентарь. В руках \(heldItem.name). E главное действие. F силовое действие. C положить рядом. R описание. Escape закрывает.")
+            } else {
+                announce("Инвентарь пуст.")
+            }
+        } else {
+            announce("Инвентарь закрыт.")
+        }
+    }
+
+    func handleInventoryCommand(_ command: GameCommand) {
+        switch command {
+        case .primaryAction:
+            performInventoryAction(trigger: .primary, missingText: "Сейчас в инвентаре нет главного действия.")
+        case .forceAction:
+            performInventoryAction(trigger: .force, missingText: "Сейчас в инвентаре нет силового действия.")
+        case .inventoryQuickAction:
+            if let action = inventoryQuickAction() {
+                apply(action)
+            } else {
+                announce("Сейчас в инвентаре нечего класть рядом.")
+            }
+        case .describeFocus:
+            if let action = heldItemAction(for: .describe) {
+                apply(action)
+            } else if state.player.heldItem == nil {
+                announce("Инвентарь пуст.")
+            } else {
+                announce(inventoryText)
+            }
+        default:
+            announce("Инвентарь открыт. Нажми Escape, чтобы закрыть.")
+        }
+    }
+
+    func performInventoryAction(trigger: ActionTrigger, missingText: String) {
+        guard let action = heldItemAction(for: trigger) else {
+            announce(missingText)
+            return
+        }
+
+        apply(action)
+    }
+
+    func apply(_ action: ItemAction) {
+        if let required = action.requiresHeldItemID, state.player.heldItem?.itemID != required {
+            announce("Сейчас у тебя нет нужного предмета.")
+            return
+        }
+
+        action.stateMutation(&state)
+
+        if let producedItem = action.producesHeldItem {
+            state.player.heldItem = producedItem
+            if state.player.pose != .standing, producedItem.itemID == BedroomPillow.itemID {
+                state.player.focusedTarget = .item(BedroomBed.itemID)
+            }
+        }
+
+        syncBedAnchorAfterAction()
+        audioCoordinator.playEffect(action.sound)
+        let extraReaction = reactToLoudActionIfNeeded(for: action)
+        refreshScreenState()
+        addLog(action.resultText)
+        if let extraReaction {
+            addLog(extraReaction)
+            announce("\(action.resultText) \(extraReaction)", delay: 0.7)
+        } else {
+            announce(action.resultText)
+        }
+    }
+
+    func doorLinkID(for door: DoorDefinition) -> String {
+        let ids = [state.player.roomID.rawValue, door.targetRoomID.rawValue].sorted()
+        return ids.joined(separator: "|")
+    }
+
+    func isDoorOpened(_ door: DoorDefinition) -> Bool {
+        openedDoorLinks.contains(doorLinkID(for: door))
+    }
+
+    func doorAtCurrentPosition() -> DoorDefinition? {
+        guard let node = visibleNode(at: state.player.roomPosition) else { return nil }
+        guard case let .door(id) = node.target else { return nil }
+        return currentRoom.doors[id]
+    }
+
+    func doorActionTitle(for door: DoorDefinition) -> String {
+        if door.state == .locked {
+            return "Проверить дверь"
+        }
+        return isDoorOpened(door) ? "Закрыть" : "Открыть"
+    }
+
+    func finishGame(
+        roomTitle: String = "Улица",
+        focusTitle: String = "Конец игры",
+        text: String = "Конец. Ты вышел на улицу. Вы прошли игру, спасибо за внимание.",
+        logLine: String = "Конец игры",
+        ambientCue: AudioCueID? = nil,
+        announcementDelay: TimeInterval = 0
+    ) {
+        cancelNeighborTasks()
+        flowController.enter(.finished)
+        stage = flowController.currentStage
+        state.player.focusedTarget = .none
+        state.player.pose = .standing
+        bedAnchorPosition = nil
+        audioCoordinator.setTrafficEnabled(false)
+        audioCoordinator.setStreetPresence(.off, fadeDuration: 0)
+        audioCoordinator.playAmbient(ambientCue)
+        self.roomTitle = roomTitle
+        self.focusTitle = focusTitle
+        focusShortText = ""
+        if let heldItem = state.player.heldItem {
+            holdText = "В руках: \(heldItem.name)."
+        } else {
+            holdText = "Стоишь"
+        }
+        statusText = text
+        addLog(logLine)
+        announce(text, delay: announcementDelay)
+        onGameFinished?()
+    }
+}

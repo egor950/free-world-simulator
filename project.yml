@@ -1,0 +1,142 @@
+name: FreeWorldSimulator
+options:
+  deploymentTarget:
+    macOS: "14.0"
+    iOS: "18.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+
+targets:
+  FreeWorldMac:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources/Shared
+      - path: Sources/macOSApp
+      - path: Resources
+        buildPhase: resources
+    info:
+      path: Sources/macOSApp/Info.plist
+      properties:
+        CFBundleDisplayName: "Симулятор свободного мира"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.egor.freeworld.mac
+        PRODUCT_NAME: FreeWorldMac
+        PRODUCT_MODULE_NAME: FreeWorldMac
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: 75WT3FT4Z5
+    dependencies:
+      - sdk: GameplayKit.framework
+      - sdk: AVFoundation.framework
+      - sdk: Network.framework
+
+  FreeWorldiOS:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources/Shared
+      - path: Sources/iOSApp
+      - path: Resources
+        buildPhase: resources
+    info:
+      path: Sources/iOSApp/Info.plist
+      properties:
+        CFBundleDisplayName: "Симулятор свободного мира"
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.egor.freeworld.ios
+        PRODUCT_NAME: FreeWorldiOS
+        PRODUCT_MODULE_NAME: FreeWorldiOS
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: 75WT3FT4Z5
+        TARGETED_DEVICE_FAMILY: "1"
+    dependencies:
+      - sdk: GameplayKit.framework
+      - sdk: AVFoundation.framework
+      - sdk: Network.framework
+
+  FreeWorldPlaytests:
+    type: tool
+    platform: macOS
+    sources:
+      - path: Sources/Shared
+      - path: Sources/macOSApp
+        includes:
+          - MacKeyboardCapture.swift
+      - path: Sources/Playtests
+      - path: Resources
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_NAME: FreeWorldPlaytests
+        PRODUCT_MODULE_NAME: FreeWorldPlaytests
+    dependencies:
+      - sdk: GameplayKit.framework
+      - sdk: AVFoundation.framework
+      - sdk: Network.framework
+
+  FreeWorldMCP:
+    type: tool
+    platform: macOS
+    sources:
+      - path: Sources/Shared
+        excludes:
+          - RootGameView.swift
+      - path: Sources/MCPServer
+      - path: Resources
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_NAME: FreeWorldMCP
+        PRODUCT_MODULE_NAME: FreeWorldMCP
+    dependencies:
+      - sdk: GameplayKit.framework
+      - sdk: AVFoundation.framework
+      - sdk: Network.framework
+
+  FreeWorldVarispeedProbe:
+    type: tool
+    platform: macOS
+    sources:
+      - path: Sources/VarispeedProbe
+      - path: Resources
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_NAME: FreeWorldVarispeedProbe
+        PRODUCT_MODULE_NAME: FreeWorldVarispeedProbe
+    dependencies:
+      - sdk: AVFoundation.framework
+
+schemes:
+  FreeWorldMac:
+    build:
+      targets:
+        FreeWorldMac: all
+
+  FreeWorldiOS:
+    build:
+      targets:
+        FreeWorldiOS: all
+
+  FreeWorldPlaytests:
+    build:
+      targets:
+        FreeWorldPlaytests: all
+
+  FreeWorldMCP:
+    build:
+      targets:
+        FreeWorldMCP: all
+
+  FreeWorldVarispeedProbe:
+    build:
+      targets:
+        FreeWorldVarispeedProbe: all
