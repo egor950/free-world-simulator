@@ -25,14 +25,16 @@ extension GameViewModel {
             return
         }
 
-        guard door.state != .locked else {
+        let machine = doorMachine(for: door)
+
+        guard !machine.isLocked else {
             addLog("Дверь заперта: \(door.name)")
             announce(door.lockedText)
             return
         }
 
-        if isDoorOpened(door) {
-            openedDoorLinks.remove(doorLinkID(for: door))
+        if machine.isOpen {
+            _ = machine.close()
             audioCoordinator.playEffect(door.sound ?? .obstacleThud)
             addLog("Закрыл дверь: \(door.name)")
             announce("Закрыл \(door.name).")
@@ -40,7 +42,7 @@ extension GameViewModel {
             return
         }
 
-        openedDoorLinks.insert(doorLinkID(for: door))
+        _ = machine.open()
         audioCoordinator.playEffect(door.sound ?? .obstacleThud)
         addLog("Открыл дверь: \(door.name)")
         announce("Открыл \(door.name). Чтобы пройти, нажми вперед.")
@@ -48,14 +50,16 @@ extension GameViewModel {
     }
 
     func tryPassThroughDoor(_ door: DoorDefinition) {
-        guard door.state != .locked else {
+        let machine = doorMachine(for: door)
+
+        guard !machine.isLocked else {
             addLog("Дверь заперта: \(door.name)")
             audioCoordinator.playBlockedMovement()
             announce(door.lockedText)
             return
         }
 
-        guard isDoorOpened(door) else {
+        guard machine.isOpen else {
             audioCoordinator.playBlockedMovement()
             announce("Дверь закрыта. Сначала открой ее.")
             return
@@ -65,7 +69,7 @@ extension GameViewModel {
         state.player.roomID = door.targetRoomID
         state.player.roomPosition = door.targetRoomPosition ?? targetRoom.spawnPosition
         state.player.focusedTarget = .none
-        state.player.pose = .standing
+        setPlayerPose(.standing)
         bedAnchorPosition = nil
         audioCoordinator.playEffect(door.sound)
         refreshScreenState()
@@ -215,7 +219,7 @@ extension GameViewModel {
 
         if let producedItem = action.producesHeldItem {
             state.player.heldItem = producedItem
-            if state.player.pose != .standing, producedItem.itemID == BedroomPillow.itemID {
+            if !poseMachine.isStanding, producedItem.itemID == BedroomPillow.itemID {
                 state.player.focusedTarget = .item(BedroomBed.itemID)
             }
         }
@@ -238,8 +242,21 @@ extension GameViewModel {
         return ids.joined(separator: "|")
     }
 
+    func doorMachine(for door: DoorDefinition) -> DoorLifecycleMachine {
+        let linkID = doorLinkID(for: door)
+
+        if let machine = doorLifecycleMachines[linkID] {
+            machine.sync(staticState: door.state)
+            return machine
+        }
+
+        let machine = DoorLifecycleMachine(staticState: door.state)
+        doorLifecycleMachines[linkID] = machine
+        return machine
+    }
+
     func isDoorOpened(_ door: DoorDefinition) -> Bool {
-        openedDoorLinks.contains(doorLinkID(for: door))
+        doorMachine(for: door).isOpen
     }
 
     func doorAtCurrentPosition() -> DoorDefinition? {
@@ -249,10 +266,11 @@ extension GameViewModel {
     }
 
     func doorActionTitle(for door: DoorDefinition) -> String {
-        if door.state == .locked {
+        let machine = doorMachine(for: door)
+        if machine.isLocked {
             return "Проверить дверь"
         }
-        return isDoorOpened(door) ? "Закрыть" : "Открыть"
+        return machine.isOpen ? "Закрыть" : "Открыть"
     }
 
     func finishGame(
@@ -267,7 +285,7 @@ extension GameViewModel {
         flowController.enter(.finished)
         stage = flowController.currentStage
         state.player.focusedTarget = .none
-        state.player.pose = .standing
+        setPlayerPose(.standing)
         bedAnchorPosition = nil
         audioCoordinator.setTrafficEnabled(false)
         audioCoordinator.setStreetPresence(.off, fadeDuration: 0)

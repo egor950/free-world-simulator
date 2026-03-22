@@ -67,7 +67,7 @@ extension GameViewModel {
             )
         )
         bedAnchorPosition = nil
-        openedDoorLinks.removeAll()
+        doorLifecycleMachines.removeAll()
         cancelNeighborTasks()
         neighborDoorHitsTarget = 0
         neighborDoorHitsDone = 0
@@ -137,9 +137,10 @@ extension GameViewModel {
         eventLog.removeAll()
         tutorialText = ""
         isTutorialVisible = false
-        isInventoryOpen = false
+        setInventoryOpen(false)
         inventoryTitle = ""
         inventoryText = ""
+        doorLifecycleMachines.removeAll()
     }
 
     func availableDebugScenarios() -> [[String: String]] {
@@ -221,7 +222,7 @@ extension GameViewModel {
         state.player.roomID = roomID
         state.player.roomPosition = position
         state.player.focusedTarget = .none
-        state.player.pose = .standing
+        setPlayerPose(.standing)
         bedAnchorPosition = nil
         refreshScreenState()
         addLog("Отладка: \(roomID.rawValue) \(position.x),\(position.y)")

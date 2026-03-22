@@ -3,6 +3,22 @@ import Foundation
 extension GameViewModel {
     var streetCarInteractionDistance: Int { 2 }
 
+    func syncGameplayStateMachines() {
+        roomTraversalMachine.sync(mode: currentRoom.movementMode)
+        poseMachine.sync(pose: state.player.pose)
+        inventoryMachine.sync(isOpen: isInventoryOpen)
+    }
+
+    func setPlayerPose(_ pose: PlayerPose) {
+        state.player.pose = pose
+        poseMachine.sync(pose: pose)
+    }
+
+    func setInventoryOpen(_ isOpen: Bool) {
+        self.isInventoryOpen = isOpen
+        inventoryMachine.sync(isOpen: isOpen)
+    }
+
     var currentRoom: RoomDefinition {
         rooms[state.player.roomID] ?? rooms[.hallway]!
     }
@@ -84,6 +100,7 @@ extension GameViewModel {
     }
 
     func refreshScreenState() {
+        syncGameplayStateMachines()
         roomTitle = currentRoom.title
         focusTitle = currentFocusNode?.title ?? "Свободное место"
         focusShortText = currentShortPrompt()
