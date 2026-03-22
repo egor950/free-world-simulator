@@ -4,14 +4,14 @@ extension GameViewModel {
     func movePlayer(_ command: GameCommand) {
         lastMovementAt = Date()
 
-        if state.player.pose == .standing,
+        if poseMachine.isStanding,
            let door = doorAtCurrentPosition(),
            shouldPassThroughDoor(door, on: command) {
             tryPassThroughDoor(door)
             return
         }
 
-        if state.player.pose != .standing {
+        if !poseMachine.isStanding {
             guard let linearStep = linearStep(for: command) else { return }
             if command == .moveLeft || command == .moveRight {
                 audioCoordinator.playBlockedMovement()
@@ -96,8 +96,8 @@ extension GameViewModel {
     }
 
     func completeMovement(to position: GridPosition, focusTarget: FocusTarget) {
-        if state.player.pose == .lying {
-            state.player.pose = .crawling
+        if poseMachine.isLying {
+            setPlayerPose(.crawling)
         }
 
         state.player.roomPosition = position
@@ -225,7 +225,7 @@ extension GameViewModel {
     }
 
     func syncBedAnchorAfterAction() {
-        if state.player.pose == .standing {
+        if poseMachine.isStanding {
             bedAnchorPosition = nil
             return
         }

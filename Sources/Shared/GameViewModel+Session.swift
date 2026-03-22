@@ -90,7 +90,7 @@ extension GameViewModel {
             return
         }
 
-        if isInventoryOpen {
+        if inventoryMachine.isOpen {
             handleInventoryCommand(command)
             return
         }

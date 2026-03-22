@@ -161,10 +161,16 @@ extension GameViewModel {
     }
 
     func toggleInventory() {
-        isInventoryOpen.toggle()
+        if inventoryMachine.isOpen {
+            _ = inventoryMachine.close()
+            setInventoryOpen(false)
+        } else {
+            _ = inventoryMachine.open()
+            setInventoryOpen(true)
+        }
         refreshScreenState()
 
-        if isInventoryOpen {
+        if inventoryMachine.isOpen {
             if let heldItem = state.player.heldItem {
                 announce("Открыт инвентарь. В руках \(heldItem.name). E главное действие. F силовое действие. C положить рядом. R описание. Escape закрывает.")
             } else {
@@ -216,6 +222,7 @@ extension GameViewModel {
         }
 
         action.stateMutation(&state)
+        poseMachine.sync(pose: state.player.pose)
 
         if let producedItem = action.producesHeldItem {
             state.player.heldItem = producedItem

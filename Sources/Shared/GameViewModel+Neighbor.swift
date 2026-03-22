@@ -196,7 +196,7 @@ extension GameViewModel {
         cancelNeighborTasks()
         state.setFlag(itemID: NeighborNoise.worldID, key: NeighborNoise.resolvedFlag, value: true)
         neighborEncounterMachine.markResolved()
-        isInventoryOpen = false
+        setInventoryOpen(false)
         audioCoordinator.playEffect(.punchHit)
         finishGame(
             roomTitle: "Прихожая",

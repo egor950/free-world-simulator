@@ -49,7 +49,7 @@ extension GameViewModel {
     }
 
     var bedItemWhileOnBed: ItemDefinition? {
-        guard state.player.pose != .standing else { return nil }
+        guard !poseMachine.isStanding else { return nil }
         return currentRoom.items[BedroomBed.itemID]
     }
 
@@ -282,7 +282,7 @@ extension GameViewModel {
 
         if id == BedroomPillow.itemID {
             if state.player.heldItem?.itemID == id {
-                if state.player.pose != .standing, currentRoom.items[BedroomBed.itemID] != nil {
+                if !poseMachine.isStanding, currentRoom.items[BedroomBed.itemID] != nil {
                     return .item(BedroomBed.itemID)
                 }
                 return .none
@@ -290,7 +290,7 @@ extension GameViewModel {
 
             if let pillowPosition = currentPositionForPillow(),
                state.player.roomPosition != pillowPosition {
-                if state.player.pose != .standing, currentRoom.items[BedroomBed.itemID] != nil {
+                if !poseMachine.isStanding, currentRoom.items[BedroomBed.itemID] != nil {
                     return .item(BedroomBed.itemID)
                 }
                 return .none
