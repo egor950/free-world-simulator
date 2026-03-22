@@ -1,5 +1,6 @@
 @preconcurrency import AVFoundation
 import Foundation
+import GameplayKit
 
 @MainActor
 final class StreetTrafficCoordinator {
@@ -106,6 +107,141 @@ final class StreetTrafficCoordinator {
         let varispeed: AVAudioUnitVarispeed
         let eq: AVAudioUnitEQ
         let panner: AVAudioMixerNode
+    }
+
+    private final class TrafficLifecycle {
+        private final class PassingState: GKState {
+            override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+                stateClass == FinishedState.self
+            }
+        }
+
+        private final class ApproachingState: GKState {
+            override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+                stateClass == ParkedState.self || stateClass == FinishedState.self
+            }
+        }
+
+        private final class ParkedState: GKState {
+            override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+                stateClass == DepartingState.self || stateClass == FinishedState.self
+            }
+        }
+
+        private final class DepartingState: GKState {
+            override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+                stateClass == FinishedState.self
+            }
+        }
+
+        private final class FinishedState: GKState {}
+
+        private let routeStyle: TrafficRouteStyle
+        private let machine: GKStateMachine
+
+        private(set) var parkedElapsed: Float = 0
+        private(set) var departureElapsed: Float = 0
+        private(set) var completedParkingStop = false
+
+        init(routeStyle: TrafficRouteStyle) {
+            self.routeStyle = routeStyle
+            switch routeStyle {
+            case .courtyardParking:
+                machine = GKStateMachine(states: [
+                    ApproachingState(),
+                    ParkedState(),
+                    DepartingState(),
+                    FinishedState()
+                ])
+                machine.enter(ApproachingState.self)
+            case .roadPass, .slowRollBy:
+                machine = GKStateMachine(states: [
+                    PassingState(),
+                    FinishedState()
+                ])
+                machine.enter(PassingState.self)
+            }
+        }
+
+        var isParkingRoute: Bool {
+            routeStyle == .courtyardParking
+        }
+
+        var isApproachingParkingSpot: Bool {
+            machine.currentState is ApproachingState
+        }
+
+        var isParked: Bool {
+            machine.currentState is ParkedState
+        }
+
+        var isDeparting: Bool {
+            machine.currentState is DepartingState
+        }
+
+        var didCompleteParkingStop: Bool {
+            completedParkingStop
+        }
+
+        func advance(deltaTime: Float, parkHoldDuration: Float) {
+            if isParked {
+                parkedElapsed += deltaTime
+                if parkedElapsed >= parkHoldDuration, beginDeparture() {
+                    departureElapsed += deltaTime
+                }
+                return
+            }
+
+            if isDeparting {
+                departureElapsed += deltaTime
+            }
+        }
+
+        @discardableResult
+        func beginParked() -> Bool {
+            guard isParkingRoute, isApproachingParkingSpot else {
+                return false
+            }
+
+            guard machine.enter(ParkedState.self) else {
+                return false
+            }
+
+            parkedElapsed = 0
+            departureElapsed = 0
+            return true
+        }
+
+        @discardableResult
+        func beginDeparture() -> Bool {
+            guard isParkingRoute, isParked else {
+                return false
+            }
+
+            guard machine.enter(DepartingState.self) else {
+                return false
+            }
+
+            completedParkingStop = true
+            parkedElapsed = 0
+            departureElapsed = 0
+            return true
+        }
+
+        func forceDepartureIfNeeded(for id: UUID, forcedIDs: inout Set<UUID>, deltaTime: Float) {
+            guard isParked, forcedIDs.contains(id) else {
+                return
+            }
+
+            forcedIDs.remove(id)
+            if beginDeparture() {
+                departureElapsed += deltaTime
+            }
+        }
+
+        func markFinished() {
+            _ = machine.enter(FinishedState.self)
+        }
     }
 
     private let effectEngine: AVAudioEngine
@@ -423,10 +559,7 @@ final class StreetTrafficCoordinator {
                 var speed = object.entrySpeed
                 var previousSpeed = speed
                 var elapsed: Float = 0
-                var parkedElapsed: Float = 0
-                var departureElapsed: Float = 0
-                var isParked = false
-                var didCompleteParkingStop = false
+                let lifecycle = TrafficLifecycle(routeStyle: object.routeStyle)
                 var currentRate = clampRate(tuning.idleHz / max(1, object.sampleRate))
                 var previousGear = 1
                 var shiftPulseUntil: Float = 0
@@ -435,18 +568,17 @@ final class StreetTrafficCoordinator {
                     guard !Task.isCancelled, audio.player.isPlaying else { break }
 
                     elapsed += dt
-                    if isParked {
-                        parkedElapsed += dt
-                    }
+                    lifecycle.advance(deltaTime: dt, parkHoldDuration: object.parkHoldDuration)
+                    lifecycle.forceDepartureIfNeeded(for: object.id, forcedIDs: &self.forcedDepartureIDs, deltaTime: dt)
 
                     let targetSpeed = desiredSpeed(
                         for: object,
                         x: x,
                         z: z,
-                        isParked: isParked,
-                        parkedElapsed: parkedElapsed,
-                        didCompleteParkingStop: didCompleteParkingStop,
-                        departureElapsed: departureElapsed
+                        isParked: lifecycle.isParked,
+                        parkedElapsed: lifecycle.parkedElapsed,
+                        didCompleteParkingStop: lifecycle.didCompleteParkingStop,
+                        departureElapsed: lifecycle.departureElapsed
                     )
                     speed = advanceSpeed(
                         current: speed,
@@ -459,21 +591,21 @@ final class StreetTrafficCoordinator {
                         deltaTime: dt
                     )
 
-                    if !isParked {
+                    if !lifecycle.isParked {
                         let direction: Float = object.directionLeftToRight ? 1 : -1
                         x += direction * speed * dt
                     }
 
-                    z = trafficZ(for: object, x: x, isParked: isParked)
+                    z = trafficZ(for: object, x: x, isParked: lifecycle.isParked)
                     audio.panner.pan = self.trafficPan(for: object, x: x, z: z)
-                    audio.panner.outputVolume = self.trafficVolume(for: object, x: x, z: z, speed: speed, isParked: isParked)
+                    audio.panner.outputVolume = self.trafficVolume(for: object, x: x, z: z, speed: speed, isParked: lifecycle.isParked)
                     audio.brakePlayer?.volume = self.trafficBrakeSoundVolume(
                         for: object,
                         speed: speed,
                         previousSpeed: previousSpeed,
                         deltaTime: dt,
-                        isParked: isParked,
-                        didCompleteParkingStop: didCompleteParkingStop
+                        isParked: lifecycle.isParked,
+                        didCompleteParkingStop: lifecycle.didCompleteParkingStop
                     )
                     if object.routeStyle != .courtyardParking {
                         self.updateStreetCarSnapshot(for: object, x: x, z: z, isParked: false, isLeaving: false)
@@ -494,15 +626,7 @@ final class StreetTrafficCoordinator {
                     currentRate = smoothRate(previousRate: currentRate, targetRate: targetRate, routeStyle: object.routeStyle)
                     audio.varispeed.rate = currentRate
 
-                    if object.routeStyle == .courtyardParking {
-                        if isParked, self.forcedDepartureIDs.contains(object.id) {
-                            isParked = false
-                            parkedElapsed = 0
-                            departureElapsed = 0
-                            didCompleteParkingStop = true
-                            self.forcedDepartureIDs.remove(object.id)
-                        }
-
+                    if lifecycle.isParkingRoute {
                         let reachedParkingSpot = self.hasReachedParkingStop(
                             for: object,
                             x: x,
@@ -510,42 +634,21 @@ final class StreetTrafficCoordinator {
                             previousSpeed: previousSpeed,
                             elapsed: elapsed
                         )
-                        if reachedParkingSpot, !isParked, !didCompleteParkingStop {
+                        if reachedParkingSpot, lifecycle.beginParked() {
                             speed = 0
                             previousSpeed = 0
-                            isParked = true
-                            parkedElapsed = 0
                             self.updateStreetCarSnapshot(for: object, x: x, z: z, isParked: true, isLeaving: false)
                             if let snapshot = self.activeStreetCarSnapshots[object.id] {
                                 self.onStreetCarParked?(snapshot)
                             }
                         }
-                        if isParked && parkedElapsed >= object.parkHoldDuration {
-                            isParked = false
-                            parkedElapsed = 0
-                            departureElapsed = 0
-                            didCompleteParkingStop = true
-                        }
-                        if didCompleteParkingStop && !isParked {
-                            departureElapsed += dt
-                            self.updateStreetCarSnapshot(for: object, x: x, z: z, isParked: false, isLeaving: true)
-                        } else if isParked {
-                            self.updateStreetCarSnapshot(for: object, x: x, z: z, isParked: true, isLeaving: false)
-                        } else if !didCompleteParkingStop {
-                            self.updateStreetCarSnapshot(for: object, x: x, z: z, isParked: false, isLeaving: false)
-                        }
 
-                        let departureExitX: Float = object.directionLeftToRight ? 36 : -36
-                        let passedDepartureExit = object.directionLeftToRight ? x >= departureExitX : x <= departureExitX
-                        if didCompleteParkingStop && passedDepartureExit {
-                            break
-                        }
-                    } else {
-                        let exitX = object.finalExitX
-                        let passedRoadBounds = object.directionLeftToRight ? x >= exitX : x <= exitX
-                        if passedRoadBounds {
-                            break
-                        }
+                        self.syncCourtyardParkingSnapshot(for: object, x: x, z: z, lifecycle: lifecycle)
+                    }
+
+                    if self.hasCompletedRoute(for: object, x: x, lifecycle: lifecycle) {
+                        lifecycle.markFinished()
+                        break
                     }
 
                     previousSpeed = speed
@@ -1113,6 +1216,38 @@ final class StreetTrafficCoordinator {
         case .far:
             return 18
         }
+    }
+
+    private func syncCourtyardParkingSnapshot(
+        for object: TrafficObject,
+        x: Float,
+        z: Float,
+        lifecycle: TrafficLifecycle
+    ) {
+        if lifecycle.isDeparting {
+            updateStreetCarSnapshot(for: object, x: x, z: z, isParked: false, isLeaving: true)
+            return
+        }
+
+        if lifecycle.isParked {
+            updateStreetCarSnapshot(for: object, x: x, z: z, isParked: true, isLeaving: false)
+            return
+        }
+
+        updateStreetCarSnapshot(for: object, x: x, z: z, isParked: false, isLeaving: false)
+    }
+
+    private func hasCompletedRoute(
+        for object: TrafficObject,
+        x: Float,
+        lifecycle: TrafficLifecycle
+    ) -> Bool {
+        if lifecycle.isParkingRoute, !lifecycle.isDeparting {
+            return false
+        }
+
+        let exitX = object.finalExitX
+        return object.directionLeftToRight ? x >= exitX : x <= exitX
     }
 
     private func updateStreetCarSnapshot(for object: TrafficObject, x: Float, z: Float, isParked: Bool, isLeaving: Bool) {

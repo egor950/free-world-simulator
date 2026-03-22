@@ -1,4 +1,5 @@
 import Foundation
+import GameplayKit
 
 extension GameViewModel {
     func reactToLoudActionIfNeeded(for action: ItemAction) -> String? {
@@ -6,28 +7,29 @@ extension GameViewModel {
             return nil
         }
 
-        if !state.flag(itemID: NeighborNoise.worldID, key: NeighborNoise.warnedFlag) {
+        syncNeighborEncounterMachine()
+
+        switch neighborEncounterMachine.resolveLoudAction() {
+        case .warn:
             state.setFlag(itemID: NeighborNoise.worldID, key: NeighborNoise.warnedFlag, value: true)
             return "Где-то за стеной сразу рявкнули: Эй, ты там что творишь вообще?"
-        }
-
-        if !state.flag(itemID: NeighborNoise.worldID, key: NeighborNoise.doorbellFlag) {
+        case .ringDoorbell:
             state.setFlag(itemID: NeighborNoise.worldID, key: NeighborNoise.doorbellFlag, value: true)
             audioCoordinator.playEffect(.doorbellMain)
             scheduleNeighborResponse()
             return "Снаружи раздался злой звонок в дверь. Похоже, кто-то пришел разбираться. Иди в прихожую к самому началу."
-        }
-
-        if neighborBreakInTask == nil {
+        case .startBreakIn:
             startNeighborBreakIn(
                 introText: "Снаружи сразу взбесились: А, он еще и дальше крушит. Ломай дверь.",
                 finalText: "Они уже не ждут. Дверь начали высаживать всерьез."
             )
             return "Снаружи сразу взбесились: А, он еще и дальше крушит. Ломай дверь."
+        case .intensifyBreakIn:
+            audioCoordinator.playEffect(.doorBreakHeavy)
+            return "Ты снова устроил грохот, и за дверью сразу начали бить еще ожесточеннее."
+        case .ignore:
+            return nil
         }
-
-        audioCoordinator.playEffect(.doorBreakHeavy)
-        return "Ты снова устроил грохот, и за дверью сразу начали бить еще ожесточеннее."
     }
 
     func isNeighborNoiseAction(_ action: ItemAction) -> Bool {
@@ -63,7 +65,7 @@ extension GameViewModel {
                 let pause = Double.random(in: 1.8...3.0)
                 await self.sleep(seconds: pause)
                 guard self.shouldContinueNeighborSequence else { return }
-                guard self.neighborBreakInTask == nil else { return }
+                guard !self.neighborEncounterMachine.isBreakInActive else { return }
 
                 let shouldRing = Bool.random()
                 if shouldRing {
@@ -78,7 +80,7 @@ extension GameViewModel {
             }
 
             guard self.shouldContinueNeighborSequence else { return }
-            guard self.neighborBreakInTask == nil else { return }
+            guard !self.neighborEncounterMachine.isBreakInActive else { return }
 
             if Bool.random() {
                 self.neighborsGiveUpAndLeave()
@@ -92,9 +94,12 @@ extension GameViewModel {
     }
 
     func startNeighborBreakIn(introText: String, finalText: String) {
+        syncNeighborEncounterMachine()
         guard shouldContinueNeighborSequence else { return }
         guard neighborBreakInTask == nil else { return }
+        guard !neighborEncounterMachine.isBreakInActive else { return }
 
+        neighborEncounterMachine.markBreakInStarted()
         neighborResponseTask?.cancel()
         neighborResponseTask = nil
         state.setFlag(itemID: NeighborNoise.worldID, key: NeighborNoise.bangingFlag, value: true)
@@ -175,6 +180,7 @@ extension GameViewModel {
     func neighborsGiveUpAndLeave() {
         guard shouldContinueNeighborSequence else { return }
         cancelNeighborTasks()
+        neighborEncounterMachine.markCalmAfterGiveUp()
         neighborDoorHitsTarget = 0
         neighborDoorHitsDone = 0
         state.setFlag(itemID: NeighborNoise.worldID, key: NeighborNoise.warnedFlag, value: false)
@@ -189,6 +195,7 @@ extension GameViewModel {
     func resolveNeighborAttack(text: String, logLine: String) {
         cancelNeighborTasks()
         state.setFlag(itemID: NeighborNoise.worldID, key: NeighborNoise.resolvedFlag, value: true)
+        neighborEncounterMachine.markResolved()
         isInventoryOpen = false
         audioCoordinator.playEffect(.punchHit)
         finishGame(
@@ -208,8 +215,137 @@ extension GameViewModel {
         neighborBreakInTask = nil
     }
 
+    func syncNeighborEncounterMachine() {
+        neighborEncounterMachine.syncFromRuntime(
+            resolved: state.flag(itemID: NeighborNoise.worldID, key: NeighborNoise.resolvedFlag),
+            warned: state.flag(itemID: NeighborNoise.worldID, key: NeighborNoise.warnedFlag),
+            doorbellRaised: state.flag(itemID: NeighborNoise.worldID, key: NeighborNoise.doorbellFlag),
+            breakInActive: state.flag(itemID: NeighborNoise.worldID, key: NeighborNoise.bangingFlag) || neighborBreakInTask != nil
+        )
+    }
+
     func sleep(seconds: TimeInterval) async {
         let nanoseconds = UInt64(seconds * 1_000_000_000)
         try? await Task.sleep(nanoseconds: nanoseconds)
+    }
+}
+
+enum NeighborLoudReactionStep {
+    case warn
+    case ringDoorbell
+    case startBreakIn
+    case intensifyBreakIn
+    case ignore
+}
+
+final class NeighborEncounterMachine {
+    private final class CalmState: GKState {
+        override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+            stateClass == WarnedState.self || stateClass == ResolvedState.self
+        }
+    }
+
+    private final class WarnedState: GKState {
+        override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+            stateClass == DoorbellState.self || stateClass == CalmState.self || stateClass == ResolvedState.self
+        }
+    }
+
+    private final class DoorbellState: GKState {
+        override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+            stateClass == BreakInState.self || stateClass == CalmState.self || stateClass == ResolvedState.self
+        }
+    }
+
+    private final class BreakInState: GKState {
+        override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+            stateClass == CalmState.self || stateClass == ResolvedState.self
+        }
+    }
+
+    private final class ResolvedState: GKState {
+        override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+            stateClass == CalmState.self
+        }
+    }
+
+    private let stateMachine: GKStateMachine
+
+    init() {
+        stateMachine = GKStateMachine(states: [
+            CalmState(),
+            WarnedState(),
+            DoorbellState(),
+            BreakInState(),
+            ResolvedState()
+        ])
+        stateMachine.enter(CalmState.self)
+    }
+
+    var isBreakInActive: Bool {
+        stateMachine.currentState is BreakInState
+    }
+
+    func syncFromRuntime(resolved: Bool, warned: Bool, doorbellRaised: Bool, breakInActive: Bool) {
+        if resolved {
+            _ = stateMachine.enter(ResolvedState.self)
+            return
+        }
+
+        if breakInActive {
+            _ = stateMachine.enter(BreakInState.self)
+            return
+        }
+
+        if doorbellRaised {
+            _ = stateMachine.enter(DoorbellState.self)
+            return
+        }
+
+        if warned {
+            _ = stateMachine.enter(WarnedState.self)
+            return
+        }
+
+        _ = stateMachine.enter(CalmState.self)
+    }
+
+    func resolveLoudAction() -> NeighborLoudReactionStep {
+        if stateMachine.currentState is ResolvedState {
+            return .ignore
+        }
+
+        if stateMachine.currentState is CalmState {
+            _ = stateMachine.enter(WarnedState.self)
+            return .warn
+        }
+
+        if stateMachine.currentState is WarnedState {
+            _ = stateMachine.enter(DoorbellState.self)
+            return .ringDoorbell
+        }
+
+        if stateMachine.currentState is DoorbellState {
+            _ = stateMachine.enter(BreakInState.self)
+            return .startBreakIn
+        }
+
+        if stateMachine.currentState is BreakInState {
+            return .intensifyBreakIn
+        }
+
+        return .ignore
+    }
+
+    func markBreakInStarted() {
+        _ = stateMachine.enter(BreakInState.self)
+    }
+
+    func markCalmAfterGiveUp() {
+        _ = stateMachine.enter(CalmState.self)
+    }
+
+    func markResolved() {
+        _ = stateMachine.enter(ResolvedState.self)
     }
 }

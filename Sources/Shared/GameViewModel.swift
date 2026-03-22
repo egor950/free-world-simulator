@@ -42,6 +42,7 @@ final class GameViewModel: ObservableObject {
     var pendingStreetCarDepartureTask: Task<Void, Never>?
     var neighborResponseTask: Task<Void, Never>?
     var neighborBreakInTask: Task<Void, Never>?
+    lazy var neighborEncounterMachine = NeighborEncounterMachine()
     var lastMovementAt: Date = .distantPast
     var bedAnchorPosition: GridPosition?
     var openedDoorLinks: Set<String> = []
