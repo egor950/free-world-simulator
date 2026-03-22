@@ -5,7 +5,6 @@ import Foundation
 final class StreetTrafficCoordinator {
     private static let desiredMinimumTrafficCount = 2
     private static let maximumTrafficCount = 3
-
     enum DebugScenario: String, CaseIterable {
         case parkedCar = "street_parked_car"
         case approachingCar = "street_approaching_car"
@@ -22,7 +21,7 @@ final class StreetTrafficCoordinator {
         let isInspectable: Bool
     }
 
-    private struct TrafficProfile {
+    struct TrafficProfile {
         let cue: AudioCueID
         let cruiseRateRange: ClosedRange<Float>
         let brakeDepthRange: ClosedRange<Float>
@@ -38,7 +37,7 @@ final class StreetTrafficCoordinator {
         let gearCount: Int
     }
 
-    private enum TrafficRouteStyle {
+    enum TrafficRouteStyle {
         case roadPass
         case courtyardParking
         case slowRollBy
@@ -61,13 +60,13 @@ final class StreetTrafficCoordinator {
         }
     }
 
-    private enum TrafficSpeedBand: CaseIterable {
+    enum TrafficSpeedBand: CaseIterable {
         case slow
         case normal
         case fast
     }
 
-    private struct TrafficObject {
+    struct TrafficObject {
         let id: UUID
         let profile: TrafficProfile
         let speedBand: TrafficSpeedBand
@@ -113,16 +112,19 @@ final class StreetTrafficCoordinator {
     private let resourceURLProvider: (AudioCueID) -> URL?
 
     var onStreetCarsChanged: (([StreetCarSnapshot]) -> Void)?
+    var onStreetCarParked: ((StreetCarSnapshot) -> Void)?
 
     private var activeTrafficPlayers: [UUID: TrafficAudioUnit] = [:]
     private var activeTrafficTasks: [UUID: Task<Void, Never>] = [:]
-    private var activeTrafficRoutes: [UUID: TrafficRouteStyle] = [:]
-    private var activeTrafficCues: [UUID: AudioCueID] = [:]
+    var activeTrafficRoutes: [UUID: TrafficRouteStyle] = [:]
+    var activeTrafficCues: [UUID: AudioCueID] = [:]
     private var activeTrafficSpeedBands: [UUID: TrafficSpeedBand] = [:]
     private var trafficBufferCache: [AudioCueID: AVAudioPCMBuffer] = [:]
     private var brakeBuffer: AVAudioPCMBuffer?
     private var trafficLoopTask: Task<Void, Never>?
     private var isEnabled = false
+    var lastCourtyardParkingStartedAt: Date = .distantPast
+    var lastCourtyardParkingCue: AudioCueID?
     private var listenerStreetPosition = GridPosition(x: 7, y: 14)
     private var forcedDepartureIDs: Set<UUID> = []
     private var activeDebugScenario: DebugScenario?
@@ -232,6 +234,9 @@ final class StreetTrafficCoordinator {
         isEnabled = enabled
 
         if enabled {
+            if lastCourtyardParkingStartedAt == .distantPast {
+                lastCourtyardParkingStartedAt = Date()
+            }
             if let scenario = activeDebugScenario {
                 if activeTrafficPlayers.isEmpty {
                     runDebugScenarioInternal(scenario)
@@ -327,6 +332,8 @@ final class StreetTrafficCoordinator {
         trafficLoopTask = nil
         activeStreetCarSnapshots = [:]
         forcedDepartureIDs.removeAll()
+        lastCourtyardParkingStartedAt = .distantPast
+        lastCourtyardParkingCue = nil
 
         for task in activeTrafficTasks.values {
             task.cancel()
@@ -365,6 +372,7 @@ final class StreetTrafficCoordinator {
         trafficBufferCache[profile.cue] = buffer
 
         let object = makeDebugTrafficObject(for: scenario, profile: profile, sampleRate: buffer.format.sampleRate)
+        lastCourtyardParkingStartedAt = Date()
         startTrafficObject(object, buffer: buffer)
     }
 
@@ -372,14 +380,21 @@ final class StreetTrafficCoordinator {
         guard activeDebugScenario == nil else { return }
 
         let profiles = trafficProfiles
-        let activeCues = Set(activeTrafficCues.values)
-        let availableProfiles = profiles.filter { !activeCues.contains($0.cue) }
-        guard let profile = (availableProfiles.isEmpty ? profiles : availableProfiles).randomElement() else { return }
+        let routeStyle = routeStyleForNextSpawn()
+        let profile = selectProfile(for: routeStyle, profiles: profiles)
         let buffer = trafficBufferCache[profile.cue] ?? loadPCMBuffer(for: profile.cue)
         guard let buffer else { return }
         trafficBufferCache[profile.cue] = buffer
 
-        let object = makeTrafficObject(for: profile, sampleRate: buffer.format.sampleRate)
+        let object = makeTrafficObject(
+            for: profile,
+            sampleRate: buffer.format.sampleRate,
+            routeStyle: routeStyle
+        )
+        if object.routeStyle == .courtyardParking {
+            lastCourtyardParkingStartedAt = Date()
+            lastCourtyardParkingCue = object.profile.cue
+        }
         startTrafficObject(object, buffer: buffer)
     }
 
@@ -479,7 +494,6 @@ final class StreetTrafficCoordinator {
                     currentRate = smoothRate(previousRate: currentRate, targetRate: targetRate, routeStyle: object.routeStyle)
                     audio.varispeed.rate = currentRate
 
-                    previousSpeed = speed
                     if object.routeStyle == .courtyardParking {
                         if isParked, self.forcedDepartureIDs.contains(object.id) {
                             isParked = false
@@ -489,10 +503,22 @@ final class StreetTrafficCoordinator {
                             self.forcedDepartureIDs.remove(object.id)
                         }
 
-                        let reachedParkingSpot = abs(x - object.endX) < 0.8 && speed < 0.7
-                        if reachedParkingSpot, !didCompleteParkingStop {
+                        let reachedParkingSpot = self.hasReachedParkingStop(
+                            for: object,
+                            x: x,
+                            speed: speed,
+                            previousSpeed: previousSpeed,
+                            elapsed: elapsed
+                        )
+                        if reachedParkingSpot, !isParked, !didCompleteParkingStop {
+                            speed = 0
+                            previousSpeed = 0
                             isParked = true
+                            parkedElapsed = 0
                             self.updateStreetCarSnapshot(for: object, x: x, z: z, isParked: true, isLeaving: false)
+                            if let snapshot = self.activeStreetCarSnapshots[object.id] {
+                                self.onStreetCarParked?(snapshot)
+                            }
                         }
                         if isParked && parkedElapsed >= object.parkHoldDuration {
                             isParked = false
@@ -521,6 +547,8 @@ final class StreetTrafficCoordinator {
                             break
                         }
                     }
+
+                    previousSpeed = speed
 
                     try? await Task.sleep(nanoseconds: UInt64(dt * 1_000_000_000))
                 }
@@ -588,22 +616,16 @@ final class StreetTrafficCoordinator {
         )
     }
 
-    private func makeTrafficObject(for profile: TrafficProfile, sampleRate: Double) -> TrafficObject {
-        let directionLeftToRight = Bool.random()
+    private func makeTrafficObject(
+        for profile: TrafficProfile,
+        sampleRate: Double,
+        routeStyle: TrafficRouteStyle
+    ) -> TrafficObject {
+        let directionLeftToRight = directionForSpawn(routeStyle: routeStyle)
         let distance = TrafficDistanceBand.allCases.randomElement() ?? .medium
         let usedSpeedBands = Set(activeTrafficSpeedBands.values)
         let availableSpeedBands = TrafficSpeedBand.allCases.filter { !usedSpeedBands.contains($0) }
         let speedBand = (availableSpeedBands.isEmpty ? TrafficSpeedBand.allCases : availableSpeedBands).randomElement() ?? .normal
-
-        let routeStyle: TrafficRouteStyle
-        let routeRoll = Int.random(in: 1...100)
-        if routeRoll <= 6 {
-            routeStyle = .courtyardParking
-        } else if routeRoll <= 28 {
-            routeStyle = .slowRollBy
-        } else {
-            routeStyle = .roadPass
-        }
 
         let normalizedRouteStyle: TrafficRouteStyle
         if routeStyle == .courtyardParking, activeTrafficRoutes.values.contains(.courtyardParking) {
@@ -882,47 +904,6 @@ final class StreetTrafficCoordinator {
         return max(0.48, min(1.75, base * bandMultiplier * routeMultiplier))
     }
 
-    private func desiredSpeed(
-        for object: TrafficObject,
-        x: Float,
-        z: Float,
-        isParked: Bool,
-        parkedElapsed: Float,
-        didCompleteParkingStop: Bool,
-        departureElapsed: Float
-    ) -> Float {
-        if isParked {
-            return parkedElapsed >= object.parkHoldDuration ? max(0.5, object.brakeTargetSpeed * 0.9) : max(0.22, object.brakeTargetSpeed * 0.32)
-        }
-
-        let distanceFromBrakeCenter = abs(x - object.brakeCenterX)
-        let brakeMix = 1 - min(1.0, distanceFromBrakeCenter / max(0.01, object.brakeHalfWidth))
-        let softBrakeSpeed = trafficInterpolate(from: object.cruiseSpeed, to: object.brakeTargetSpeed, progress: brakeMix)
-
-        switch object.routeStyle {
-        case .roadPass:
-            return max(object.brakeTargetSpeed, softBrakeSpeed)
-        case .slowRollBy:
-            let finishMix = min(1.0, abs(x / max(1.0, object.endX)))
-            let target = trafficInterpolate(from: softBrakeSpeed, to: object.brakeTargetSpeed, progress: finishMix * 0.45)
-            return max(object.brakeTargetSpeed, target)
-        case .courtyardParking:
-            if didCompleteParkingStop {
-                let departureMix = min(1.0, departureElapsed / 2.1)
-                let departureTarget = max(object.maxSpeed * 0.9, object.cruiseSpeed * 1.02)
-                return trafficInterpolate(
-                    from: max(object.brakeTargetSpeed * 1.35, 1.1),
-                    to: departureTarget,
-                    progress: departureMix
-                )
-            }
-            let nearGoalMix = 1 - min(1.0, abs(x - object.endX) / 10.0)
-            let zMix = 1 - min(1.0, abs(z - object.nearZ) / max(1.0, object.roadZ - object.nearZ))
-            let parkingMix = max(nearGoalMix, zMix)
-            return trafficInterpolate(from: softBrakeSpeed, to: 0, progress: parkingMix)
-        }
-    }
-
     private func advanceSpeed(
         current: Float,
         target: Float,
@@ -961,21 +942,26 @@ final class StreetTrafficCoordinator {
         }
 
         let braking = max(0, previousSpeed - speed) / max(0.01, deltaTime)
-        let brakingMix = min(1.0, braking / max(0.8, object.brakeDeceleration * 0.58))
-        let speedMix = min(1.0, speed / max(1.1, object.cruiseSpeed * 0.46))
-        var volume = brakingMix * (0.1 + 0.24 * speedMix)
+        let brakingMix = min(1.0, braking / max(0.8, object.brakeDeceleration * 0.7))
+        let speedMix = min(1.0, speed / max(1.1, object.cruiseSpeed * 0.4))
+        var volume = brakingMix * (0.07 + 0.2 * speedMix) * max(0.72, object.profile.brakeScale)
+
+        if object.routeStyle == .courtyardParking, !isParked {
+            let parkingApproachMix = 1 - min(1.0, abs(speed - object.brakeTargetSpeed) / max(0.4, object.cruiseSpeed * 0.28))
+            volume *= 1 + (parkingApproachMix * 0.28)
+        }
 
         if didCompleteParkingStop {
-            volume *= 0.35
+            volume *= 0.22
         }
         if isParked {
             volume *= 0.06
         }
-        if brakingMix < 0.08 {
+        if brakingMix < 0.12 || speed < max(0.42, object.brakeTargetSpeed * 0.72) {
             return 0
         }
 
-        return min(0.32, volume)
+        return min(0.26, volume)
     }
 
     private func engineRate(
@@ -1134,11 +1120,11 @@ final class StreetTrafficCoordinator {
         let hint = streetCarRelativeHint(x: x, z: z)
         let snapshotPosition = streetGridPosition(for: object, x: x, z: z, isParked: isParked, isLeaving: isLeaving)
         let playerDistance = abs(snapshotPosition.x - listenerStreetPosition.x) + abs(snapshotPosition.y - listenerStreetPosition.y)
-        let isInspectable = isParked || (object.routeStyle == .courtyardParking && playerDistance <= 1)
+        let isInspectable = isParked
         let shortPrompt: String
         let fullDescription: String
 
-        if playerDistance <= 1 {
+        if isParked && playerDistance <= 1 {
             shortPrompt = "Рядом \(title)."
             fullDescription = "Перед тобой \(title). \(streetCarAppearanceDescription(for: object.profile.cue)) Корпус еще теплый, рядом чувствуются двери, стекла и линия капота, а мотор хорошо слышен совсем близко."
         } else if isLeaving {
@@ -1149,7 +1135,7 @@ final class StreetTrafficCoordinator {
             fullDescription = "Перед тобой \(title). \(streetCarAppearanceDescription(for: object.profile.cue)) Она припаркована слева во дворе, мотор мягко урчит, а если подойти ближе, хорошо чувствуются двери, стекла, капот и спокойные холостые обороты."
         } else if object.routeStyle == .courtyardParking {
             shortPrompt = "Слева \(title). Она заезжает во двор."
-            fullDescription = "Перед тобой \(title). \(streetCarAppearanceDescription(for: object.profile.cue)) Она заезжает слева во двор и еще не встала окончательно, но уже хорошо ловится по звуку."
+            fullDescription = "Перед тобой \(title). \(streetCarAppearanceDescription(for: object.profile.cue)) Она ещё едет и тормозит, докатываясь до парковочного места."
         } else {
             let directionText = object.directionLeftToRight ? "Она едет слева направо." : "Она едет справа налево."
             shortPrompt = "\(hint) \(title). \(directionText)"
@@ -1269,6 +1255,6 @@ final class StreetTrafficCoordinator {
     }
 }
 
-private func trafficInterpolate(from start: Float, to end: Float, progress: Float) -> Float {
+func trafficInterpolate(from start: Float, to end: Float, progress: Float) -> Float {
     start + ((end - start) * progress)
 }

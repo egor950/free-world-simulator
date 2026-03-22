@@ -80,6 +80,7 @@ extension GameViewModel {
     func describeCurrentFocus() {
         let text: String
         let focusedStreetCar = currentFocusStreetCarSnapshot()
+        var streetCarDepartureID: UUID?
 
         if let item = currentFocusItem {
             text = item.fullDescriptionProvider(state)
@@ -96,7 +97,7 @@ extension GameViewModel {
         } else {
             if let focusedStreetCar, focusedStreetCar.isInspectable {
                 text = focusedStreetCar.fullDescription
-                audioCoordinator.triggerStreetCarDeparture(focusedStreetCar.id)
+                streetCarDepartureID = focusedStreetCar.id
             } else {
                 text = currentFocusNode?.fullDescription ?? roomEmptyDescription()
             }
@@ -104,6 +105,30 @@ extension GameViewModel {
 
         addLog("Описание: \(focusTitle)")
         announce(text)
+        if let streetCarDepartureID {
+            scheduleStreetCarDeparture(afterDescribing: text, carID: streetCarDepartureID)
+        } else {
+            pendingStreetCarDepartureTask?.cancel()
+            pendingStreetCarDepartureTask = nil
+        }
+    }
+
+    func scheduleStreetCarDeparture(afterDescribing text: String, carID: UUID) {
+        pendingStreetCarDepartureTask?.cancel()
+
+        let delay = estimatedSpeechDuration(for: text) + 0.7
+        pendingStreetCarDepartureTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+            guard !Task.isCancelled else { return }
+            self?.audioCoordinator.triggerStreetCarDeparture(carID)
+            self?.pendingStreetCarDepartureTask = nil
+        }
+    }
+
+    func estimatedSpeechDuration(for text: String) -> TimeInterval {
+        let letters = text.count
+        let duration = 1.3 + (Double(letters) * 0.055)
+        return min(14.0, max(2.4, duration))
     }
 
     func action(for trigger: ActionTrigger) -> ItemAction? {

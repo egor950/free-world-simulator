@@ -143,6 +143,10 @@ final class AudioCoordinator {
         streetTraffic?.onStreetCarsChanged = observer
     }
 
+    func setStreetParkingObserver(_ observer: ((StreetTrafficCoordinator.StreetCarSnapshot) -> Void)?) {
+        streetTraffic?.onStreetCarParked = observer
+    }
+
     func runStreetDebugScenario(_ rawName: String) -> Bool {
         guard let scenario = StreetTrafficCoordinator.DebugScenario(rawValue: rawName) else {
             return false

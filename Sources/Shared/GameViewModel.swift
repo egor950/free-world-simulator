@@ -39,6 +39,7 @@ final class GameViewModel: ObservableObject {
 
     var state: WorldRuntimeState
     var pendingAnnouncementTask: Task<Void, Never>?
+    var pendingStreetCarDepartureTask: Task<Void, Never>?
     var neighborResponseTask: Task<Void, Never>?
     var neighborBreakInTask: Task<Void, Never>?
     var lastMovementAt: Date = .distantPast
@@ -91,6 +92,13 @@ final class GameViewModel: ObservableObject {
             if self.currentRoom.id == .street {
                 self.refreshScreenState()
             }
+        }
+        self.audioCoordinator.setStreetParkingObserver { [weak self] snapshot in
+            guard let self else { return }
+            guard self.stage == .exploration, self.currentRoom.id == .street else { return }
+            let text = "Во дворе припарковалась \(snapshot.title)."
+            self.addLog(text)
+            self.announce(text)
         }
 
         refreshScreenState()

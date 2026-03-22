@@ -13,6 +13,7 @@
 		02069B0B8C3CD9CDE7959689 /* step_asphalt_02.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = BB34C26A1A78412AC745A63A /* step_asphalt_02.mp3 */; };
 		02B73E37E5AF9482542AA97A /* step_asphalt_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A1B571977C738DA838527836 /* step_asphalt_01.mp3 */; };
 		030E71D8BA96E8C7FDBE053F /* MacKeyboardCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D09413D01B5CA78E4D48500 /* MacKeyboardCapture.swift */; };
+		033F9BB008F9B5EA939DD595 /* Parking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907ECF76E3CC9760129ADB4D /* Parking.swift */; };
 		0378B9FCE9E1762FC3C9314A /* traffic_engine_sedan.wav in Resources */ = {isa = PBXBuildFile; fileRef = D8A3648B39035FCD7FB63C48 /* traffic_engine_sedan.wav */; };
 		04E7C30595DBD8BAFCF81352 /* traffic_engine_roadster.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8839E3FB941B90991AE53BCE /* traffic_engine_roadster.wav */; };
 		0572751CF4281917C8003C02 /* punch_hit.wav in Resources */ = {isa = PBXBuildFile; fileRef = 204993DDC77CE778610428AF /* punch_hit.wav */; };
@@ -50,6 +51,7 @@
 		2BDD4FD5C8E1E8C3761458D2 /* traffic_engine_sedan.wav in Resources */ = {isa = PBXBuildFile; fileRef = D8A3648B39035FCD7FB63C48 /* traffic_engine_sedan.wav */; };
 		2C09AB1E1110E7BAAF516148 /* door_break_heavy.wav in Resources */ = {isa = PBXBuildFile; fileRef = BD4D3183B8DA6D995B2B996A /* door_break_heavy.wav */; };
 		2C5DC3893E83A78A6E02EF95 /* Mirror.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7C4A955FBD5B1997BA364D /* Mirror.swift */; };
+		2D054863337B2B1B3F554AEB /* Parking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907ECF76E3CC9760129ADB4D /* Parking.swift */; };
 		2DC8620DB07FA42AAB5F04D1 /* LiveGameBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5959BD7C1D6739EAC43657B /* LiveGameBridge.swift */; };
 		2E314106069F8E2820CEA7AC /* traffic_engine_coupe.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8305143CA420C2CF0B356BBC /* traffic_engine_coupe.wav */; };
 		2FEF89F6240C9A747CABDC2F /* FlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CC80B06B3F049B82729EDFD /* FlowController.swift */; };
@@ -69,6 +71,7 @@
 		3CF2595E090559A079BDE052 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 222982F14D2F777539752E99 /* Network.framework */; };
 		3D22B9346A9DEE135C23422F /* BedroomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02F4D3EB9FAF56BB2133D62 /* BedroomRoom.swift */; };
 		3DECFE06BDC3CA9F9B8F00E7 /* Table.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943828DE7B0D9D3B024F5285 /* Table.swift */; };
+		3FB0B7AAF0A4C84C7AF539D1 /* traffic_brake_soft.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7F95D302593FCDCB65958EAA /* traffic_brake_soft.wav */; };
 		403DF2DF37EE437F25AEDCC9 /* MacKeyboardCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D09413D01B5CA78E4D48500 /* MacKeyboardCapture.swift */; };
 		422677F6AF90D5EE102D92B7 /* GameViewModel+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE4C98E8EF4F75E13ACBC6B /* GameViewModel+Audio.swift */; };
 		422EBB9EBAC30C096D5F0655 /* ambient_room_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1B5DD9BE823FBDFDB4E6A9D8 /* ambient_room_01.mp3 */; };
@@ -90,19 +93,23 @@
 		55D0827FAF503FED6E131168 /* GameViewModel+Movement.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD85185B7E2D807BEACC5E3A /* GameViewModel+Movement.swift */; };
 		55DBAC9D841156194BCAC075 /* BathroomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE17EF1B5947855F9092B857 /* BathroomRoom.swift */; };
 		56BCFEB1EB59711493E08A45 /* step_asphalt_02.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = BB34C26A1A78412AC745A63A /* step_asphalt_02.mp3 */; };
+		57D144483159E993ACDD78D8 /* traffic_brake_soft.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7F95D302593FCDCB65958EAA /* traffic_brake_soft.wav */; };
 		581A3DEBDA354C03A5055FA3 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 222982F14D2F777539752E99 /* Network.framework */; };
 		589193FF565098CBD5ADA043 /* LivingRoomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB9865D6A5C834A60036B4C /* LivingRoomRoom.swift */; };
+		5B3C082F5FD569F6066599D5 /* Parking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907ECF76E3CC9760129ADB4D /* Parking.swift */; };
 		5E700CC638C684F635D57F91 /* SpeechCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 339CBAB2EBF45D24F500CA5E /* SpeechCoordinator.swift */; };
 		5F179A85FF8BD13C9CCEB59A /* GameViewModel+Movement.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD85185B7E2D807BEACC5E3A /* GameViewModel+Movement.swift */; };
 		6060BA3738E51D7BE72162AA /* WorldBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAF5C38A20B5069BEC2DAA /* WorldBuilder.swift */; };
 		614ED8AB255C91B1F10AF66F /* Mirror.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7C4A955FBD5B1997BA364D /* Mirror.swift */; };
 		62AF71B7DE41D6C3034CA487 /* door_break_heavy.wav in Resources */ = {isa = PBXBuildFile; fileRef = BD4D3183B8DA6D995B2B996A /* door_break_heavy.wav */; };
 		64138C849E413BDAE051BB82 /* Mirror.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7C4A955FBD5B1997BA364D /* Mirror.swift */; };
+		6436BA26475242335F6E8EF1 /* Parking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907ECF76E3CC9760129ADB4D /* Parking.swift */; };
 		64E0B0E33B78021E9333A4AC /* door_break_heavy.wav in Resources */ = {isa = PBXBuildFile; fileRef = BD4D3183B8DA6D995B2B996A /* door_break_heavy.wav */; };
 		6600C43EB93A720A1D9AEC15 /* Bed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77D0566229DA2669BEC252FE /* Bed.swift */; };
 		67BD6E8B9CC61A1D590B031C /* traffic_engine_sport.wav in Resources */ = {isa = PBXBuildFile; fileRef = E468E6DBD0931FD588C9FBA2 /* traffic_engine_sport.wav */; };
 		68824214912636BBB5283FCB /* GameViewModel+Neighbor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCAC02804772D8A2B627A8 /* GameViewModel+Neighbor.swift */; };
 		688694846D641206B38261FC /* traffic_engine_sport.wav in Resources */ = {isa = PBXBuildFile; fileRef = E468E6DBD0931FD588C9FBA2 /* traffic_engine_sport.wav */; };
+		695818762A816F139B938354 /* traffic_brake_soft.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7F95D302593FCDCB65958EAA /* traffic_brake_soft.wav */; };
 		6989951CFFD53D6ABEF75D0A /* Mirror.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7C4A955FBD5B1997BA364D /* Mirror.swift */; };
 		70BE0A213B33A9FEA9EBADFA /* traffic_engine_coupe.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8305143CA420C2CF0B356BBC /* traffic_engine_coupe.wav */; };
 		70D602524CA979789F35B13E /* step_asphalt_05.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 45A806FB972EF77BDDD2C7BD /* step_asphalt_05.mp3 */; };
@@ -111,6 +118,7 @@
 		742AE0CF2282F81A715ED4E7 /* GameViewModel+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE4C98E8EF4F75E13ACBC6B /* GameViewModel+Audio.swift */; };
 		74ECEB168E2DDD99F5D7A55A /* AudioCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422AE568411A45281AB086DC /* AudioCoordinator.swift */; };
 		755517E456B48FAC6F4949B9 /* HallwayRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7369C9785D4D3F5F19763804 /* HallwayRoom.swift */; };
+		76B88DFD62DC90D36E0AF2FB /* traffic_brake_soft.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7F95D302593FCDCB65958EAA /* traffic_brake_soft.wav */; };
 		776FE8A50104F9CC09F88486 /* GameViewModel+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECED716DFE265F2CA62A1D35 /* GameViewModel+Actions.swift */; };
 		7A38329361A4BA4085D70BF6 /* city_street_bed.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 043450244A81A3749DCE01DF /* city_street_bed.mp3 */; };
 		7BCE1D36567FEC77BDBDB05F /* GameViewModel+World.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F26AFFB3A12129B23B1A8F2 /* GameViewModel+World.swift */; };
@@ -135,6 +143,7 @@
 		86C4FC4E3C59431E5CEF5BD7 /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A672BF4FDE31AD4B9CC373A1 /* GameViewModel.swift */; };
 		872AC5E00F18863882572E39 /* step_carpet_02.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DB2B915989252BC9445E62EF /* step_carpet_02.mp3 */; };
 		8733326AA167E75400AF562D /* doorbell_main.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8F2A1EEA92A9058319B37BE2 /* doorbell_main.wav */; };
+		89098918DE7B06A776AE0DF4 /* traffic_brake_soft.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7F95D302593FCDCB65958EAA /* traffic_brake_soft.wav */; };
 		89D77AF207742BAF2CFAC103 /* heartbeat_fast.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9D0CFB0ABCAB78C1210B2920 /* heartbeat_fast.wav */; };
 		8A819076CF1891E76362568D /* KitchenRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73399F4F81E6955153AB198C /* KitchenRoom.swift */; };
 		8AE8FE6566FD71C555665BF3 /* GameViewModel+Neighbor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCAC02804772D8A2B627A8 /* GameViewModel+Neighbor.swift */; };
@@ -276,6 +285,7 @@
 		77D0566229DA2669BEC252FE /* Bed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bed.swift; sourceTree = "<group>"; };
 		7A0AF23670BC9F08B94B6DAB /* FreeWorldMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeWorldMacApp.swift; sourceTree = "<group>"; };
 		7F26AFFB3A12129B23B1A8F2 /* GameViewModel+World.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameViewModel+World.swift"; sourceTree = "<group>"; };
+		7F95D302593FCDCB65958EAA /* traffic_brake_soft.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = traffic_brake_soft.wav; sourceTree = "<group>"; };
 		811C0B200A2DA7C3A5CF2356 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8305143CA420C2CF0B356BBC /* traffic_engine_coupe.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = traffic_engine_coupe.wav; sourceTree = "<group>"; };
 		8839E3FB941B90991AE53BCE /* traffic_engine_roadster.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = traffic_engine_roadster.wav; sourceTree = "<group>"; };
@@ -283,6 +293,7 @@
 		8A7C4A955FBD5B1997BA364D /* Mirror.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mirror.swift; sourceTree = "<group>"; };
 		8F2A1EEA92A9058319B37BE2 /* doorbell_main.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = doorbell_main.wav; sourceTree = "<group>"; };
 		8F3C0E8D3613B8C88562A375 /* RootGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootGameView.swift; sourceTree = "<group>"; };
+		907ECF76E3CC9760129ADB4D /* Parking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parking.swift; sourceTree = "<group>"; };
 		92BEE0C99314BC4B06044385 /* FreeWorldiOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = FreeWorldiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		943828DE7B0D9D3B024F5285 /* Table.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Table.swift; sourceTree = "<group>"; };
 		94EA3A91C6537F093A33C0BA /* StreetTrafficCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreetTrafficCoordinator.swift; sourceTree = "<group>"; };
@@ -414,6 +425,7 @@
 				B730C6D651C4C2D06ADA9FED /* GameViewModel+Session.swift */,
 				7F26AFFB3A12129B23B1A8F2 /* GameViewModel+World.swift */,
 				B5959BD7C1D6739EAC43657B /* LiveGameBridge.swift */,
+				907ECF76E3CC9760129ADB4D /* Parking.swift */,
 				8F3C0E8D3613B8C88562A375 /* RootGameView.swift */,
 				339CBAB2EBF45D24F500CA5E /* SpeechCoordinator.swift */,
 				94EA3A91C6537F093A33C0BA /* StreetTrafficCoordinator.swift */,
@@ -505,6 +517,7 @@
 				45A806FB972EF77BDDD2C7BD /* step_asphalt_05.mp3 */,
 				2443C6417F9E025DFC0F565D /* step_carpet_01.mp3 */,
 				DB2B915989252BC9445E62EF /* step_carpet_02.mp3 */,
+				7F95D302593FCDCB65958EAA /* traffic_brake_soft.wav */,
 				40816B25521BB3370EA06B48 /* traffic_engine_base.wav */,
 				8305143CA420C2CF0B356BBC /* traffic_engine_coupe.wav */,
 				A8249E518C89328D18940F0A /* traffic_engine_light.wav */,
@@ -742,6 +755,7 @@
 				2957E64306D456E35A51F674 /* step_asphalt_05.mp3 in Resources */,
 				21D25CAA2059033D3BE46181 /* step_carpet_01.mp3 in Resources */,
 				96CC5214CC7607005C2409AF /* step_carpet_02.mp3 in Resources */,
+				76B88DFD62DC90D36E0AF2FB /* traffic_brake_soft.wav in Resources */,
 				3B4B02294B813E424C88E604 /* traffic_engine_base.wav in Resources */,
 				E4DC9DBEC373F1E6EE987066 /* traffic_engine_coupe.wav in Resources */,
 				F69751497FC213B3C1086D1E /* traffic_engine_light.wav in Resources */,
@@ -772,6 +786,7 @@
 				AAE6D58270A1F81B88E63825 /* step_asphalt_05.mp3 in Resources */,
 				46D18243D6DA5B5832BBE9E6 /* step_carpet_01.mp3 in Resources */,
 				0F280BA5EB35D8FDF569ABF9 /* step_carpet_02.mp3 in Resources */,
+				57D144483159E993ACDD78D8 /* traffic_brake_soft.wav in Resources */,
 				B41ECB1874C95AFC1D4D5C48 /* traffic_engine_base.wav in Resources */,
 				2E314106069F8E2820CEA7AC /* traffic_engine_coupe.wav in Resources */,
 				F40B541F02C740E98276EE61 /* traffic_engine_light.wav in Resources */,
@@ -802,6 +817,7 @@
 				17F208DECF27941773617082 /* step_asphalt_05.mp3 in Resources */,
 				2004207E5AE50BB025E17B49 /* step_carpet_01.mp3 in Resources */,
 				2127FAD3C3CA627DFF63FF75 /* step_carpet_02.mp3 in Resources */,
+				695818762A816F139B938354 /* traffic_brake_soft.wav in Resources */,
 				B9F10373F18003DFF691C9EF /* traffic_engine_base.wav in Resources */,
 				70BE0A213B33A9FEA9EBADFA /* traffic_engine_coupe.wav in Resources */,
 				854B1F56D54A56E81DF42AE1 /* traffic_engine_light.wav in Resources */,
@@ -832,6 +848,7 @@
 				2474DD008134A33D1E0173A2 /* step_asphalt_05.mp3 in Resources */,
 				4D71BB30CD85CEEEC8BAB2BF /* step_carpet_01.mp3 in Resources */,
 				872AC5E00F18863882572E39 /* step_carpet_02.mp3 in Resources */,
+				3FB0B7AAF0A4C84C7AF539D1 /* traffic_brake_soft.wav in Resources */,
 				96F97AEFE30DD4EA2CE16FE0 /* traffic_engine_base.wav in Resources */,
 				9995E3C1283662BC57CE234A /* traffic_engine_coupe.wav in Resources */,
 				243DFB4579CCC2B12B0B7C8C /* traffic_engine_light.wav in Resources */,
@@ -862,6 +879,7 @@
 				70D602524CA979789F35B13E /* step_asphalt_05.mp3 in Resources */,
 				DF846E6797AF88DD9E636AC0 /* step_carpet_01.mp3 in Resources */,
 				A149E2A90768C66C285C8F1F /* step_carpet_02.mp3 in Resources */,
+				89098918DE7B06A776AE0DF4 /* traffic_brake_soft.wav in Resources */,
 				91F719DDFFFFA6D5F2923372 /* traffic_engine_base.wav in Resources */,
 				FB787F1B17A5441890B65C4B /* traffic_engine_coupe.wav in Resources */,
 				13E38ECB4F3E50A0F4627338 /* traffic_engine_light.wav in Resources */,
@@ -905,6 +923,7 @@
 				2DC8620DB07FA42AAB5F04D1 /* LiveGameBridge.swift in Sources */,
 				BD90520E1C7A0D3260146262 /* LivingRoomRoom.swift in Sources */,
 				64138C849E413BDAE051BB82 /* Mirror.swift in Sources */,
+				2D054863337B2B1B3F554AEB /* Parking.swift in Sources */,
 				97D0E5773E94F2F4519BAD94 /* Pillow.swift in Sources */,
 				DACD5D8919CFF2DA0D2B6DBB /* SpeechCoordinator.swift in Sources */,
 				C2FF440805D0B24163049821 /* StreetTrafficCoordinator.swift in Sources */,
@@ -939,6 +958,7 @@
 				C100F71A99154F34F4CEF346 /* LivingRoomRoom.swift in Sources */,
 				403DF2DF37EE437F25AEDCC9 /* MacKeyboardCapture.swift in Sources */,
 				6989951CFFD53D6ABEF75D0A /* Mirror.swift in Sources */,
+				6436BA26475242335F6E8EF1 /* Parking.swift in Sources */,
 				0D068C3AC3C2BFE998893B86 /* Pillow.swift in Sources */,
 				433DC47D0A49ED407B2EDEFD /* RootGameView.swift in Sources */,
 				5E700CC638C684F635D57F91 /* SpeechCoordinator.swift in Sources */,
@@ -975,6 +995,7 @@
 				BB3EF7995262583D3DE99262 /* LivingRoomRoom.swift in Sources */,
 				030E71D8BA96E8C7FDBE053F /* MacKeyboardCapture.swift in Sources */,
 				2C5DC3893E83A78A6E02EF95 /* Mirror.swift in Sources */,
+				033F9BB008F9B5EA939DD595 /* Parking.swift in Sources */,
 				CA8789CC0E96975C709A78EC /* Pillow.swift in Sources */,
 				BA604B14D614C4E5A1C427C0 /* RootGameView.swift in Sources */,
 				E8A5D22A5D5DECD797F013AB /* SpeechCoordinator.swift in Sources */,
@@ -1009,6 +1030,7 @@
 				14C6044BD8B93832ED1B6365 /* LiveGameBridge.swift in Sources */,
 				589193FF565098CBD5ADA043 /* LivingRoomRoom.swift in Sources */,
 				614ED8AB255C91B1F10AF66F /* Mirror.swift in Sources */,
+				5B3C082F5FD569F6066599D5 /* Parking.swift in Sources */,
 				DA9B79C287116CDF732CCB02 /* Pillow.swift in Sources */,
 				965C4228D1219438891AEC8F /* RootGameView.swift in Sources */,
 				DFBB980D507B207A474A555E /* SpeechCoordinator.swift in Sources */,
