@@ -16,6 +16,7 @@ private final class PlaytestSession {
         runDoorToggleScenario()
         runStreetScenario()
         runStreetBoundaryScenario()
+        runNeighborNoiseScenario()
 
         log("=== Итог ===")
         if failures == 0 {
@@ -116,6 +117,57 @@ private final class PlaytestSession {
         expect(game.statusText.lowercased().contains("край дороги"),
                "Улица ограничивает путь вперед",
                "На краю улицы не сработало сообщение об ограничении")
+    }
+
+    private func runNeighborNoiseScenario() {
+        log("=== Сценарий 5: соседи реагируют на шум ===")
+        let game = makeStartedGame()
+
+        game.debugMovePlayer(to: .livingRoom, position: GridPosition(x: 4, y: 1))
+        press(game, .forceAction, "Разбить телевизор")
+        expect(
+            game.state.flag(itemID: GameViewModel.NeighborNoise.worldID, key: GameViewModel.NeighborNoise.warnedFlag),
+            "Первый громкий удар поднимает предупреждение соседей",
+            "После первого громкого удара соседи не перешли в предупреждение"
+        )
+        expect(
+            game.statusText.lowercased().contains("что творишь"),
+            "После первого удара слышно предупреждение соседей",
+            "После первого громкого удара не появилось предупреждение соседей"
+        )
+
+        game.debugMovePlayer(to: .livingRoom, position: GridPosition(x: 4, y: 2))
+        press(game, .forceAction, "Разломать стол")
+        expect(
+            game.state.flag(itemID: GameViewModel.NeighborNoise.worldID, key: GameViewModel.NeighborNoise.doorbellFlag),
+            "Второй громкий удар поднимает звонок соседей",
+            "После второго громкого удара соседи не перешли к звонку"
+        )
+        expect(
+            game.statusText.lowercased().contains("злой звонок"),
+            "После второго удара запускается звонок соседей",
+            "После второго громкого удара не появился звонок соседей"
+        )
+
+        game.debugMovePlayer(to: .kitchen, position: GridPosition(x: 5, y: 2))
+        press(game, .forceAction, "Грохнуть по холодильнику")
+        expect(
+            game.neighborEncounterMachine.isBreakInActive,
+            "Третий громкий удар запускает взлом двери",
+            "После третьего громкого удара соседи не перешли к взлому двери"
+        )
+        expect(
+            game.statusText.lowercased().contains("ломай дверь"),
+            "После третьего удара соседи идут на штурм",
+            "После третьего громкого удара не запустился штурм соседей"
+        )
+
+        _ = game.runDebugScenario(named: "hallway_neighbor_door")
+        expect(
+            game.focusTitle.lowercased().contains("входная дверь"),
+            "Отладочная сцена соседской двери ставит прямо к двери",
+            "Отладочная сцена соседской двери не поставила игрока к двери"
+        )
     }
 
     private func walkToDoorAndPass(_ game: GameViewModel, doorName: String, expectedRoom: String) {

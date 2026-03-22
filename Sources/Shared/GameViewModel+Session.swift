@@ -163,9 +163,14 @@ extension GameViewModel {
 
     @discardableResult
     func runDebugScenario(named name: String) -> Bool {
+        resetNeighborEncounterState()
+
         switch name {
         case "hallway_neighbor_door":
             audioCoordinator.clearStreetDebugScenario()
+            state.setFlag(itemID: NeighborNoise.worldID, key: NeighborNoise.warnedFlag, value: true)
+            state.setFlag(itemID: NeighborNoise.worldID, key: NeighborNoise.doorbellFlag, value: true)
+            syncNeighborEncounterMachine()
             debugMovePlayer(to: .hallway, position: GridPosition(x: 1, y: 1))
         case "hallway_coat_rack":
             audioCoordinator.clearStreetDebugScenario()

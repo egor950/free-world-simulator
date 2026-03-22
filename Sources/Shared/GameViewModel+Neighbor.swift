@@ -2,6 +2,17 @@ import Foundation
 import GameplayKit
 
 extension GameViewModel {
+    func resetNeighborEncounterState() {
+        cancelNeighborTasks()
+        neighborDoorHitsTarget = 0
+        neighborDoorHitsDone = 0
+        state.setFlag(itemID: NeighborNoise.worldID, key: NeighborNoise.warnedFlag, value: false)
+        state.setFlag(itemID: NeighborNoise.worldID, key: NeighborNoise.doorbellFlag, value: false)
+        state.setFlag(itemID: NeighborNoise.worldID, key: NeighborNoise.bangingFlag, value: false)
+        state.setFlag(itemID: NeighborNoise.worldID, key: NeighborNoise.resolvedFlag, value: false)
+        neighborEncounterMachine.markCalmAfterGiveUp()
+    }
+
     func reactToLoudActionIfNeeded(for action: ItemAction) -> String? {
         guard isNeighborNoiseAction(action) else {
             return nil
