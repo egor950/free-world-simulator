@@ -152,6 +152,10 @@ extension GameViewModel {
             return streetEmptyDescription()
         }
 
+        if currentRoom.id == .mainStreet {
+            return mainStreetEmptyDescription()
+        }
+
         if currentRoom.id == .hallway {
             return hallwayEmptyDescription()
         }
@@ -198,6 +202,10 @@ extension GameViewModel {
             return "Ты стоишь у двери обратно в квартиру. Позади вход, а впереди двор. Здесь можно идти во все четыре стороны. Под ногами асфальт."
         }
 
+        if pos == GridPosition(x: 7, y: 0) {
+            return "Ты у калитки в верхней части двора. За ней идет более широкая улица."
+        }
+
         if pos.y <= 2 {
             return "Ты почти у дороги. Впереди идет поток машин, а под ногами жесткий асфальт."
         }
@@ -222,6 +230,28 @@ extension GameViewModel {
         }
 
         return "Ты во дворе на открытом асфальте. Здесь можно свободно идти вверх, вниз, влево и вправо."
+    }
+
+    func mainStreetEmptyDescription() -> String {
+        let pos = state.player.roomPosition
+
+        if pos == GridPosition(x: 10, y: 18) {
+            return "Ты стоишь сразу за калиткой. Позади двор, а впереди широкая улица. Здесь больше воздуха и простора."
+        }
+
+        if pos.y <= 2 {
+            return "Ты почти у дальнего края широкой улицы. Дальше путь пока не сделан."
+        }
+
+        if pos.x <= 2 {
+            return "Ты у левого края широкой улицы. Вправо открыто пространство, а дальше влево пока ничего нет."
+        }
+
+        if pos.x >= currentRoom.width - 3 {
+            return "Ты у правого края широкой улицы. Слева открыто пространство, а дальше вправо пути пока нет."
+        }
+
+        return "Ты идешь по широкой улице. Вокруг открытое пространство, а позади можно вернуться через калитку."
     }
 
     func nearestStreetCarGuidance(maxDistance: Int, includeDistance: Bool, parkedOnly: Bool = false) -> String? {

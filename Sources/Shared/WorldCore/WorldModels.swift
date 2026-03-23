@@ -21,6 +21,7 @@ enum RoomID: String, CaseIterable, Identifiable {
     case kitchen
     case bathroom
     case street
+    case mainStreet
 
     var id: String { rawValue }
 }

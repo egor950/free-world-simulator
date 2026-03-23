@@ -155,6 +155,8 @@ extension GameViewModel {
             ["id": "bathroom_mirror", "title": "Зеркало"],
             ["id": "bathroom_street_door", "title": "Дверь на улицу"],
             ["id": "street_entry", "title": "Выход во двор"],
+            ["id": "street_gate", "title": "Калитка во дворе"],
+            ["id": "main_street_entry", "title": "Большая улица"],
             ["id": "street_parked_car", "title": "Припаркованная машина"],
             ["id": "street_approaching_car", "title": "Машина заезжает"],
             ["id": "street_departing_car", "title": "Машина уезжает"]
@@ -197,6 +199,12 @@ extension GameViewModel {
         case "street_entry":
             audioCoordinator.clearStreetDebugScenario()
             debugMovePlayer(to: .street, position: GridPosition(x: 7, y: 14))
+        case "street_gate":
+            audioCoordinator.clearStreetDebugScenario()
+            debugMovePlayer(to: .street, position: GridPosition(x: 7, y: 0))
+        case "main_street_entry":
+            audioCoordinator.clearStreetDebugScenario()
+            debugMovePlayer(to: .mainStreet, position: GridPosition(x: 10, y: 18))
         case "street_parked_car", "street_approaching_car", "street_departing_car":
             debugMovePlayer(to: .street, position: GridPosition(x: 7, y: 14))
             return audioCoordinator.runStreetDebugScenario(name)

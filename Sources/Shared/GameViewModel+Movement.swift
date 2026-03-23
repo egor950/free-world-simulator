@@ -52,18 +52,46 @@ extension GameViewModel {
 
     func blockedText(for command: GameCommand) -> String {
         if currentTraversalMode == .freeGrid4Way {
-            switch command {
-            case .moveForward:
-                return "Дальше только край дороги."
-            case .moveBackward:
-                return "Дальше уже стена дома и дверь позади."
-            case .moveLeft:
-                return "Слева дальше уже стена дома."
-            case .moveRight:
-                return "Справа дальше уже край двора."
+        switch command {
+        case .moveForward:
+            switch currentRoom.id {
+            case .street:
+                return "Дальше только калитка и край дороги."
+            case .mainStreet:
+                return "Дальше пока только край широкой улицы."
             default:
                 return "Дальше хода нет."
             }
+        case .moveBackward:
+            switch currentRoom.id {
+            case .street:
+                return "Дальше уже стена дома и дверь позади."
+            case .mainStreet:
+                return "Позади только калитка и край улицы."
+            default:
+                return "Дальше хода нет."
+            }
+        case .moveLeft:
+            switch currentRoom.id {
+            case .street:
+                return "Слева дальше уже стена дома."
+            case .mainStreet:
+                return "Слева дальше уже край улицы."
+            default:
+                return "Дальше хода нет."
+            }
+        case .moveRight:
+            switch currentRoom.id {
+            case .street:
+                return "Справа дальше уже край двора."
+            case .mainStreet:
+                return "Справа дальше уже край улицы."
+            default:
+                return "Дальше хода нет."
+            }
+        default:
+            return "Дальше хода нет."
+        }
         }
 
         switch command {
@@ -309,6 +337,8 @@ extension GameViewModel {
             ]
         case .street:
             return [GridPosition(x: 7, y: 14)]
+        case .mainStreet:
+            return [GridPosition(x: 10, y: 18)]
         }
     }
 
