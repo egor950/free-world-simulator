@@ -493,20 +493,9 @@ struct PlayerState {
 
 struct WorldRuntimeState {
     var player: PlayerState
-    private(set) var itemFlags: [String: [String: Bool]] = [:]
     private(set) var itemStages: [String: String] = [:]
     private(set) var itemPositions: [String: GridPosition] = [:]
     private(set) var itemRooms: [String: RoomID] = [:]
-
-    func flag(itemID: String, key: String, default defaultValue: Bool = false) -> Bool {
-        itemFlags[itemID]?[key] ?? defaultValue
-    }
-
-    mutating func setFlag(itemID: String, key: String, value: Bool) {
-        var flags = itemFlags[itemID] ?? [:]
-        flags[key] = value
-        itemFlags[itemID] = flags
-    }
 
     func itemStage<Stage: RawRepresentable>(
         itemID: String,

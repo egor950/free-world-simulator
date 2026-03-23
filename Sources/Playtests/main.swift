@@ -126,7 +126,7 @@ private final class PlaytestSession {
         game.debugMovePlayer(to: .livingRoom, position: GridPosition(x: 4, y: 1))
         press(game, .forceAction, "Разбить телевизор")
         expect(
-            game.state.flag(itemID: GameViewModel.NeighborNoise.worldID, key: GameViewModel.NeighborNoise.warnedFlag),
+            game.neighborEncounterMachine.isWarned,
             "Первый громкий удар поднимает предупреждение соседей",
             "После первого громкого удара соседи не перешли в предупреждение"
         )
@@ -139,7 +139,7 @@ private final class PlaytestSession {
         game.debugMovePlayer(to: .livingRoom, position: GridPosition(x: 4, y: 2))
         press(game, .forceAction, "Разломать стол")
         expect(
-            game.state.flag(itemID: GameViewModel.NeighborNoise.worldID, key: GameViewModel.NeighborNoise.doorbellFlag),
+            game.neighborEncounterMachine.isDoorbellRaised,
             "Второй громкий удар поднимает звонок соседей",
             "После второго громкого удара соседи не перешли к звонку"
         )

@@ -278,6 +278,10 @@ final class NeighborEncounterMachine {
         stateMachine.currentState is ResolvedState
     }
 
+    var isWarned: Bool {
+        stateMachine.currentState is WarnedState
+    }
+
     var isDoorbellRaised: Bool {
         stateMachine.currentState is DoorbellState
     }
