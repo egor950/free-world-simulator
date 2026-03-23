@@ -86,10 +86,6 @@ final class RoomTraversalMachine {
         sync(mode: initialMode)
     }
 
-    var isLinearTraversal: Bool {
-        machine.currentState is LinearTraversalState
-    }
-
     var isGridTraversal: Bool {
         machine.currentState is GridTraversalState
     }
@@ -139,10 +135,6 @@ final class PoseMachine {
 
     var isLying: Bool {
         machine.currentState is LyingState
-    }
-
-    var isCrawling: Bool {
-        machine.currentState is CrawlingState
     }
 
     func sync(pose: PlayerPose) {
@@ -243,7 +235,6 @@ final class GameViewModel: ObservableObject {
     var bedAnchorPosition: GridPosition?
     var doorLifecycleMachines: [String: DoorLifecycleMachine] = [:]
     var neighborDoorHitsTarget = 0
-    var neighborDoorHitsDone = 0
     var streetCarSnapshots: [StreetTrafficCoordinator.StreetCarSnapshot] = []
 
     init(

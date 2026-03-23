@@ -5,7 +5,6 @@ extension GameViewModel {
     func resetNeighborEncounterState() {
         cancelNeighborTasks()
         neighborDoorHitsTarget = 0
-        neighborDoorHitsDone = 0
         neighborEncounterMachine.resetToCalm()
     }
 
@@ -105,7 +104,6 @@ extension GameViewModel {
         neighborResponseTask?.cancel()
         neighborResponseTask = nil
         neighborDoorHitsTarget = [3, 5, 8].randomElement() ?? 5
-        neighborDoorHitsDone = 0
         addLog(finalText)
         announce(introText, delay: 0.15)
 
@@ -115,7 +113,6 @@ extension GameViewModel {
             for hit in 1...self.neighborDoorHitsTarget {
                 await self.sleep(seconds: Double.random(in: 0.6...0.9))
                 guard self.shouldContinueNeighborSequence else { return }
-                self.neighborDoorHitsDone = hit
                 self.audioCoordinator.playEffect(.doorBreakHeavy)
 
                 if hit == 1 {
@@ -183,7 +180,6 @@ extension GameViewModel {
         cancelNeighborTasks()
         neighborEncounterMachine.resetToCalm()
         neighborDoorHitsTarget = 0
-        neighborDoorHitsDone = 0
         let text = "За дверью еще немного потоптались, кто-то буркнул: Да ну его. Потом шаги стихли. Кажется, ушли."
         addLog(text)
         refreshScreenState()

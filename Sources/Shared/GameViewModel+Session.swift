@@ -71,7 +71,6 @@ extension GameViewModel {
         cancelNeighborTasks()
         neighborEncounterMachine.resetToCalm()
         neighborDoorHitsTarget = 0
-        neighborDoorHitsDone = 0
 
         refreshScreenState()
         addLog("Создан персонаж: \(selectedCharacterKind.rawValue), \(safeName)")
@@ -131,7 +130,6 @@ extension GameViewModel {
     func resetForNewSession() {
         cancelNeighborTasks()
         neighborDoorHitsTarget = 0
-        neighborDoorHitsDone = 0
         audioCoordinator.playAmbient(nil)
         audioCoordinator.setStreetPresence(.off, fadeDuration: 0)
         audioCoordinator.setTrafficEnabled(false)
