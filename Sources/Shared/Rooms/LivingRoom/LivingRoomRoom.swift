@@ -2,19 +2,27 @@ import Foundation
 
 enum LivingRoomGlassTV {
     static let itemID = "livingRoom.glassTV"
-    static let brokenFlag = "broken"
+
+    enum Stage: String {
+        case intact
+        case broken
+    }
+
+    static func stage(in state: WorldRuntimeState) -> Stage {
+        state.itemStage(itemID: itemID, as: Stage.self, default: .intact)
+    }
 
     static func make() -> ItemDefinition {
         ItemDefinition(
             id: itemID,
             name: "стеклянный телевизор",
             shortPromptProvider: { state in
-                state.flag(itemID: itemID, key: brokenFlag)
+                stage(in: state) == .broken
                     ? "Большой разбитый телевизор."
                     : "Большой стеклянный телевизор."
             },
             fullDescriptionProvider: { state in
-                if state.flag(itemID: itemID, key: brokenFlag) {
+                if stage(in: state) == .broken {
                     return "Большой телевизор уже разбит. Под ним хрустят крупные стеклянные осколки."
                 }
 
@@ -32,7 +40,7 @@ enum LivingRoomGlassTV {
                     ) { _ in }
                 ]
 
-                if !state.flag(itemID: itemID, key: brokenFlag) {
+                if stage(in: state) == .intact {
                     actions.append(
                         ItemAction(
                             trigger: .force,
@@ -42,7 +50,7 @@ enum LivingRoomGlassTV {
                             requiresHeldItemID: nil,
                             producesHeldItem: nil
                         ) { runtimeState in
-                            runtimeState.setFlag(itemID: itemID, key: brokenFlag, value: true)
+                            runtimeState.setItemStage(itemID: itemID, stage: Stage.broken)
                         }
                     )
                 }
