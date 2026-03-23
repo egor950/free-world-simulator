@@ -11,6 +11,7 @@ final class AudioCoordinator {
         case insideClosedDoor
         case insideOpenDoor
         case outside
+        case wideOpenStreet
     }
 
     private struct SpatialEffectStyle {
@@ -304,6 +305,8 @@ final class AudioCoordinator {
             return (0.14, 2400)
         case .outside:
             return (0.24, 18_000)
+        case .wideOpenStreet:
+            return (0.34, 18_000)
         }
     }
 
