@@ -3,13 +3,17 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		00A4F81B924BAF27A644C397 /* item_place_metal_01.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 24E913316391B2F8CC2F781F /* item_place_metal_01.m4a */; };
 		00EC229E595D63CFFE14871C /* GameViewModel+Neighbor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCAC02804772D8A2B627A8 /* GameViewModel+Neighbor.swift */; };
 		01C8654E428094301DC06313 /* GameViewModel+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECED716DFE265F2CA62A1D35 /* GameViewModel+Actions.swift */; };
+		01C8654E428094301DC06321 /* GameViewModel+Gate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A1A1A1A1A1A1A1A1A1A03 /* GameViewModel+Gate.swift */; };
+		01C8654E428094301DC06322 /* MainStreetRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A1A1A1A1A1A1A1A1A1A02 /* MainStreetRoom.swift */; };
+		01C8654E428094301DC06323 /* StreetRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A1A1A1A1A1A1A1A1A1A01 /* StreetRoom.swift */; };
+		01C8654E428094301DC06324 /* StreetTrafficCoordinator+CourtyardAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A1A1A1A1A1A1A1A1A1A04 /* StreetTrafficCoordinator+CourtyardAccess.swift */; };
 		02069B0B8C3CD9CDE7959689 /* step_asphalt_02.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = BB34C26A1A78412AC745A63A /* step_asphalt_02.mp3 */; };
 		02B73E37E5AF9482542AA97A /* step_asphalt_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A1B571977C738DA838527836 /* step_asphalt_01.mp3 */; };
 		030E71D8BA96E8C7FDBE053F /* MacKeyboardCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D09413D01B5CA78E4D48500 /* MacKeyboardCapture.swift */; };
@@ -20,6 +24,10 @@
 		0896C9778693C7466B92E1FC /* city_street_bed.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 043450244A81A3749DCE01DF /* city_street_bed.mp3 */; };
 		0B41224E53AF454595A699FD /* item_place_metal_01.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 24E913316391B2F8CC2F781F /* item_place_metal_01.m4a */; };
 		0BD3B6EF902E4B4EB7E4E5E7 /* GameViewModel+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECED716DFE265F2CA62A1D35 /* GameViewModel+Actions.swift */; };
+		0BD3B6EF902E4B4EB7E4E5F1 /* GameViewModel+Gate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A1A1A1A1A1A1A1A1A1A03 /* GameViewModel+Gate.swift */; };
+		0BD3B6EF902E4B4EB7E4E5F2 /* MainStreetRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A1A1A1A1A1A1A1A1A1A02 /* MainStreetRoom.swift */; };
+		0BD3B6EF902E4B4EB7E4E5F3 /* StreetRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A1A1A1A1A1A1A1A1A1A01 /* StreetRoom.swift */; };
+		0BD3B6EF902E4B4EB7E4E5F4 /* StreetTrafficCoordinator+CourtyardAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A1A1A1A1A1A1A1A1A1A04 /* StreetTrafficCoordinator+CourtyardAccess.swift */; };
 		0D068C3AC3C2BFE998893B86 /* Pillow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC8A4A3F6568C9EFDDF3E75 /* Pillow.swift */; };
 		0E2B2B9A458092C345C82D8D /* doorbell_main.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8F2A1EEA92A9058319B37BE2 /* doorbell_main.wav */; };
 		0EDF9C246047AE9BC87B2B1E /* Bed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77D0566229DA2669BEC252FE /* Bed.swift */; };
@@ -59,6 +67,10 @@
 		3129D1D65E7B848B1C65C447 /* doorbell_main.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8F2A1EEA92A9058319B37BE2 /* doorbell_main.wav */; };
 		316A89B17A3A33055CFC5AB7 /* glass_break_small.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0FE30E30380E983F6AD14081 /* glass_break_small.wav */; };
 		33279D70467089D510183875 /* GameViewModel+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECED716DFE265F2CA62A1D35 /* GameViewModel+Actions.swift */; };
+		33279D70467089D510183881 /* GameViewModel+Gate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A1A1A1A1A1A1A1A1A1A03 /* GameViewModel+Gate.swift */; };
+		33279D70467089D510183882 /* MainStreetRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A1A1A1A1A1A1A1A1A1A02 /* MainStreetRoom.swift */; };
+		33279D70467089D510183883 /* StreetRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A1A1A1A1A1A1A1A1A1A01 /* StreetRoom.swift */; };
+		33279D70467089D510183884 /* StreetTrafficCoordinator+CourtyardAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A1A1A1A1A1A1A1A1A1A04 /* StreetTrafficCoordinator+CourtyardAccess.swift */; };
 		3376D1C2553FE55463E6E32F /* step_asphalt_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A1B571977C738DA838527836 /* step_asphalt_01.mp3 */; };
 		3434BBD18E6FF569B12AB488 /* CoatRack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98525CCA15D0CA51155B23A /* CoatRack.swift */; };
 		348E82CD9A49642C64D66A39 /* heartbeat_fast.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9D0CFB0ABCAB78C1210B2920 /* heartbeat_fast.wav */; };
@@ -120,6 +132,10 @@
 		755517E456B48FAC6F4949B9 /* HallwayRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7369C9785D4D3F5F19763804 /* HallwayRoom.swift */; };
 		76B88DFD62DC90D36E0AF2FB /* traffic_brake_soft.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7F95D302593FCDCB65958EAA /* traffic_brake_soft.wav */; };
 		776FE8A50104F9CC09F88486 /* GameViewModel+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECED716DFE265F2CA62A1D35 /* GameViewModel+Actions.swift */; };
+		776FE8A50104F9CC09F88491 /* GameViewModel+Gate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A1A1A1A1A1A1A1A1A1A03 /* GameViewModel+Gate.swift */; };
+		776FE8A50104F9CC09F88492 /* MainStreetRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A1A1A1A1A1A1A1A1A1A02 /* MainStreetRoom.swift */; };
+		776FE8A50104F9CC09F88493 /* StreetRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A1A1A1A1A1A1A1A1A1A01 /* StreetRoom.swift */; };
+		776FE8A50104F9CC09F88494 /* StreetTrafficCoordinator+CourtyardAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A1A1A1A1A1A1A1A1A1A04 /* StreetTrafficCoordinator+CourtyardAccess.swift */; };
 		7A38329361A4BA4085D70BF6 /* city_street_bed.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 043450244A81A3749DCE01DF /* city_street_bed.mp3 */; };
 		7BCE1D36567FEC77BDBDB05F /* GameViewModel+World.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F26AFFB3A12129B23B1A8F2 /* GameViewModel+World.swift */; };
 		7C81548FCFD1DFB9010F420B /* BedroomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02F4D3EB9FAF56BB2133D62 /* BedroomRoom.swift */; };
@@ -260,14 +276,14 @@
 		0396C37B0938F73C6B4F7A19 /* Fridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fridge.swift; sourceTree = "<group>"; };
 		043450244A81A3749DCE01DF /* city_street_bed.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = city_street_bed.mp3; sourceTree = "<group>"; };
 		0FE30E30380E983F6AD14081 /* glass_break_small.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = glass_break_small.wav; sourceTree = "<group>"; };
-		1020C00C7711917266A0F7ED /* FreeWorldMCP */ = {isa = PBXFileReference; includeInIndex = 0; path = FreeWorldMCP; sourceTree = BUILT_PRODUCTS_DIR; };
+		1020C00C7711917266A0F7ED /* FreeWorldMCP */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FreeWorldMCP; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B5DD9BE823FBDFDB4E6A9D8 /* ambient_room_01.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ambient_room_01.mp3; sourceTree = "<group>"; };
 		1C8D28E1A92D404222AB9161 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		204993DDC77CE778610428AF /* punch_hit.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = punch_hit.wav; sourceTree = "<group>"; };
 		206EC78B10A9164FD3EC0FB2 /* cabinet_smash.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = cabinet_smash.wav; sourceTree = "<group>"; };
 		222982F14D2F777539752E99 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = System/Library/Frameworks/Network.framework; sourceTree = SDKROOT; };
 		2443C6417F9E025DFC0F565D /* step_carpet_01.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = step_carpet_01.mp3; sourceTree = "<group>"; };
-		24E913316391B2F8CC2F781F /* item_place_metal_01.m4a */ = {isa = PBXFileReference; path = item_place_metal_01.m4a; sourceTree = "<group>"; };
+		24E913316391B2F8CC2F781F /* item_place_metal_01.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = item_place_metal_01.m4a; sourceTree = "<group>"; };
 		2D09413D01B5CA78E4D48500 /* MacKeyboardCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacKeyboardCapture.swift; sourceTree = "<group>"; };
 		339CBAB2EBF45D24F500CA5E /* SpeechCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechCoordinator.swift; sourceTree = "<group>"; };
 		3DEAF5C38A20B5069BEC2DAA /* WorldBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldBuilder.swift; sourceTree = "<group>"; };
@@ -294,7 +310,7 @@
 		8F2A1EEA92A9058319B37BE2 /* doorbell_main.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = doorbell_main.wav; sourceTree = "<group>"; };
 		8F3C0E8D3613B8C88562A375 /* RootGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootGameView.swift; sourceTree = "<group>"; };
 		907ECF76E3CC9760129ADB4D /* Parking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parking.swift; sourceTree = "<group>"; };
-		92BEE0C99314BC4B06044385 /* FreeWorldiOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = FreeWorldiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		92BEE0C99314BC4B06044385 /* FreeWorldiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreeWorldiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		943828DE7B0D9D3B024F5285 /* Table.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Table.swift; sourceTree = "<group>"; };
 		94EA3A91C6537F093A33C0BA /* StreetTrafficCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreetTrafficCoordinator.swift; sourceTree = "<group>"; };
 		997A77E2FDC306A746781D1D /* FreeWorldIOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeWorldIOSApp.swift; sourceTree = "<group>"; };
@@ -303,6 +319,10 @@
 		A1B571977C738DA838527836 /* step_asphalt_01.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = step_asphalt_01.mp3; sourceTree = "<group>"; };
 		A672BF4FDE31AD4B9CC373A1 /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = "<group>"; };
 		A8249E518C89328D18940F0A /* traffic_engine_light.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = traffic_engine_light.wav; sourceTree = "<group>"; };
+		A11A1A1A1A1A1A1A1A1A1A01 /* StreetRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreetRoom.swift; sourceTree = "<group>"; };
+		A11A1A1A1A1A1A1A1A1A1A02 /* MainStreetRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainStreetRoom.swift; sourceTree = "<group>"; };
+		A11A1A1A1A1A1A1A1A1A1A03 /* GameViewModel+Gate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameViewModel+Gate.swift"; sourceTree = "<group>"; };
+		A11A1A1A1A1A1A1A1A1A1A04 /* StreetTrafficCoordinator+CourtyardAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StreetTrafficCoordinator+CourtyardAccess.swift"; sourceTree = "<group>"; };
 		AFA7372A8234FABA9214063C /* step_asphalt_04.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = step_asphalt_04.mp3; sourceTree = "<group>"; };
 		B5959BD7C1D6739EAC43657B /* LiveGameBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveGameBridge.swift; sourceTree = "<group>"; };
 		B730C6D651C4C2D06ADA9FED /* GameViewModel+Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameViewModel+Session.swift"; sourceTree = "<group>"; };
@@ -310,9 +330,9 @@
 		BD4D3183B8DA6D995B2B996A /* door_break_heavy.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = door_break_heavy.wav; sourceTree = "<group>"; };
 		C30DE97987846316974C7D1F /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		C46D184F0064168FBA634A8A /* FreeWorldMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreeWorldMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C602295D5D1B0532B44E8DF7 /* FreeWorldVarispeedProbe */ = {isa = PBXFileReference; includeInIndex = 0; path = FreeWorldVarispeedProbe; sourceTree = BUILT_PRODUCTS_DIR; };
+		C602295D5D1B0532B44E8DF7 /* FreeWorldVarispeedProbe */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FreeWorldVarispeedProbe; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD382F6DF0AD992404D5624A /* step_asphalt_03.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = step_asphalt_03.mp3; sourceTree = "<group>"; };
-		D2567EC239A6892408B2D43F /* FreeWorldPlaytests */ = {isa = PBXFileReference; includeInIndex = 0; path = FreeWorldPlaytests; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2567EC239A6892408B2D43F /* FreeWorldPlaytests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FreeWorldPlaytests; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8A3648B39035FCD7FB63C48 /* traffic_engine_sedan.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = traffic_engine_sedan.wav; sourceTree = "<group>"; };
 		DB2B915989252BC9445E62EF /* step_carpet_02.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = step_carpet_02.mp3; sourceTree = "<group>"; };
 		DD85185B7E2D807BEACC5E3A /* GameViewModel+Movement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameViewModel+Movement.swift"; sourceTree = "<group>"; };
@@ -420,6 +440,7 @@
 				A672BF4FDE31AD4B9CC373A1 /* GameViewModel.swift */,
 				ECED716DFE265F2CA62A1D35 /* GameViewModel+Actions.swift */,
 				4AE4C98E8EF4F75E13ACBC6B /* GameViewModel+Audio.swift */,
+				A11A1A1A1A1A1A1A1A1A1A03 /* GameViewModel+Gate.swift */,
 				DD85185B7E2D807BEACC5E3A /* GameViewModel+Movement.swift */,
 				4BCCAC02804772D8A2B627A8 /* GameViewModel+Neighbor.swift */,
 				B730C6D651C4C2D06ADA9FED /* GameViewModel+Session.swift */,
@@ -429,6 +450,7 @@
 				8F3C0E8D3613B8C88562A375 /* RootGameView.swift */,
 				339CBAB2EBF45D24F500CA5E /* SpeechCoordinator.swift */,
 				94EA3A91C6537F093A33C0BA /* StreetTrafficCoordinator.swift */,
+				A11A1A1A1A1A1A1A1A1A1A04 /* StreetTrafficCoordinator+CourtyardAccess.swift */,
 				A6CE612062DD1BB55A6FCFEA /* Rooms */,
 				FC18D6EB2C998BD89D21A239 /* WorldCore */,
 			);
@@ -587,6 +609,8 @@
 			isa = PBXGroup;
 			children = (
 				9CC80B06B3F049B82729EDFD /* FlowController.swift */,
+				A11A1A1A1A1A1A1A1A1A1A02 /* MainStreetRoom.swift */,
+				A11A1A1A1A1A1A1A1A1A1A01 /* StreetRoom.swift */,
 				3DEAF5C38A20B5069BEC2DAA /* WorldBuilder.swift */,
 				6EF953433DC7FB50056534A6 /* WorldModels.swift */,
 			);
@@ -698,7 +722,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 2630;
 				TargetAttributes = {
 					77A933E0E1C3007299A20D6F = {
 						DevelopmentTeam = 75WT3FT4Z5;
@@ -720,7 +744,6 @@
 			);
 			mainGroup = CFAE1B4C6D539140D5EA3235;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -913,6 +936,7 @@
 				F2A7F2E62E7053F709848CE0 /* Fridge.swift in Sources */,
 				0BD3B6EF902E4B4EB7E4E5E7 /* GameViewModel+Actions.swift in Sources */,
 				422677F6AF90D5EE102D92B7 /* GameViewModel+Audio.swift in Sources */,
+				0BD3B6EF902E4B4EB7E4E5F1 /* GameViewModel+Gate.swift in Sources */,
 				55D0827FAF503FED6E131168 /* GameViewModel+Movement.swift in Sources */,
 				F565756E090ED06DA64E3E2E /* GameViewModel+Neighbor.swift in Sources */,
 				5331829BCEB978189ED2CA7F /* GameViewModel+Session.swift in Sources */,
@@ -927,7 +951,10 @@
 				97D0E5773E94F2F4519BAD94 /* Pillow.swift in Sources */,
 				DACD5D8919CFF2DA0D2B6DBB /* SpeechCoordinator.swift in Sources */,
 				C2FF440805D0B24163049821 /* StreetTrafficCoordinator.swift in Sources */,
+				0BD3B6EF902E4B4EB7E4E5F4 /* StreetTrafficCoordinator+CourtyardAccess.swift in Sources */,
 				3DECFE06BDC3CA9F9B8F00E7 /* Table.swift in Sources */,
+				0BD3B6EF902E4B4EB7E4E5F2 /* MainStreetRoom.swift in Sources */,
+				0BD3B6EF902E4B4EB7E4E5F3 /* StreetRoom.swift in Sources */,
 				FC7D97060DC85A38AA5160D8 /* WorldBuilder.swift in Sources */,
 				C30BA2F94D75D702AAFE6EF8 /* WorldModels.swift in Sources */,
 				DF1522477968C9A1E3537399 /* main.swift in Sources */,
@@ -947,6 +974,7 @@
 				7E60C9DB80444881C9A8747C /* Fridge.swift in Sources */,
 				01C8654E428094301DC06313 /* GameViewModel+Actions.swift in Sources */,
 				742AE0CF2282F81A715ED4E7 /* GameViewModel+Audio.swift in Sources */,
+				01C8654E428094301DC06321 /* GameViewModel+Gate.swift in Sources */,
 				C1A97849D2FDAC2F87A5B8D9 /* GameViewModel+Movement.swift in Sources */,
 				68824214912636BBB5283FCB /* GameViewModel+Neighbor.swift in Sources */,
 				DCCA17F10E5D6A8DD9A007C6 /* GameViewModel+Session.swift in Sources */,
@@ -963,7 +991,10 @@
 				433DC47D0A49ED407B2EDEFD /* RootGameView.swift in Sources */,
 				5E700CC638C684F635D57F91 /* SpeechCoordinator.swift in Sources */,
 				ADED175A2AD0F06DF21EB971 /* StreetTrafficCoordinator.swift in Sources */,
+				01C8654E428094301DC06324 /* StreetTrafficCoordinator+CourtyardAccess.swift in Sources */,
 				82514783F3A95110C778061A /* Table.swift in Sources */,
+				01C8654E428094301DC06322 /* MainStreetRoom.swift in Sources */,
+				01C8654E428094301DC06323 /* StreetRoom.swift in Sources */,
 				1A0C98B5F37824194D218BFE /* WorldBuilder.swift in Sources */,
 				A83165FB32CBCFE088109B1A /* WorldModels.swift in Sources */,
 				C26D46834B9C6D57F8A46AC6 /* main.swift in Sources */,
@@ -984,6 +1015,7 @@
 				97910ED814756E69EC759C9E /* Fridge.swift in Sources */,
 				33279D70467089D510183875 /* GameViewModel+Actions.swift in Sources */,
 				9311C5F4B05045CED30EFCA5 /* GameViewModel+Audio.swift in Sources */,
+				33279D70467089D510183881 /* GameViewModel+Gate.swift in Sources */,
 				84DFB801D5A2860F6B9895DF /* GameViewModel+Movement.swift in Sources */,
 				8AE8FE6566FD71C555665BF3 /* GameViewModel+Neighbor.swift in Sources */,
 				7C9D79011DC06D5535DC8C3F /* GameViewModel+Session.swift in Sources */,
@@ -1000,7 +1032,10 @@
 				BA604B14D614C4E5A1C427C0 /* RootGameView.swift in Sources */,
 				E8A5D22A5D5DECD797F013AB /* SpeechCoordinator.swift in Sources */,
 				A004A86EF7C685F49A059D76 /* StreetTrafficCoordinator.swift in Sources */,
+				33279D70467089D510183884 /* StreetTrafficCoordinator+CourtyardAccess.swift in Sources */,
 				98DB83DA837BE7C7E8CE919A /* Table.swift in Sources */,
+				33279D70467089D510183882 /* MainStreetRoom.swift in Sources */,
+				33279D70467089D510183883 /* StreetRoom.swift in Sources */,
 				6060BA3738E51D7BE72162AA /* WorldBuilder.swift in Sources */,
 				4D0CDDF353C967D6500053E2 /* WorldModels.swift in Sources */,
 			);
@@ -1020,6 +1055,7 @@
 				A0708EE09457A2611F65D7E3 /* Fridge.swift in Sources */,
 				776FE8A50104F9CC09F88486 /* GameViewModel+Actions.swift in Sources */,
 				85C33F916FD714A58CAC3779 /* GameViewModel+Audio.swift in Sources */,
+				776FE8A50104F9CC09F88491 /* GameViewModel+Gate.swift in Sources */,
 				5F179A85FF8BD13C9CCEB59A /* GameViewModel+Movement.swift in Sources */,
 				00EC229E595D63CFFE14871C /* GameViewModel+Neighbor.swift in Sources */,
 				46474118F183EBB4555C6406 /* GameViewModel+Session.swift in Sources */,
@@ -1035,7 +1071,10 @@
 				965C4228D1219438891AEC8F /* RootGameView.swift in Sources */,
 				DFBB980D507B207A474A555E /* SpeechCoordinator.swift in Sources */,
 				53EC71F04DB1071445E5A63B /* StreetTrafficCoordinator.swift in Sources */,
+				776FE8A50104F9CC09F88494 /* StreetTrafficCoordinator+CourtyardAccess.swift in Sources */,
 				C794AD0B128CED6268342C4D /* Table.swift in Sources */,
+				776FE8A50104F9CC09F88492 /* MainStreetRoom.swift in Sources */,
+				776FE8A50104F9CC09F88493 /* StreetRoom.swift in Sources */,
 				EEAD11DD5ABC011C1F898348 /* WorldBuilder.swift in Sources */,
 				FBF0A20A74B89745C78D2B92 /* WorldModels.swift in Sources */,
 			);
@@ -1048,6 +1087,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				INFOPLIST_FILE = Sources/macOSApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1065,6 +1105,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 75WT3FT4Z5;
 				INFOPLIST_FILE = Sources/macOSApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1102,6 +1143,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1146,9 +1188,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1169,6 +1213,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.10;
@@ -1179,6 +1224,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				INFOPLIST_FILE = Sources/macOSApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1196,6 +1242,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 75WT3FT4Z5;
 				INFOPLIST_FILE = Sources/macOSApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1213,6 +1260,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1227,6 +1275,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1271,9 +1320,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1287,6 +1338,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.10;
@@ -1297,6 +1349,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
