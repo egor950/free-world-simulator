@@ -1,6 +1,21 @@
 import Foundation
 
 extension GameViewModel {
+    private func announceMovementNode(_ node: FocusNode) {
+        let prompt = currentShortPrompt()
+        if !prompt.isEmpty {
+            announce(prompt)
+            return
+        }
+
+        if case .none = node.target, node.title == "асфальт" {
+            announce("Асфальт.")
+            return
+        }
+
+        announce("Рядом \(node.title).")
+    }
+
     func movePlayer(_ command: GameCommand) {
         lastMovementAt = Date()
 
@@ -167,12 +182,7 @@ extension GameViewModel {
 
         if let node = visibleNode(at: nextPosition) {
             addLog("Рядом: \(node.title)")
-            let prompt = currentShortPrompt()
-            if prompt.isEmpty {
-                announce("Рядом \(node.title).")
-            } else {
-                announce(prompt)
-            }
+            announceMovementNode(node)
         } else {
             setSilentStatus("Ты двигаешься дальше по комнате.")
         }
@@ -202,12 +212,7 @@ extension GameViewModel {
 
         if let node = visibleNode(at: nextPosition) {
             addLog("Рядом: \(node.title)")
-            let prompt = currentShortPrompt()
-            if prompt.isEmpty {
-                announce("Рядом \(node.title).")
-            } else {
-                announce(prompt)
-            }
+            announceMovementNode(node)
         } else if currentRoom.id == .street {
             if let hint = nearestStreetCarGuidance(maxDistance: 6, includeDistance: true, parkedOnly: true) {
                 setSilentStatus("Ты идешь по асфальту. \(hint)")
@@ -243,12 +248,7 @@ extension GameViewModel {
 
         if let node = visibleNode(at: nextPosition) {
             addLog("Рядом: \(node.title)")
-            let prompt = currentShortPrompt()
-            if prompt.isEmpty {
-                announce("Рядом \(node.title).")
-            } else {
-                announce(prompt)
-            }
+            announceMovementNode(node)
         } else {
             setSilentStatus("Ты подтягиваешься по кровати.")
         }
