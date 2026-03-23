@@ -204,14 +204,6 @@ final class InventoryMachine {
 
 @MainActor
 final class GameViewModel: ObservableObject {
-    enum NeighborNoise {
-        static let worldID = "world.neighborNoise"
-        static let warnedFlag = "warned"
-        static let doorbellFlag = "doorbell"
-        static let bangingFlag = "banging"
-        static let resolvedFlag = "resolved"
-    }
-
     @Published var stage: GameStage
     @Published var selectedCharacterKind: CharacterKind = .man
     @Published var characterName: String = ""

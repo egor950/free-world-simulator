@@ -411,7 +411,7 @@ extension GameViewModel {
     }
 
     var isNeighborDoorVisible: Bool {
-        state.flag(itemID: NeighborNoise.worldID, key: NeighborNoise.doorbellFlag) &&
-        !state.flag(itemID: NeighborNoise.worldID, key: NeighborNoise.resolvedFlag)
+        (neighborEncounterMachine.isDoorbellRaised || neighborEncounterMachine.isBreakInActive) &&
+        !neighborEncounterMachine.isResolved
     }
 }
