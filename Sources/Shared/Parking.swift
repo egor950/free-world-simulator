@@ -145,7 +145,7 @@ extension StreetTrafficCoordinator {
     }
 
     func shouldSpawnParkingCar(now: Date = Date()) -> Bool {
-        let hasActiveParkingRoute = activeTrafficRoutes.values.contains(.courtyardParking)
+        let hasActiveParkingRoute = !activeCourtyardParkingIDs.isEmpty
         return parkingSpawnDirector.shouldSpawnParkingCar(now: now, hasActiveParkingRoute: hasActiveParkingRoute)
     }
 

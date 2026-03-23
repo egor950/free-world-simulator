@@ -5,7 +5,7 @@ import GameplayKit
 @MainActor
 final class StreetTrafficCoordinator {
     private static let desiredMinimumTrafficCount = 2
-    private static let maximumTrafficCount = 3
+    private static let maximumTrafficCount = 4
     enum DebugScenario: String, CaseIterable {
         case parkedCar = "street_parked_car"
         case approachingCar = "street_approaching_car"
@@ -352,6 +352,7 @@ final class StreetTrafficCoordinator {
     var activeTrafficRoutes: [UUID: TrafficRouteStyle] = [:]
     var activeTrafficCues: [UUID: AudioCueID] = [:]
     private var activeTrafficSpeedBands: [UUID: TrafficSpeedBand] = [:]
+    var activeCourtyardParkingIDs: Set<UUID> = []
     private var trafficBufferCache: [AudioCueID: AVAudioPCMBuffer] = [:]
     private var brakeBuffer: AVAudioPCMBuffer?
     private var trafficLoopTask: Task<Void, Never>?
@@ -575,6 +576,7 @@ final class StreetTrafficCoordinator {
         activeTrafficRoutes.removeAll()
         activeTrafficCues.removeAll()
         activeTrafficSpeedBands.removeAll()
+        activeCourtyardParkingIDs.removeAll()
 
         for audio in activeTrafficPlayers.values {
             stopAndDetach(audio)
@@ -592,6 +594,7 @@ final class StreetTrafficCoordinator {
                 activeTrafficRoutes.removeValue(forKey: id)
                 activeTrafficCues.removeValue(forKey: id)
                 activeTrafficSpeedBands.removeValue(forKey: id)
+                activeCourtyardParkingIDs.remove(id)
                 clearStreetCarSnapshot(for: id)
                 stopAndDetach(audio)
             }
@@ -599,7 +602,7 @@ final class StreetTrafficCoordinator {
 
         parkingSpawnDirector.update(
             now: Date(),
-            hasActiveParkingRoute: activeTrafficRoutes.values.contains(.courtyardParking)
+            hasActiveParkingRoute: !activeCourtyardParkingIDs.isEmpty
         )
     }
 
@@ -651,6 +654,9 @@ final class StreetTrafficCoordinator {
             activeTrafficRoutes[object.id] = object.routeStyle
             activeTrafficCues[object.id] = object.profile.cue
             activeTrafficSpeedBands[object.id] = object.speedBand
+            if object.routeStyle == .courtyardParking {
+                self.activeCourtyardParkingIDs.insert(object.id)
+            }
 
             let motionTask = Task { @MainActor [weak self] in
                 guard let self else { return }
@@ -753,6 +759,9 @@ final class StreetTrafficCoordinator {
                     audio.varispeed.rate = currentRate
 
                     if lifecycle.isParkingRoute {
+                        if lifecycle.isStreetDeparture {
+                            self.activeCourtyardParkingIDs.remove(object.id)
+                        }
                         let reachedParkingSpot = self.hasReachedCourtyardParkingStop(
                             for: object,
                             position: OutdoorWorldPoint(x: x, z: z),
@@ -796,6 +805,7 @@ final class StreetTrafficCoordinator {
                 self.activeTrafficRoutes.removeValue(forKey: object.id)
                 self.activeTrafficCues.removeValue(forKey: object.id)
                 self.activeTrafficSpeedBands.removeValue(forKey: object.id)
+                self.activeCourtyardParkingIDs.remove(object.id)
                 self.forcedDepartureIDs.remove(object.id)
             }
 
@@ -858,7 +868,7 @@ final class StreetTrafficCoordinator {
         let speedBand = (availableSpeedBands.isEmpty ? TrafficSpeedBand.allCases : availableSpeedBands).randomElement() ?? .normal
 
         let normalizedRouteStyle: TrafficRouteStyle
-        if routeStyle == .courtyardParking, activeTrafficRoutes.values.contains(.courtyardParking) {
+        if routeStyle == .courtyardParking, !activeCourtyardParkingIDs.isEmpty {
             normalizedRouteStyle = .slowRollBy
         } else {
             normalizedRouteStyle = routeStyle
