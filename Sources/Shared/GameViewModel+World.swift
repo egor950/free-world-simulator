@@ -10,8 +10,6 @@ extension GameViewModel {
         roomTraversalMachine.sync(mode: currentRoom.movementMode)
         poseMachine.sync(pose: state.player.pose)
         inventoryMachine.sync(isOpen: isInventoryOpen)
-        syncBreakableItemMachines()
-        syncPillowMachines()
     }
 
     func setPlayerPose(_ pose: PlayerPose) {
@@ -22,69 +20,6 @@ extension GameViewModel {
     func setInventoryOpen(_ isOpen: Bool) {
         self.isInventoryOpen = isOpen
         inventoryMachine.sync(isOpen: isOpen)
-    }
-
-    var breakableItemIDs: [String] {
-        [
-            LivingRoomGlassTV.itemID,
-            LivingRoomTable.itemID,
-            BathroomMirror.itemID,
-            KitchenFridge.itemID
-        ]
-    }
-
-    func breakableItemStage(for itemID: String) -> BreakableItemMachine.Stage {
-        state.itemStage(itemID: itemID, as: BreakableItemMachine.Stage.self, default: .intact)
-    }
-
-    func setBreakableItemStage(_ stage: BreakableItemMachine.Stage, for itemID: String) {
-        state.setItemStage(itemID: itemID, stage: stage)
-        breakableMachine(for: itemID).sync(stage: stage)
-    }
-
-    func breakableMachine(for itemID: String) -> BreakableItemMachine {
-        let stage = breakableItemStage(for: itemID)
-
-        if let machine = breakableItemMachines[itemID] {
-            machine.sync(stage: stage)
-            return machine
-        }
-
-        let machine = BreakableItemMachine(stage: stage)
-        breakableItemMachines[itemID] = machine
-        return machine
-    }
-
-    func syncBreakableItemMachines() {
-        for itemID in breakableItemIDs {
-            breakableMachine(for: itemID).sync(stage: breakableItemStage(for: itemID))
-        }
-    }
-
-    func pillowConditionStage() -> PillowConditionMachine.Stage {
-        state.itemStage(itemID: BedroomPillow.itemID, as: PillowConditionMachine.Stage.self, default: .intact)
-    }
-
-    func setPillowConditionStage(_ stage: PillowConditionMachine.Stage) {
-        state.setItemStage(itemID: BedroomPillow.itemID, stage: stage)
-        pillowConditionMachine.sync(stage: stage)
-    }
-
-    func pillowPlacementStage() -> PillowPlacementMachine.Stage {
-        if state.player.heldItem?.itemID == BedroomPillow.itemID {
-            return .held
-        }
-
-        if state.position(for: BedroomPillow.itemID) != nil || state.room(for: BedroomPillow.itemID) != nil {
-            return .onFloor
-        }
-
-        return .onBed
-    }
-
-    func syncPillowMachines() {
-        pillowConditionMachine.sync(stage: pillowConditionStage())
-        pillowPlacementMachine.sync(stage: pillowPlacementStage())
     }
 
     var currentRoom: RoomDefinition {
@@ -444,7 +379,7 @@ extension GameViewModel {
     }
 
     func currentPositionForPillow() -> GridPosition? {
-        if pillowPlacementStage() == .held {
+        if BedroomPillow.placement(in: state) == .held {
             return nil
         }
 
@@ -456,7 +391,7 @@ extension GameViewModel {
             return customPosition
         }
 
-        if pillowPlacementStage() == .onFloor {
+        if BedroomPillow.placement(in: state) == .onFloor {
             return GridPosition(x: 4, y: 3)
         }
 

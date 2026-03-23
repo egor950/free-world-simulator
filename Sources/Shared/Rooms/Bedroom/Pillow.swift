@@ -9,11 +9,17 @@ enum BedroomPillow {
         case torn
     }
 
+    enum Placement {
+        case onBed
+        case held
+        case onFloor
+    }
+
     static func condition(in state: WorldRuntimeState) -> Condition {
         state.itemStage(itemID: itemID, as: Condition.self, default: .intact)
     }
 
-    static func placement(in state: WorldRuntimeState) -> PillowPlacementMachine.Stage {
+    static func placement(in state: WorldRuntimeState) -> Placement {
         if state.player.heldItem?.itemID == itemID {
             return .held
         }
