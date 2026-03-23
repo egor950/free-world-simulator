@@ -2,7 +2,15 @@ import Foundation
 
 enum KitchenFridge {
     static let itemID = "kitchen.fridge"
-    static let bottleBrokenFlag = "bottleBroken"
+
+    enum Stage: String {
+        case bottleIntact
+        case bottleBroken
+    }
+
+    static func stage(in state: WorldRuntimeState) -> Stage {
+        state.itemStage(itemID: itemID, as: Stage.self, default: .bottleIntact)
+    }
 
     static func make() -> ItemDefinition {
         ItemDefinition(
@@ -10,7 +18,7 @@ enum KitchenFridge {
             name: "холодильник",
             shortPromptProvider: { _ in "Холодильник." },
             fullDescriptionProvider: { state in
-                if state.flag(itemID: itemID, key: bottleBrokenFlag) {
+                if stage(in: state) == .bottleBroken {
                     return "Холодильник открыт, а на полу рядом слышны осколки от разбитой бутылки."
                 }
                 return "Перед тобой холодильник. Его можно открыть, ударить по дверце или смахнуть бутылку с полки."
@@ -21,10 +29,10 @@ enum KitchenFridge {
                     ItemAction(trigger: .force, title: "Ударить холодильник", resultText: "Ты стукнул по дверце. Металл гулко отозвался по всей кухне.", sound: .cabinetSmash, requiresHeldItemID: nil, producesHeldItem: nil) { _ in }
                 ]
 
-                if !state.flag(itemID: itemID, key: bottleBrokenFlag) {
+                if stage(in: state) == .bottleIntact {
                     actions.append(
                         ItemAction(trigger: .throwItem, title: "Смахнуть бутылку", resultText: "Ты смахнул бутылку. Она упала и разбилась у холодильника.", sound: .glassBreakSmall, requiresHeldItemID: nil, producesHeldItem: nil) { runtimeState in
-                            runtimeState.setFlag(itemID: itemID, key: bottleBrokenFlag, value: true)
+                            runtimeState.setItemStage(itemID: itemID, stage: Stage.bottleBroken)
                         }
                     )
                 }
