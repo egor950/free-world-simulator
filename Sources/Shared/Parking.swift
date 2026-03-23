@@ -6,6 +6,7 @@ extension StreetTrafficCoordinator {
     static let guaranteedParkingInterval: TimeInterval = 22
     static let fallbackSlowRollChance = 24
     static let minimumParkingApproachTime: Float = 2.2
+    static let maximumParkingApproachTime: Float = 12.0
     static let parkingStopSpeedThreshold: Float = 0.06
     static let parkingStopApproachDistance: Float = 4.2
 

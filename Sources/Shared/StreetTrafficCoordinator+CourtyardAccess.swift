@@ -260,13 +260,25 @@ extension StreetTrafficCoordinator {
         }
 
         if lifecycle.isCourtyardEntry {
-            return max(object.brakeTargetSpeed * 1.8, object.cruiseSpeed * 0.58)
+            return max(object.brakeTargetSpeed * 2.0, object.cruiseSpeed * 0.94)
         }
 
         if lifecycle.isCourtyardCruise {
             let distance = distance(from: position, to: plan.parkingPoint)
-            let parkingMix = 1 - min(1.0, distance / 14.0)
-            return trafficInterpolate(from: object.cruiseSpeed * 0.62, to: 0, progress: pow(parkingMix, 1.7))
+            let approachSpeed = max(object.cruiseSpeed * 0.92, object.brakeTargetSpeed * 2.0)
+            let brakeSpeed = max(object.cruiseSpeed * 0.58, object.brakeTargetSpeed * 1.35)
+            let finalGlideSpeed = max(0.42, object.brakeTargetSpeed * 1.2)
+
+            if distance <= 1.0 {
+                return finalGlideSpeed
+            }
+
+            if distance <= 3.2 {
+                let finalMix = 1 - min(1.0, (distance - 1.0) / 2.2)
+                return trafficInterpolate(from: brakeSpeed, to: finalGlideSpeed, progress: pow(finalMix, 1.45))
+            }
+
+            return approachSpeed
         }
 
         if lifecycle.isCourtyardExit {
@@ -292,10 +304,17 @@ extension StreetTrafficCoordinator {
         elapsed: Float
     ) -> Bool {
         guard let plan = object.courtyardAccessPlan else { return false }
-        let closeEnough = distance(from: position, to: plan.parkingPoint) <= 1.2
+        let distanceToParking = distance(from: position, to: plan.parkingPoint)
+        let closeEnough = distanceToParking <= 1.2
         let slowEnough = speed <= max(Self.parkingStopSpeedThreshold, object.brakeTargetSpeed * 0.34)
         let settledEnough = previousSpeed <= max(0.18, object.brakeTargetSpeed * 1.05)
-        return closeEnough && slowEnough && settledEnough && elapsed >= Self.minimumParkingApproachTime
+        let snapNearSpot = distanceToParking <= 1.35
+            && elapsed >= Self.minimumParkingApproachTime
+        let overdueNearSpot = distanceToParking <= 2.4
+            && elapsed >= Self.maximumParkingApproachTime
+        return (closeEnough && slowEnough && settledEnough && elapsed >= Self.minimumParkingApproachTime)
+            || snapNearSpot
+            || overdueNearSpot
     }
 
     func hasCompletedCourtyardRoute(

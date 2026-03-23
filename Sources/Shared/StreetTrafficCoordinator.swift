@@ -652,7 +652,7 @@ final class StreetTrafficCoordinator {
                 guard let self else { return }
                 guard let audio = self.activeTrafficPlayers[object.id] else { return }
 
-                let dt: Float = 0.08
+                let baseTick: UInt64 = 80_000_000
                 var x = object.startX
                 var z = object.startZ
                 var speed = object.entrySpeed
@@ -662,10 +662,14 @@ final class StreetTrafficCoordinator {
                 var currentRate = clampRate(tuning.idleHz / max(1, object.sampleRate))
                 var previousGear = 1
                 var shiftPulseUntil: Float = 0
+                var lastStepTimestamp = ProcessInfo.processInfo.systemUptime
 
                 while true {
                     guard !Task.isCancelled, audio.player.isPlaying else { break }
 
+                    let currentTimestamp = ProcessInfo.processInfo.systemUptime
+                    let dt = Float(min(0.4, max(0.04, currentTimestamp - lastStepTimestamp)))
+                    lastStepTimestamp = currentTimestamp
                     elapsed += dt
                     lifecycle.advance(deltaTime: dt, parkHoldDuration: object.parkHoldDuration)
                     lifecycle.forceDepartureIfNeeded(for: object.id, forcedIDs: &self.forcedDepartureIDs, deltaTime: dt)
@@ -753,8 +757,15 @@ final class StreetTrafficCoordinator {
                             elapsed: elapsed
                         )
                         if reachedParkingSpot, lifecycle.beginParked() {
+                            if let parkingPoint = object.courtyardAccessPlan?.parkingPoint {
+                                x = parkingPoint.x
+                                z = parkingPoint.z
+                            }
                             speed = 0
                             previousSpeed = 0
+                            audio.panner.pan = self.trafficPan(for: object, x: x, z: z)
+                            audio.panner.outputVolume = self.trafficVolume(for: object, x: x, z: z, speed: speed, isParked: true)
+                            audio.brakePlayer?.volume = 0
                             self.updateStreetCarSnapshot(for: object, x: x, z: z, isParked: true, isLeaving: false)
                             if let snapshot = self.activeStreetCarSnapshots[object.id] {
                                 self.onStreetCarParked?(snapshot)
@@ -771,7 +782,7 @@ final class StreetTrafficCoordinator {
 
                     previousSpeed = speed
 
-                    try? await Task.sleep(nanoseconds: UInt64(dt * 1_000_000_000))
+                    try? await Task.sleep(nanoseconds: baseTick)
                 }
 
                 self.clearStreetCarSnapshot(for: object.id)
@@ -817,13 +828,13 @@ final class StreetTrafficCoordinator {
             finalExitX: accessPlan.streetDeparturePoint.x,
             roadZ: courtyardMainStreetLaneZ,
             nearZ: accessPlan.parkingPoint.z,
-            entrySpeed: 1.1,
-            cruiseSpeed: 2.3,
-            maxSpeed: 3.0,
-            acceleration: 1.35,
-            brakeDeceleration: 2.6,
-            rollingDeceleration: 0.96,
-            dragFactor: 0.036,
+            entrySpeed: 1.6,
+            cruiseSpeed: 2.8,
+            maxSpeed: 3.6,
+            acceleration: 2.8,
+            brakeDeceleration: 3.4,
+            rollingDeceleration: 0.32,
+            dragFactor: 0.028,
             brakeTargetSpeed: 0.34,
             brakeCenterX: accessPlan.parkingPoint.x,
             brakeHalfWidth: max(6.0, abs(accessPlan.parkingPoint.x - accessPlan.courtyardEntryPoint.x)),
@@ -925,12 +936,12 @@ final class StreetTrafficCoordinator {
             nearZ = courtyardAccessPlan?.parkingPoint.z ?? 3.8
             finalExitX = courtyardAccessPlan?.streetDeparturePoint.x ?? (directionLeftToRight ? 52 : -52)
             maxSpeed = Float.random(in: profile.parkingSpeedRange) * speedRate
-            cruiseSpeed = maxSpeed * 0.76
-            entrySpeed = max(0.5, cruiseSpeed * 0.06)
-            acceleration = (1.0 + speedRate * 0.9) * profile.accelerationScale
-            brakeDeceleration = (2.5 + speedRate * 1.4) * profile.brakeScale
-            rollingDeceleration = 0.96
-            dragFactor = 0.036
+            cruiseSpeed = maxSpeed * 0.9
+            entrySpeed = max(0.8, cruiseSpeed * 0.22)
+            acceleration = (2.4 + speedRate * 1.8) * profile.accelerationScale
+            brakeDeceleration = (3.2 + speedRate * 1.8) * profile.brakeScale
+            rollingDeceleration = 0.34
+            dragFactor = 0.028
             brakeTargetSpeed = max(0.3, cruiseSpeed * 0.18)
             brakeCenterX = courtyardAccessPlan?.parkingPoint.x ?? (directionLeftToRight ? 6.5 : -6.5)
             brakeHalfWidth = max(6.0, abs((courtyardAccessPlan?.parkingPoint.x ?? 0) - (courtyardAccessPlan?.courtyardEntryPoint.x ?? 0)))
