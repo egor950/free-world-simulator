@@ -27,7 +27,7 @@ enum StreetRoom {
             id: gateDoorID,
             name: "калитка",
             targetRoomID: .mainStreet,
-            targetRoomPosition: GridPosition(x: 10, y: 18),
+            targetRoomPosition: MainStreetRoom.gatePosition,
             state: .closed,
             focusNodeID: "street.node.gate",
             shortPrompt: "Впереди калитка на большую улицу.",
@@ -57,7 +57,7 @@ enum StreetRoom {
                 ),
                 FocusNode.floor(
                     id: "street.node.center",
-                    title: "асфальт двора",
+                    title: "асфальт",
                     position: GridPosition(x: 7, y: 7),
                     fullDescription: "Ты стоишь почти в центре двора. Под ногами жесткий асфальт, а вокруг открытое пространство."
                 ),

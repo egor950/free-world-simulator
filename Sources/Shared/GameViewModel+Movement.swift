@@ -210,10 +210,12 @@ extension GameViewModel {
             }
         } else if currentRoom.id == .street {
             if let hint = nearestStreetCarGuidance(maxDistance: 6, includeDistance: true, parkedOnly: true) {
-                setSilentStatus("Ты идешь по асфальту двора. \(hint)")
+                setSilentStatus("Ты идешь по асфальту. \(hint)")
             } else {
-                setSilentStatus("Ты идешь по асфальту двора.")
+                setSilentStatus("Ты идешь по асфальту.")
             }
+        } else if currentRoom.id == .mainStreet {
+            setSilentStatus("Ты идешь по асфальту.")
         } else {
             setSilentStatus("Ты двигаешься дальше.")
         }

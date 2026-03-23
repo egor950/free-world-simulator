@@ -209,7 +209,7 @@ extension GameViewModel {
             debugMovePlayer(to: .street, position: GridPosition(x: 7, y: 0))
         case "main_street_entry":
             audioCoordinator.clearStreetDebugScenario()
-            debugMovePlayer(to: .mainStreet, position: GridPosition(x: 10, y: 18))
+            debugMovePlayer(to: .mainStreet, position: MainStreetRoom.gatePosition)
         case "street_parked_car":
             debugMovePlayer(to: .street, position: GridPosition(x: 6, y: 6))
             return audioCoordinator.runStreetDebugScenario(name)
@@ -217,13 +217,13 @@ extension GameViewModel {
             debugMovePlayer(to: .street, position: GridPosition(x: 7, y: 14))
             return audioCoordinator.runStreetDebugScenario(name)
         case "main_street_car_entry_left":
-            debugMovePlayer(to: .mainStreet, position: GridPosition(x: 2, y: 13))
+            debugMovePlayer(to: .mainStreet, position: GridPosition(x: 4, y: 24))
             return audioCoordinator.runStreetDebugScenario(name)
         case "main_street_car_entry_right":
-            debugMovePlayer(to: .mainStreet, position: GridPosition(x: 18, y: 13))
+            debugMovePlayer(to: .mainStreet, position: GridPosition(x: 36, y: 24))
             return audioCoordinator.runStreetDebugScenario(name)
         case "main_street_car_exit":
-            debugMovePlayer(to: .mainStreet, position: GridPosition(x: 17, y: 13))
+            debugMovePlayer(to: .mainStreet, position: GridPosition(x: 33, y: 24))
             return audioCoordinator.runStreetDebugScenario(name)
         default:
             return false
