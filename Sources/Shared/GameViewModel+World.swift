@@ -76,11 +76,25 @@ extension GameViewModel {
 
     func currentShortPrompt() -> String {
         if let door = currentFocusDoor {
+            if timedDoorConfiguration(for: door) != nil {
+                let machine = gateMachine(for: door)
+                if machine.isOpening {
+                    return "\(door.shortPrompt) Калитка открывается."
+                }
+                if machine.isClosing {
+                    return "\(door.shortPrompt) Калитка закрывается."
+                }
+                if machine.isOpen {
+                    return "\(door.shortPrompt) Калитка открыта. Нажми \(passCommandHint(for: door)), чтобы пройти."
+                }
+                return "\(door.shortPrompt) Калитка закрыта."
+            }
+
             if door.state == .locked {
                 return "\(door.shortPrompt) Заперто."
             }
             if isDoorOpened(door) {
-                return "\(door.shortPrompt) Дверь открыта. Нажми вперед, чтобы пройти."
+                return "\(door.shortPrompt) Дверь открыта. Нажми \(passCommandHint(for: door)), чтобы пройти."
             }
             return "\(door.shortPrompt) Дверь закрыта."
         }

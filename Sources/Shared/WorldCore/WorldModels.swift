@@ -110,6 +110,18 @@ enum DoorState {
     case locked
 }
 
+struct TimedDoorTransitionConfiguration {
+    let openCue: AudioCueID
+    let closeCue: AudioCueID
+    let openDuration: TimeInterval
+    let closeDuration: TimeInterval
+}
+
+enum DoorInteractionStyle {
+    case standard
+    case timedGate(TimedDoorTransitionConfiguration)
+}
+
 enum ActionTrigger {
     case primary
     case force
@@ -426,6 +438,33 @@ struct DoorDefinition {
     let openResultText: String
     let lockedText: String
     let sound: AudioCueID?
+    let interactionStyle: DoorInteractionStyle
+
+    init(
+        id: String,
+        name: String,
+        targetRoomID: RoomID,
+        targetRoomPosition: GridPosition?,
+        state: DoorState,
+        focusNodeID: String,
+        shortPrompt: String,
+        openResultText: String,
+        lockedText: String,
+        sound: AudioCueID?,
+        interactionStyle: DoorInteractionStyle = .standard
+    ) {
+        self.id = id
+        self.name = name
+        self.targetRoomID = targetRoomID
+        self.targetRoomPosition = targetRoomPosition
+        self.state = state
+        self.focusNodeID = focusNodeID
+        self.shortPrompt = shortPrompt
+        self.openResultText = openResultText
+        self.lockedText = lockedText
+        self.sound = sound
+        self.interactionStyle = interactionStyle
+    }
 }
 
 struct ItemAction {

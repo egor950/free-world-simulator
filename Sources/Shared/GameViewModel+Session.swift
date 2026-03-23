@@ -68,6 +68,7 @@ extension GameViewModel {
         )
         bedAnchorPosition = nil
         doorLifecycleMachines.removeAll()
+        cancelGateTransitionTasks(resetMachines: true)
         cancelNeighborTasks()
         neighborEncounterMachine.resetToCalm()
         neighborDoorHitsTarget = 0
@@ -140,6 +141,7 @@ extension GameViewModel {
         inventoryTitle = ""
         inventoryText = ""
         doorLifecycleMachines.removeAll()
+        cancelGateTransitionTasks(resetMachines: true)
         neighborEncounterMachine.resetToCalm()
     }
 
@@ -230,6 +232,7 @@ extension GameViewModel {
     }
 
     func debugMovePlayer(to roomID: RoomID, position: GridPosition) {
+        cancelGateTransitionTasks(resetMachines: true)
         state.player.roomID = roomID
         state.player.roomPosition = position
         state.player.focusedTarget = .none

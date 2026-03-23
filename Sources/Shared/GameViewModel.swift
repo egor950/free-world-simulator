@@ -64,6 +64,79 @@ final class DoorLifecycleMachine {
     }
 }
 
+final class GateLifecycleMachine {
+    private final class ClosedState: GKState {
+        override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+            stateClass == OpeningState.self
+        }
+    }
+
+    private final class OpeningState: GKState {
+        override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+            stateClass == OpenState.self
+        }
+    }
+
+    private final class OpenState: GKState {
+        override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+            stateClass == ClosingState.self
+        }
+    }
+
+    private final class ClosingState: GKState {
+        override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+            stateClass == ClosedState.self
+        }
+    }
+
+    private let machine = GKStateMachine(states: [
+        ClosedState(),
+        OpeningState(),
+        OpenState(),
+        ClosingState()
+    ])
+
+    init() {
+        _ = machine.enter(ClosedState.self)
+    }
+
+    var isOpen: Bool {
+        machine.currentState is OpenState
+    }
+
+    var isOpening: Bool {
+        machine.currentState is OpeningState
+    }
+
+    var isClosing: Bool {
+        machine.currentState is ClosingState
+    }
+
+    func reset() {
+        _ = machine.enter(ClosedState.self)
+    }
+
+    @discardableResult
+    func beginOpening() -> Bool {
+        machine.enter(OpeningState.self)
+    }
+
+    @discardableResult
+    func finishOpening() -> Bool {
+        machine.enter(OpenState.self)
+    }
+
+    @discardableResult
+    func beginClosing() -> Bool {
+        machine.enter(ClosingState.self)
+    }
+
+    @discardableResult
+    func finishClosing() -> Bool {
+        machine.enter(ClosedState.self)
+    }
+}
+
 final class RoomTraversalMachine {
     private final class LinearTraversalState: GKState {
         override func isValidNextState(_ stateClass: AnyClass) -> Bool {
@@ -234,6 +307,8 @@ final class GameViewModel: ObservableObject {
     var lastMovementAt: Date = .distantPast
     var bedAnchorPosition: GridPosition?
     var doorLifecycleMachines: [String: DoorLifecycleMachine] = [:]
+    var gateLifecycleMachines: [String: GateLifecycleMachine] = [:]
+    var gateTransitionTasks: [String: Task<Void, Never>] = [:]
     var neighborDoorHitsTarget = 0
     var streetCarSnapshots: [StreetTrafficCoordinator.StreetCarSnapshot] = []
 

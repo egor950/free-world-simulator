@@ -19,6 +19,12 @@ enum WorldBuilder {
 enum StreetRoom {
     static let apartmentDoorID = "street.door.apartment"
     static let gateDoorID = "street.gate.mainStreet"
+    static let gateTiming = TimedDoorTransitionConfiguration(
+        openCue: .gateOpen,
+        closeCue: .gateClose,
+        openDuration: 2.22,
+        closeDuration: 3.40
+    )
 
     static func make() -> RoomDefinition {
         let apartmentDoor = DoorDefinition(
@@ -43,7 +49,8 @@ enum StreetRoom {
             shortPrompt: "Впереди калитка на большую улицу.",
             openResultText: "Ты открыл калитку и можешь выйти дальше на улицу.",
             lockedText: "Калитка не поддается.",
-            sound: nil
+            sound: nil,
+            interactionStyle: .timedGate(gateTiming)
         )
 
         return RoomDefinition(
@@ -115,7 +122,8 @@ enum MainStreetRoom {
             shortPrompt: "Позади калитка обратно во двор.",
             openResultText: "Ты открыл калитку и можешь вернуться во двор.",
             lockedText: "Калитка не поддается.",
-            sound: nil
+            sound: nil,
+            interactionStyle: .timedGate(StreetRoom.gateTiming)
         )
 
         return RoomDefinition(
