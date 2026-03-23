@@ -68,6 +68,9 @@ extension GameViewModel {
         )
         bedAnchorPosition = nil
         doorLifecycleMachines.removeAll()
+        breakableItemMachines.removeAll()
+        pillowConditionMachine.sync(stage: .intact)
+        pillowPlacementMachine.sync(stage: .onBed)
         cancelNeighborTasks()
         neighborDoorHitsTarget = 0
         neighborDoorHitsDone = 0
@@ -141,6 +144,9 @@ extension GameViewModel {
         inventoryTitle = ""
         inventoryText = ""
         doorLifecycleMachines.removeAll()
+        breakableItemMachines.removeAll()
+        pillowConditionMachine.sync(stage: .intact)
+        pillowPlacementMachine.sync(stage: .onBed)
     }
 
     func availableDebugScenarios() -> [[String: String]] {

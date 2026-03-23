@@ -202,6 +202,205 @@ final class InventoryMachine {
     }
 }
 
+final class BreakableItemMachine {
+    enum Stage: String {
+        case intact
+        case broken
+    }
+
+    private final class IntactState: GKState {
+        override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+            stateClass == BrokenState.self
+        }
+    }
+
+    private final class BrokenState: GKState {
+        override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+            stateClass == IntactState.self
+        }
+    }
+
+    private let machine = GKStateMachine(states: [
+        IntactState(),
+        BrokenState()
+    ])
+
+    init(stage: Stage = .intact) {
+        sync(stage: stage)
+    }
+
+    var stage: Stage {
+        machine.currentState is BrokenState ? .broken : .intact
+    }
+
+    var isBroken: Bool {
+        stage == .broken
+    }
+
+    func sync(stage: Stage) {
+        switch stage {
+        case .intact:
+            _ = machine.enter(IntactState.self)
+        case .broken:
+            _ = machine.enter(BrokenState.self)
+        }
+    }
+
+    @discardableResult
+    func markBroken() -> Bool {
+        machine.enter(BrokenState.self)
+    }
+}
+
+final class PillowConditionMachine {
+    enum Stage: String {
+        case intact
+        case dusty
+        case torn
+    }
+
+    private final class IntactState: GKState {
+        override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+            stateClass == DustyState.self || stateClass == TornState.self
+        }
+    }
+
+    private final class DustyState: GKState {
+        override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+            stateClass == TornState.self || stateClass == IntactState.self
+        }
+    }
+
+    private final class TornState: GKState {
+        override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+            stateClass == IntactState.self
+        }
+    }
+
+    private let machine = GKStateMachine(states: [
+        IntactState(),
+        DustyState(),
+        TornState()
+    ])
+
+    init(stage: Stage = .intact) {
+        sync(stage: stage)
+    }
+
+    var stage: Stage {
+        switch machine.currentState {
+        case is DustyState:
+            return .dusty
+        case is TornState:
+            return .torn
+        default:
+            return .intact
+        }
+    }
+
+    func sync(stage: Stage) {
+        switch stage {
+        case .intact:
+            _ = machine.enter(IntactState.self)
+        case .dusty:
+            _ = machine.enter(DustyState.self)
+        case .torn:
+            _ = machine.enter(TornState.self)
+        }
+    }
+
+    @discardableResult
+    func markDusty() -> Bool {
+        machine.enter(DustyState.self)
+    }
+
+    @discardableResult
+    func markTorn() -> Bool {
+        machine.enter(TornState.self)
+    }
+}
+
+final class PillowPlacementMachine {
+    enum Stage {
+        case onBed
+        case held
+        case onFloor
+    }
+
+    private final class OnBedState: GKState {
+        override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+            stateClass == HeldState.self || stateClass == OnFloorState.self
+        }
+    }
+
+    private final class HeldState: GKState {
+        override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+            stateClass == OnBedState.self || stateClass == OnFloorState.self
+        }
+    }
+
+    private final class OnFloorState: GKState {
+        override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+            stateClass == HeldState.self || stateClass == OnBedState.self
+        }
+    }
+
+    private let machine = GKStateMachine(states: [
+        OnBedState(),
+        HeldState(),
+        OnFloorState()
+    ])
+
+    init(stage: Stage = .onBed) {
+        sync(stage: stage)
+    }
+
+    var stage: Stage {
+        switch machine.currentState {
+        case is HeldState:
+            return .held
+        case is OnFloorState:
+            return .onFloor
+        default:
+            return .onBed
+        }
+    }
+
+    var isHeld: Bool {
+        stage == .held
+    }
+
+    var isOnFloor: Bool {
+        stage == .onFloor
+    }
+
+    func sync(stage: Stage) {
+        switch stage {
+        case .onBed:
+            _ = machine.enter(OnBedState.self)
+        case .held:
+            _ = machine.enter(HeldState.self)
+        case .onFloor:
+            _ = machine.enter(OnFloorState.self)
+        }
+    }
+
+    @discardableResult
+    func markOnBed() -> Bool {
+        machine.enter(OnBedState.self)
+    }
+
+    @discardableResult
+    func markHeld() -> Bool {
+        machine.enter(HeldState.self)
+    }
+
+    @discardableResult
+    func markOnFloor() -> Bool {
+        machine.enter(OnFloorState.self)
+    }
+}
+
 @MainActor
 final class GameViewModel: ObservableObject {
     enum NeighborNoise {
@@ -250,6 +449,9 @@ final class GameViewModel: ObservableObject {
     var lastMovementAt: Date = .distantPast
     var bedAnchorPosition: GridPosition?
     var doorLifecycleMachines: [String: DoorLifecycleMachine] = [:]
+    var breakableItemMachines: [String: BreakableItemMachine] = [:]
+    let pillowConditionMachine = PillowConditionMachine()
+    let pillowPlacementMachine = PillowPlacementMachine()
     var neighborDoorHitsTarget = 0
     var neighborDoorHitsDone = 0
     var streetCarSnapshots: [StreetTrafficCoordinator.StreetCarSnapshot] = []

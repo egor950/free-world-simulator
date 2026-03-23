@@ -494,6 +494,7 @@ struct PlayerState {
 struct WorldRuntimeState {
     var player: PlayerState
     private(set) var itemFlags: [String: [String: Bool]] = [:]
+    private(set) var itemStages: [String: String] = [:]
     private(set) var itemPositions: [String: GridPosition] = [:]
     private(set) var itemRooms: [String: RoomID] = [:]
 
@@ -505,6 +506,26 @@ struct WorldRuntimeState {
         var flags = itemFlags[itemID] ?? [:]
         flags[key] = value
         itemFlags[itemID] = flags
+    }
+
+    func itemStage<Stage: RawRepresentable>(
+        itemID: String,
+        as type: Stage.Type,
+        default defaultValue: Stage
+    ) -> Stage where Stage.RawValue == String {
+        guard let rawValue = itemStages[itemID],
+              let stage = Stage(rawValue: rawValue) else {
+            return defaultValue
+        }
+
+        return stage
+    }
+
+    mutating func setItemStage<Stage: RawRepresentable>(
+        itemID: String,
+        stage: Stage?
+    ) where Stage.RawValue == String {
+        itemStages[itemID] = stage?.rawValue
     }
 
     func position(for itemID: String) -> GridPosition? {
