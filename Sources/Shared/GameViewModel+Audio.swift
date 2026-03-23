@@ -53,12 +53,13 @@ extension GameViewModel {
 
         switch currentRoom.id {
         case .street:
-            audioCoordinator.setStreetPresence(.outside)
+            audioCoordinator.setStreetPresence(.courtyard)
             audioCoordinator.setTrafficEnabled(true)
-            audioCoordinator.setStreetListenerPosition(state.player.roomPosition)
+            audioCoordinator.setStreetListenerPosition(state.player.roomPosition, roomID: .street)
         case .mainStreet:
             audioCoordinator.setStreetPresence(.wideOpenStreet)
-            audioCoordinator.setTrafficEnabled(false)
+            audioCoordinator.setTrafficEnabled(true)
+            audioCoordinator.setStreetListenerPosition(state.player.roomPosition, roomID: .mainStreet)
         case .bathroom:
             let streetDoorOpen = currentRoom.doors["bathroom.door.street"].map { isDoorOpened($0) } ?? false
             audioCoordinator.setStreetPresence(streetDoorOpen ? .insideOpenDoor : .insideClosedDoor)

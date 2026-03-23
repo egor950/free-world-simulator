@@ -10,6 +10,7 @@ final class AudioCoordinator {
         case off
         case insideClosedDoor
         case insideOpenDoor
+        case courtyard
         case outside
         case wideOpenStreet
     }
@@ -132,8 +133,8 @@ final class AudioCoordinator {
         streetTraffic?.setEnabled(enabled)
     }
 
-    func setStreetListenerPosition(_ position: GridPosition) {
-        streetTraffic?.setListenerStreetPosition(position)
+    func setStreetListenerPosition(_ position: GridPosition, roomID: RoomID = .street) {
+        streetTraffic?.setListenerStreetPosition(position, roomID: roomID)
     }
 
     func triggerStreetCarDeparture(_ id: UUID) {
@@ -303,6 +304,8 @@ final class AudioCoordinator {
             return (0.05, 850)
         case .insideOpenDoor:
             return (0.14, 2400)
+        case .courtyard:
+            return (0.18, 3200)
         case .outside:
             return (0.24, 18_000)
         case .wideOpenStreet:

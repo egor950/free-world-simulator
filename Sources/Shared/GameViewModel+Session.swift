@@ -161,7 +161,10 @@ extension GameViewModel {
             ["id": "main_street_entry", "title": "Большая улица"],
             ["id": "street_parked_car", "title": "Припаркованная машина"],
             ["id": "street_approaching_car", "title": "Машина заезжает"],
-            ["id": "street_departing_car", "title": "Машина уезжает"]
+            ["id": "street_departing_car", "title": "Машина уезжает"],
+            ["id": "main_street_car_entry_left", "title": "Машина заезжает слева"],
+            ["id": "main_street_car_entry_right", "title": "Машина заезжает справа"],
+            ["id": "main_street_car_exit", "title": "Машина выезжает на улицу"]
         ]
     }
 
@@ -207,8 +210,20 @@ extension GameViewModel {
         case "main_street_entry":
             audioCoordinator.clearStreetDebugScenario()
             debugMovePlayer(to: .mainStreet, position: GridPosition(x: 10, y: 18))
-        case "street_parked_car", "street_approaching_car", "street_departing_car":
+        case "street_parked_car":
+            debugMovePlayer(to: .street, position: GridPosition(x: 6, y: 6))
+            return audioCoordinator.runStreetDebugScenario(name)
+        case "street_approaching_car", "street_departing_car":
             debugMovePlayer(to: .street, position: GridPosition(x: 7, y: 14))
+            return audioCoordinator.runStreetDebugScenario(name)
+        case "main_street_car_entry_left":
+            debugMovePlayer(to: .mainStreet, position: GridPosition(x: 2, y: 13))
+            return audioCoordinator.runStreetDebugScenario(name)
+        case "main_street_car_entry_right":
+            debugMovePlayer(to: .mainStreet, position: GridPosition(x: 18, y: 13))
+            return audioCoordinator.runStreetDebugScenario(name)
+        case "main_street_car_exit":
+            debugMovePlayer(to: .mainStreet, position: GridPosition(x: 17, y: 13))
             return audioCoordinator.runStreetDebugScenario(name)
         default:
             return false

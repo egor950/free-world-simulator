@@ -57,7 +57,7 @@ extension StreetTrafficCoordinator {
     }
 
     func directionForSpawn(routeStyle: TrafficRouteStyle) -> Bool {
-        routeStyle == .courtyardParking ? true : Bool.random()
+        Bool.random()
     }
 
     func hasReachedParkingStop(
