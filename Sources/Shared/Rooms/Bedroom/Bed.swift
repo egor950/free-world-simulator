@@ -19,7 +19,7 @@ enum BedroomBed {
                 let pillowText: String
                 if state.player.heldItem?.itemID == BedroomPillow.itemID {
                     pillowText = "Подушка у тебя в руках."
-                } else if state.flag(itemID: BedroomPillow.itemID, key: BedroomPillow.onFloorFlag) {
+                } else if BedroomPillow.placement(in: state) == .onFloor {
                     pillowText = "Подушка лежит на полу рядом."
                 } else {
                     pillowText = "Подушка лежит на кровати."
@@ -51,16 +51,14 @@ enum BedroomBed {
                     actions.append(
                         ItemAction(trigger: .placeHeldItem, title: "Положить подушку", resultText: "Ты положил подушку обратно на кровать.", sound: .itemPlaceMetal01, requiresHeldItemID: BedroomPillow.itemID, producesHeldItem: nil) { runtimeState in
                             runtimeState.player.heldItem = nil
-                            runtimeState.setFlag(itemID: BedroomPillow.itemID, key: BedroomPillow.onFloorFlag, value: false)
                             runtimeState.clearItemLocation(itemID: BedroomPillow.itemID)
                         }
                     )
                 }
 
-                if state.player.heldItem == nil && !state.flag(itemID: BedroomPillow.itemID, key: BedroomPillow.onFloorFlag) {
+                if state.player.heldItem == nil && BedroomPillow.placement(in: state) != .onFloor {
                     actions.append(
                         ItemAction(trigger: .throwItem, title: "Сбросить подушку", resultText: "Ты сбросил подушку с кровати на пол.", sound: .itemPlaceMetal01, requiresHeldItemID: nil, producesHeldItem: nil) { runtimeState in
-                            runtimeState.setFlag(itemID: BedroomPillow.itemID, key: BedroomPillow.onFloorFlag, value: true)
                             runtimeState.setItemLocation(itemID: BedroomPillow.itemID, roomID: .bedroom, position: GridPosition(x: 4, y: 3))
                         }
                     )

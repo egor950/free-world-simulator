@@ -444,7 +444,7 @@ extension GameViewModel {
     }
 
     func currentPositionForPillow() -> GridPosition? {
-        if state.player.heldItem?.itemID == BedroomPillow.itemID {
+        if pillowPlacementStage() == .held {
             return nil
         }
 
@@ -456,7 +456,7 @@ extension GameViewModel {
             return customPosition
         }
 
-        if state.flag(itemID: BedroomPillow.itemID, key: BedroomPillow.onFloorFlag) {
+        if pillowPlacementStage() == .onFloor {
             return GridPosition(x: 4, y: 3)
         }
 
