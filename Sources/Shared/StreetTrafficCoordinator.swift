@@ -356,8 +356,8 @@ final class StreetTrafficCoordinator {
     private var brakeBuffer: AVAudioPCMBuffer?
     private var trafficLoopTask: Task<Void, Never>?
     private var isEnabled = false
-    var lastCourtyardParkingStartedAt: Date = .distantPast
     var lastCourtyardParkingCue: AudioCueID?
+    let parkingSpawnDirector = ParkingSpawnDirector()
     var listenerStreetPosition = GridPosition(x: 7, y: 14)
     var listenerOutdoorRoomID: RoomID = .street
     private var forcedDepartureIDs: Set<UUID> = []
@@ -468,9 +468,7 @@ final class StreetTrafficCoordinator {
         isEnabled = enabled
 
         if enabled {
-            if lastCourtyardParkingStartedAt == .distantPast {
-                lastCourtyardParkingStartedAt = Date()
-            }
+            parkingSpawnDirector.reset(initiallyReady: true)
             if let scenario = activeDebugScenario {
                 if activeTrafficPlayers.isEmpty {
                     runDebugScenarioInternal(scenario)
@@ -567,8 +565,8 @@ final class StreetTrafficCoordinator {
         trafficLoopTask = nil
         activeStreetCarSnapshots = [:]
         forcedDepartureIDs.removeAll()
-        lastCourtyardParkingStartedAt = .distantPast
         lastCourtyardParkingCue = nil
+        parkingSpawnDirector.reset(initiallyReady: false)
 
         for task in activeTrafficTasks.values {
             task.cancel()
@@ -598,6 +596,11 @@ final class StreetTrafficCoordinator {
                 stopAndDetach(audio)
             }
         }
+
+        parkingSpawnDirector.update(
+            now: Date(),
+            hasActiveParkingRoute: activeTrafficRoutes.values.contains(.courtyardParking)
+        )
     }
 
     private func runDebugScenarioInternal(_ scenario: DebugScenario) {
@@ -607,7 +610,7 @@ final class StreetTrafficCoordinator {
         trafficBufferCache[profile.cue] = buffer
 
         let object = makeDebugTrafficObject(for: scenario, profile: profile, sampleRate: buffer.format.sampleRate)
-        lastCourtyardParkingStartedAt = Date()
+        parkingSpawnDirector.markParkingRouteStarted(at: Date())
         startTrafficObject(object, buffer: buffer)
     }
 
@@ -615,7 +618,8 @@ final class StreetTrafficCoordinator {
         guard activeDebugScenario == nil else { return }
 
         let profiles = trafficProfiles
-        let routeStyle = routeStyleForNextSpawn()
+        let now = Date()
+        let routeStyle = routeStyleForNextSpawn(now: now)
         let profile = selectProfile(for: routeStyle, profiles: profiles)
         let buffer = trafficBufferCache[profile.cue] ?? loadPCMBuffer(for: profile.cue)
         guard let buffer else { return }
@@ -627,8 +631,8 @@ final class StreetTrafficCoordinator {
             routeStyle: routeStyle
         )
         if object.routeStyle == .courtyardParking {
-            lastCourtyardParkingStartedAt = Date()
             lastCourtyardParkingCue = object.profile.cue
+            parkingSpawnDirector.markParkingRouteStarted(at: now)
         }
         startTrafficObject(object, buffer: buffer)
     }

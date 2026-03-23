@@ -260,22 +260,23 @@ extension StreetTrafficCoordinator {
         }
 
         if lifecycle.isCourtyardEntry {
-            return max(object.brakeTargetSpeed * 2.0, object.cruiseSpeed * 0.94)
+            return max(object.brakeTargetSpeed * 1.8, object.cruiseSpeed * 0.88)
         }
 
         if lifecycle.isCourtyardCruise {
             let distance = distance(from: position, to: plan.parkingPoint)
-            let approachSpeed = max(object.cruiseSpeed * 0.92, object.brakeTargetSpeed * 2.0)
-            let brakeSpeed = max(object.cruiseSpeed * 0.58, object.brakeTargetSpeed * 1.35)
-            let finalGlideSpeed = max(0.42, object.brakeTargetSpeed * 1.2)
+            let approachSpeed = max(object.cruiseSpeed * 0.76, object.brakeTargetSpeed * 1.8)
+            let brakeSpeed = max(object.cruiseSpeed * 0.36, object.brakeTargetSpeed * 1.08)
+            let finalGlideSpeed = max(0.26, object.brakeTargetSpeed * 0.92)
 
-            if distance <= 1.0 {
+            if distance <= 0.95 {
                 return finalGlideSpeed
             }
 
-            if distance <= 3.2 {
-                let finalMix = 1 - min(1.0, (distance - 1.0) / 2.2)
-                return trafficInterpolate(from: brakeSpeed, to: finalGlideSpeed, progress: pow(finalMix, 1.45))
+            if distance <= 4.6 {
+                let finalMix = 1 - min(1.0, (distance - 0.95) / 3.65)
+                let slowedApproach = trafficInterpolate(from: approachSpeed, to: brakeSpeed, progress: pow(finalMix, 0.72))
+                return trafficInterpolate(from: slowedApproach, to: finalGlideSpeed, progress: pow(finalMix, 1.35))
             }
 
             return approachSpeed

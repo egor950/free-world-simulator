@@ -1,17 +1,123 @@
 import Foundation
+import GameplayKit
 
 extension StreetTrafficCoordinator {
-    static let baseParkingSpawnChance: Float = 0.22
-    static let parkingChanceRampInterval: TimeInterval = 14
-    static let guaranteedParkingInterval: TimeInterval = 22
+    @MainActor
+    final class ParkingSpawnDirector {
+        private final class IdleState: GKState {
+            override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+                stateClass == ReadyState.self || stateClass == ActiveState.self
+            }
+        }
+
+        private final class ReadyState: GKState {
+            override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+                stateClass == ActiveState.self || stateClass == IdleState.self
+            }
+        }
+
+        private final class ActiveState: GKState {
+            override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+                stateClass == CooldownState.self || stateClass == IdleState.self
+            }
+        }
+
+        private final class CooldownState: GKState {
+            override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+                stateClass == ReadyState.self || stateClass == ActiveState.self || stateClass == IdleState.self
+            }
+        }
+
+        private let machine = GKStateMachine(states: [
+            IdleState(),
+            ReadyState(),
+            ActiveState(),
+            CooldownState()
+        ])
+
+        private var readyStartedAt: Date?
+        private var cooldownStartedAt: Date?
+
+        init() {
+            machine.enter(IdleState.self)
+        }
+
+        var isReady: Bool {
+            machine.currentState is ReadyState
+        }
+
+        func reset(initiallyReady: Bool, now: Date = Date()) {
+            readyStartedAt = initiallyReady ? now : nil
+            cooldownStartedAt = nil
+            machine.enter(initiallyReady ? ReadyState.self : IdleState.self)
+        }
+
+        func markParkingRouteStarted(at now: Date) {
+            readyStartedAt = nil
+            cooldownStartedAt = nil
+            machine.enter(ActiveState.self)
+        }
+
+        func update(now: Date, hasActiveParkingRoute: Bool) {
+            if hasActiveParkingRoute {
+                if !(machine.currentState is ActiveState) {
+                    markParkingRouteStarted(at: now)
+                }
+                return
+            }
+
+            if machine.currentState is ActiveState {
+                cooldownStartedAt = now
+                readyStartedAt = nil
+                machine.enter(CooldownState.self)
+                return
+            }
+
+            if machine.currentState is CooldownState {
+                let elapsed = now.timeIntervalSince(cooldownStartedAt ?? now)
+                if elapsed >= StreetTrafficCoordinator.minimumParkingCooldown {
+                    readyStartedAt = now
+                    cooldownStartedAt = nil
+                    machine.enter(ReadyState.self)
+                }
+                return
+            }
+
+            if machine.currentState == nil || machine.currentState is IdleState {
+                readyStartedAt = now
+                machine.enter(ReadyState.self)
+            }
+        }
+
+        func shouldSpawnParkingCar(now: Date, hasActiveParkingRoute: Bool) -> Bool {
+            update(now: now, hasActiveParkingRoute: hasActiveParkingRoute)
+            guard isReady, let readyStartedAt else {
+                return false
+            }
+
+            let elapsed = now.timeIntervalSince(readyStartedAt)
+            if elapsed >= StreetTrafficCoordinator.guaranteedParkingReadyInterval {
+                return true
+            }
+
+            let rampProgress = max(0.0, min(1.0, elapsed / StreetTrafficCoordinator.parkingChanceRampInterval))
+            let chance = StreetTrafficCoordinator.baseParkingSpawnChance + Float(rampProgress) * 0.42
+            return Float.random(in: 0...1) < chance
+        }
+    }
+
+    static let baseParkingSpawnChance: Float = 0.28
+    static let parkingChanceRampInterval: TimeInterval = 6
+    static let guaranteedParkingReadyInterval: TimeInterval = 11
+    static let minimumParkingCooldown: TimeInterval = 4
     static let fallbackSlowRollChance = 24
     static let minimumParkingApproachTime: Float = 2.2
     static let maximumParkingApproachTime: Float = 12.0
     static let parkingStopSpeedThreshold: Float = 0.06
     static let parkingStopApproachDistance: Float = 4.2
 
-    func routeStyleForNextSpawn() -> TrafficRouteStyle {
-        if shouldSpawnParkingCar() {
+    func routeStyleForNextSpawn(now: Date = Date()) -> TrafficRouteStyle {
+        if shouldSpawnParkingCar(now: now) {
             return .courtyardParking
         }
 
@@ -39,22 +145,8 @@ extension StreetTrafficCoordinator {
     }
 
     func shouldSpawnParkingCar(now: Date = Date()) -> Bool {
-        guard !activeTrafficRoutes.values.contains(.courtyardParking) else {
-            return false
-        }
-
-        guard lastCourtyardParkingStartedAt != .distantPast else {
-            return true
-        }
-
-        let elapsed = now.timeIntervalSince(lastCourtyardParkingStartedAt)
-        if elapsed >= Self.guaranteedParkingInterval {
-            return true
-        }
-
-        let rampProgress = max(0.0, min(1.0, elapsed / Self.parkingChanceRampInterval))
-        let chance = Self.baseParkingSpawnChance + Float(rampProgress) * 0.44
-        return Float.random(in: 0...1) < chance
+        let hasActiveParkingRoute = activeTrafficRoutes.values.contains(.courtyardParking)
+        return parkingSpawnDirector.shouldSpawnParkingCar(now: now, hasActiveParkingRoute: hasActiveParkingRoute)
     }
 
     func directionForSpawn(routeStyle: TrafficRouteStyle) -> Bool {
