@@ -278,6 +278,8 @@ enum AudioCueID: String {
     case doorbellMain
     case doorBangingHard
     case doorBreakHeavy
+    case gateOpen
+    case gateClose
     case punchHit
     case heartbeatFast
     case trafficEngineBase
@@ -322,6 +324,10 @@ enum AudioCueID: String {
             return "door_banging_hard"
         case .doorBreakHeavy:
             return "door_break_heavy"
+        case .gateOpen:
+            return "gate_open"
+        case .gateClose:
+            return "gate_close"
         case .punchHit:
             return "punch_hit"
         case .heartbeatFast:
@@ -349,7 +355,7 @@ enum AudioCueID: String {
             return "mp3"
         case .obstacleThud, .itemPlaceMetal01:
             return "m4a"
-        case .glassBreakSmall, .cabinetSmash, .doorbellMain, .doorBangingHard, .doorBreakHeavy, .punchHit, .heartbeatFast, .trafficEngineBase, .trafficBrakeSoft, .trafficEngineLight, .trafficEngineSedan, .trafficEngineSport, .trafficEngineCoupe, .trafficEngineRoadster:
+        case .glassBreakSmall, .cabinetSmash, .doorbellMain, .doorBangingHard, .doorBreakHeavy, .gateOpen, .gateClose, .punchHit, .heartbeatFast, .trafficEngineBase, .trafficBrakeSoft, .trafficEngineLight, .trafficEngineSedan, .trafficEngineSport, .trafficEngineCoupe, .trafficEngineRoadster:
             return "wav"
         }
     }
@@ -378,6 +384,10 @@ enum AudioCueID: String {
             return 0.72
         case .doorBreakHeavy:
             return 1.08
+        case .gateOpen:
+            return 0.86
+        case .gateClose:
+            return 0.84
         case .punchHit:
             return 0.82
         case .heartbeatFast:
