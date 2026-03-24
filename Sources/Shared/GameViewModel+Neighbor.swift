@@ -98,7 +98,6 @@ extension GameViewModel {
     func startNeighborBreakIn(introText: String, finalText: String) {
         guard shouldContinueNeighborSequence else { return }
         guard neighborBreakInTask == nil else { return }
-        guard !neighborEncounterMachine.isBreakInActive else { return }
 
         neighborEncounterMachine.markBreakInStarted()
         neighborResponseTask?.cancel()

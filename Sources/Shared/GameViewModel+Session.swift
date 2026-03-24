@@ -56,6 +56,7 @@ extension GameViewModel {
         stage = flowController.currentStage
 
         let room = rooms[.hallway]!
+        cancelKettleBoilingTask(resetWaterState: false)
         state = WorldRuntimeState(
             player: PlayerState(
                 roomID: .hallway,
@@ -130,6 +131,7 @@ extension GameViewModel {
 
     func resetForNewSession() {
         cancelNeighborTasks()
+        cancelKettleBoilingTask(resetWaterState: false)
         neighborDoorHitsTarget = 0
         audioCoordinator.playAmbient(nil)
         audioCoordinator.setStreetPresence(.off, fadeDuration: 0)

@@ -99,6 +99,14 @@ extension GameViewModel {
     }
 
     func describeCurrentFocus() {
+        if currentFocusItem == nil,
+           currentFocusDoor == nil,
+           currentFocusStreetCarSnapshot() == nil,
+           let heldAction = heldItemAction(for: .describe) {
+            apply(heldAction)
+            return
+        }
+
         let text: String
         let focusedStreetCar = currentFocusStreetCarSnapshot()
         var streetCarDepartureID: UUID?
@@ -155,15 +163,31 @@ extension GameViewModel {
             return action
         }
 
+        if let action = heldItemAction(for: trigger) {
+            return action
+        }
+
         return bedItemWhileOnBed?.actionsProvider(state).first(where: { $0.trigger == trigger })
     }
 
     func heldItemAction(for trigger: ActionTrigger) -> ItemAction? {
-        guard state.player.heldItem?.itemID == BedroomPillow.itemID else {
+        guard let heldItemID = state.player.heldItem?.itemID else {
             return nil
         }
 
-        return BedroomPillow.heldActions(for: state).first(where: { $0.trigger == trigger })
+        let actions: [ItemAction]
+        switch heldItemID {
+        case BedroomPillow.itemID:
+            actions = BedroomPillow.heldActions(for: state)
+        case KitchenKettle.itemID:
+            actions = KitchenKettle.heldActions(for: state)
+        case KitchenMug.itemID:
+            actions = KitchenMug.heldActions(for: state)
+        default:
+            actions = []
+        }
+
+        return actions.first(where: { $0.trigger == trigger })
     }
 
     func inventoryQuickAction() -> ItemAction? {
@@ -242,6 +266,7 @@ extension GameViewModel {
         }
 
         syncBedAnchorAfterAction()
+        syncKettleBoilingTask()
         audioCoordinator.playEffect(action.sound)
         let extraReaction = reactToLoudActionIfNeeded(for: action)
         refreshScreenState()

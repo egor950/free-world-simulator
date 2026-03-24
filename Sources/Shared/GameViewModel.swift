@@ -298,6 +298,7 @@ final class GameViewModel: ObservableObject {
     var state: WorldRuntimeState
     var pendingAnnouncementTask: Task<Void, Never>?
     var pendingStreetCarDepartureTask: Task<Void, Never>?
+    var kettleBoilingTask: Task<Void, Never>?
     var neighborResponseTask: Task<Void, Never>?
     var neighborBreakInTask: Task<Void, Never>?
     lazy var neighborEncounterMachine = NeighborEncounterMachine()

@@ -325,8 +325,9 @@ extension GameViewModel {
                 GridPosition(x: 2, y: 1),
                 GridPosition(x: 3, y: 1),
                 GridPosition(x: 4, y: 1),
-                GridPosition(x: 5, y: 1),
+                GridPosition(x: 4, y: 2),
                 GridPosition(x: 5, y: 2),
+                GridPosition(x: 5, y: 1),
                 GridPosition(x: 6, y: 1)
             ]
         case .bathroom:

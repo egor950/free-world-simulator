@@ -45,7 +45,7 @@ extension GameViewModel {
 
     var currentFocusItem: ItemDefinition? {
         guard let node = currentFocusNode, case let .item(id) = node.target else { return nil }
-        return currentRoom.items[id]
+        return itemDefinition(for: id)
     }
 
     var bedItemWhileOnBed: ItemDefinition? {
@@ -58,20 +58,53 @@ extension GameViewModel {
     }
 
     var dynamicVisibleNodes: [FocusNode] {
-        guard currentRoom.id == .street else {
-            return []
+        var nodes: [FocusNode] = []
+
+        if currentRoom.id == .street {
+            nodes.append(contentsOf: streetCarSnapshots.filter(\.isInspectable).map { snapshot in
+                FocusNode(
+                    id: "street.dynamic.car.\(snapshot.id.uuidString)",
+                    title: snapshot.title,
+                    position: snapshot.position,
+                    target: .none,
+                    shortPrompt: snapshot.shortPrompt,
+                    fullDescription: snapshot.fullDescription
+                )
+            })
         }
 
-        return streetCarSnapshots.filter(\.isInspectable).map { snapshot in
-            FocusNode(
-                id: "street.dynamic.car.\(snapshot.id.uuidString)",
-                title: snapshot.title,
-                position: snapshot.position,
-                target: .none,
-                shortPrompt: snapshot.shortPrompt,
-                fullDescription: snapshot.fullDescription
+        let relocatedItemIDs = [KitchenKettle.itemID, KitchenMug.itemID]
+        for itemID in relocatedItemIDs {
+            guard state.room(for: itemID) == currentRoom.id,
+                  currentRoom.items[itemID] == nil,
+                  let definition = itemDefinition(for: itemID),
+                  let position = state.position(for: itemID) else {
+                continue
+            }
+
+            nodes.append(
+                FocusNode(
+                    id: "dynamic.item.\(itemID)",
+                    title: definition.name,
+                    position: position,
+                    target: .item(itemID),
+                    shortPrompt: definition.shortPromptProvider(state),
+                    fullDescription: definition.fullDescriptionProvider(state)
+                )
             )
         }
+
+        return nodes
+    }
+
+    func itemDefinition(for itemID: String) -> ItemDefinition? {
+        for room in rooms.values {
+            if let item = room.items[itemID] {
+                return item
+            }
+        }
+
+        return nil
     }
 
     func currentShortPrompt() -> String {
@@ -412,18 +445,37 @@ extension GameViewModel {
             return isNeighborDoorVisible ? node : nil
         }
 
-        guard case let .item(id) = node.target, id == BedroomPillow.itemID else {
+        guard case let .item(id) = node.target else {
             return node
         }
 
-        guard let pillowPosition = currentPositionForPillow() else {
+        let customPosition: GridPosition?
+        switch id {
+        case BedroomPillow.itemID:
+            customPosition = currentPositionForPillow()
+        case KitchenKettle.itemID:
+            customPosition = currentPositionForVisibleItem(
+                itemID: id,
+                defaultPosition: GridPosition(x: 4, y: 2),
+                hiddenWhenOnStove: true
+            )
+        case KitchenMug.itemID:
+            customPosition = currentPositionForVisibleItem(
+                itemID: id,
+                defaultPosition: GridPosition(x: 2, y: 1)
+            )
+        default:
+            return node
+        }
+
+        guard let customPosition else {
             return nil
         }
 
         return FocusNode(
             id: node.id,
             title: node.title,
-            position: pillowPosition,
+            position: customPosition,
             target: node.target,
             shortPrompt: node.shortPrompt,
             fullDescription: node.fullDescription
@@ -448,6 +500,30 @@ extension GameViewModel {
         }
 
         return GridPosition(x: 4, y: 2)
+    }
+
+    func currentPositionForVisibleItem(
+        itemID: String,
+        defaultPosition: GridPosition,
+        hiddenWhenOnStove: Bool = false
+    ) -> GridPosition? {
+        if state.player.heldItem?.itemID == itemID {
+            return nil
+        }
+
+        if hiddenWhenOnStove && KitchenKettle.placement(in: state) == .onStove {
+            return nil
+        }
+
+        if state.room(for: itemID) != nil && state.room(for: itemID) != currentRoom.id {
+            return nil
+        }
+
+        if let customPosition = state.position(for: itemID) {
+            return customPosition
+        }
+
+        return defaultPosition
     }
 
     func manhattanDistance(from lhs: GridPosition, to rhs: GridPosition) -> Int {

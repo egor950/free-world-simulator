@@ -6,7 +6,7 @@ private final class PlaytestSession {
     private var lines: [String] = []
     private var stepCounter = 0
 
-    func run() {
+    func run() async {
         let game = makeStartedGame()
 
         log("=== Старт автопроверки ===")
@@ -17,6 +17,7 @@ private final class PlaytestSession {
         runStreetScenario()
         runStreetBoundaryScenario()
         runNeighborNoiseScenario()
+        await runKitchenWaterScenario()
 
         log("=== Итог ===")
         if failures == 0 {
@@ -114,9 +115,12 @@ private final class PlaytestSession {
         }
 
         press(game, .moveForward, "Упереться в край дороги")
-        expect(game.statusText.lowercased().contains("край дороги"),
-               "Улица ограничивает путь вперед",
-               "На краю улицы не сработало сообщение об ограничении")
+        let boundaryText = game.statusText.lowercased()
+        expect(
+            boundaryText.contains("край дороги") || boundaryText.contains("калитка закрыта"),
+            "Улица ограничивает путь вперед",
+            "На краю улицы не сработало сообщение об ограничении"
+        )
     }
 
     private func runNeighborNoiseScenario() {
@@ -157,6 +161,11 @@ private final class PlaytestSession {
             "После третьего громкого удара соседи не перешли к взлому двери"
         )
         expect(
+            game.neighborBreakInTask != nil,
+            "После третьего удара реально запускается таймер штурма",
+            "После третьего громкого удара состояние взлома поднялось, но сам таймер штурма не стартовал"
+        )
+        expect(
             game.statusText.lowercased().contains("ломай дверь"),
             "После третьего удара соседи идут на штурм",
             "После третьего громкого удара не запустился штурм соседей"
@@ -167,6 +176,108 @@ private final class PlaytestSession {
             game.focusTitle.lowercased().contains("входная дверь"),
             "Отладочная сцена соседской двери ставит прямо к двери",
             "Отладочная сцена соседской двери не поставила игрока к двери"
+        )
+    }
+
+    private func runKitchenWaterScenario() async {
+        log("=== Сценарий 6: чайник, кран, плита и кружка ===")
+        let game = makeStartedGame()
+
+        game.debugMovePlayer(to: .kitchen, position: GridPosition(x: 4, y: 2))
+        snapshot(game, title: "Стою у чайника")
+        expect(
+            game.focusTitle.lowercased().contains("чайник"),
+            "Отладочный переход поставил к чайнику",
+            "Не удалось поставить игрока к чайнику"
+        )
+
+        press(game, .primaryAction, "Взять чайник")
+        expect(
+            game.holdText.lowercased().contains("чайник"),
+            "Чайник оказался в руках",
+            "После взятия чайник не оказался в руках"
+        )
+
+        press(game, .primaryAction, "Открыть крышку чайника")
+        expect(
+            game.statusText.lowercased().contains("открыл крышку"),
+            "Крышка чайника открылась",
+            "Не получилось открыть крышку чайника"
+        )
+
+        game.debugMovePlayer(to: .bathroom, position: GridPosition(x: 2, y: 1))
+        snapshot(game, title: "Стою у крана")
+        expect(
+            game.focusTitle.lowercased().contains("кран"),
+            "Отладочный переход поставил к крану",
+            "Не удалось поставить игрока к крану"
+        )
+
+        press(game, .primaryAction, "Налить воду в чайник")
+        expect(
+            game.statusText.lowercased().contains("налил воду"),
+            "Вода набралась в чайник",
+            "Не получилось налить воду в чайник"
+        )
+
+        game.debugMovePlayer(to: .kitchen, position: GridPosition(x: 3, y: 1))
+        snapshot(game, title: "Стою у плиты")
+        expect(
+            game.focusTitle.lowercased().contains("плита"),
+            "Отладочный переход поставил к плите",
+            "Не удалось поставить игрока к плите"
+        )
+
+        press(game, .placeHeldItem, "Поставить чайник на плиту")
+        expect(
+            game.focusTitle.lowercased().contains("плита"),
+            "После установки чайника фокус остался на плите",
+            "После установки чайника плита не осталась в фокусе"
+        )
+
+        press(game, .primaryAction, "Включить плиту")
+        expect(
+            game.statusText.lowercased().contains("начинает греться"),
+            "Плита включилась и чайник греется",
+            "После включения плиты не появилось сообщение о нагреве"
+        )
+
+        try? await Task.sleep(nanoseconds: UInt64((KitchenStove.kettleBoilDuration + 0.6) * 1_000_000_000))
+        snapshot(game, title: "Жду, пока вода закипит")
+        expect(
+            game.statusText.lowercased().contains("закипела"),
+            "Автоматическое кипячение завершилось",
+            "Вода в чайнике не закипела автоматически"
+        )
+
+        press(game, .primaryAction, "Выключить плиту")
+        press(game, .placeHeldItem, "Снять чайник с плиты")
+        expect(
+            game.holdText.lowercased().contains("чайник"),
+            "После снятия чайник снова в руках",
+            "После снятия чайник не вернулся в руки"
+        )
+
+        game.debugMovePlayer(to: .kitchen, position: GridPosition(x: 2, y: 1))
+        snapshot(game, title: "Стою у кружки")
+        expect(
+            game.focusTitle.lowercased().contains("кружка"),
+            "Отладочный переход поставил к кружке",
+            "Не удалось поставить игрока к кружке"
+        )
+
+        press(game, .primaryAction, "Налить кипяток в кружку")
+        expect(
+            game.statusText.lowercased().contains("налил кипяток"),
+            "Кипяток перелился в кружку",
+            "Не получилось налить кипяток в кружку"
+        )
+
+        press(game, .describeFocus, "Осмотреть кружку")
+        expect(
+            game.statusText.lowercased().contains("горячая вода"),
+            "Описание кружки показывает горячую воду",
+            "После наливания описание кружки не обновилось"
         )
     }
 
@@ -272,7 +383,7 @@ private final class PlaytestSession {
 
 Task { @MainActor in
     let session = PlaytestSession()
-    session.run()
+    await session.run()
     exit(session.failures > 0 ? 1 : 0)
 }
 
