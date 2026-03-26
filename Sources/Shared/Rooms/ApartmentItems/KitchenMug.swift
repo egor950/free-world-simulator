@@ -2,36 +2,42 @@ import Foundation
 
 enum KitchenMug {
     static let itemID = "kitchen.mug"
+    static let extraStoreMugPrefix = "groceryStore.mug."
+    private static let generatedCounterKey = "groceryStore.mug.counter"
 
     enum FillState: String {
         case empty
         case filledHotWater
     }
 
-    static func fillState(in state: WorldRuntimeState) -> FillState {
+    static func isMugItemID(_ candidateID: String) -> Bool {
+        candidateID == itemID || candidateID.hasPrefix(extraStoreMugPrefix)
+    }
+
+    static func fillState(in state: WorldRuntimeState, itemID: String = itemID) -> FillState {
         state.itemStage(itemID: itemID, as: FillState.self, default: .empty)
     }
 
-    static func setFillState(_ value: FillState, in state: inout WorldRuntimeState) {
+    static func setFillState(_ value: FillState, in state: inout WorldRuntimeState, itemID: String = itemID) {
         state.setItemStage(itemID: itemID, stage: value)
     }
 
-    static func make() -> ItemDefinition {
+    static func make(itemID definitionItemID: String = itemID, name: String = "кружка") -> ItemDefinition {
         ItemDefinition(
-            id: itemID,
-            name: "кружка",
+            id: definitionItemID,
+            name: name,
             shortPromptProvider: { state in
-                if state.player.heldItem?.itemID == itemID {
-                    return fillState(in: state) == .filledHotWater ? "В руках кружка с горячей водой." : "В руках пустая кружка."
+                if state.player.heldItem?.itemID == definitionItemID {
+                    return fillState(in: state, itemID: definitionItemID) == .filledHotWater ? "В руках кружка с горячей водой." : "В руках пустая кружка."
                 }
-                return fillState(in: state) == .filledHotWater ? "Кружка с горячей водой." : "Пустая кружка."
+                return fillState(in: state, itemID: definitionItemID) == .filledHotWater ? "Кружка с горячей водой." : "Пустая кружка."
             },
             fullDescriptionProvider: { state in
-                let contentText = fillState(in: state) == .filledHotWater
+                let contentText = fillState(in: state, itemID: definitionItemID) == .filledHotWater
                     ? "Внутри горячая вода."
                     : "Пока она пустая."
 
-                if state.player.heldItem?.itemID == itemID {
+                if state.player.heldItem?.itemID == definitionItemID {
                     return "У тебя в руках кружка. \(contentText)"
                 }
 
@@ -53,7 +59,7 @@ enum KitchenMug {
                             ]
                         }
 
-                        if fillState(in: state) == .filledHotWater {
+                        if fillState(in: state, itemID: definitionItemID) == .filledHotWater {
                             return [
                                 ItemAction(
                                     trigger: .primary,
@@ -75,7 +81,7 @@ enum KitchenMug {
                                 requiresHeldItemID: KitchenKettle.itemID,
                                 producesHeldItem: nil
                             ) { runtimeState in
-                                setFillState(.filledHotWater, in: &runtimeState)
+                                setFillState(.filledHotWater, in: &runtimeState, itemID: definitionItemID)
                                 KitchenKettle.setWaterState(.empty, in: &runtimeState)
                             }
                         ]
@@ -106,7 +112,7 @@ enum KitchenMug {
                     ]
                 }
 
-                let takeText = state.position(for: itemID) == nil
+                let takeText = state.position(for: definitionItemID) == nil
                     ? "Ты взял кружку."
                     : "Ты поднял кружку."
 
@@ -117,19 +123,19 @@ enum KitchenMug {
                         resultText: takeText,
                         sound: nil,
                         requiresHeldItemID: nil,
-                        producesHeldItem: HeldItem(itemID: itemID, name: "кружка")
+                        producesHeldItem: HeldItem(itemID: definitionItemID, name: name)
                     ) { runtimeState in
-                        runtimeState.clearItemLocation(itemID: itemID)
+                        runtimeState.clearItemLocation(itemID: definitionItemID)
                     }
                 ]
             }
         )
     }
 
-    static func heldActions(for state: WorldRuntimeState) -> [ItemAction] {
-        guard state.player.heldItem?.itemID == itemID else { return [] }
+    static func heldActions(for state: WorldRuntimeState, itemID heldItemID: String) -> [ItemAction] {
+        guard state.player.heldItem?.itemID == heldItemID else { return [] }
 
-        let description = fillState(in: state) == .filledHotWater
+        let description = fillState(in: state, itemID: heldItemID) == .filledHotWater
             ? "У тебя в руках кружка с горячей водой."
             : "У тебя в руках пустая кружка."
 
@@ -139,7 +145,7 @@ enum KitchenMug {
                 title: "Осмотреть кружку",
                 resultText: description,
                 sound: nil,
-                requiresHeldItemID: itemID,
+                requiresHeldItemID: heldItemID,
                 producesHeldItem: nil
             ) { _ in },
             ItemAction(
@@ -147,12 +153,12 @@ enum KitchenMug {
                 title: "Бросить кружку под ноги",
                 resultText: "Ты поставил кружку на пол рядом с собой.",
                 sound: .itemPlaceMetal01,
-                requiresHeldItemID: itemID,
+                requiresHeldItemID: heldItemID,
                 producesHeldItem: nil
             ) { runtimeState in
                 runtimeState.player.heldItem = nil
                 runtimeState.setItemLocation(
-                    itemID: itemID,
+                    itemID: heldItemID,
                     roomID: runtimeState.player.roomID,
                     position: nearbyPlacementPosition(for: runtimeState)
                 )
@@ -162,17 +168,26 @@ enum KitchenMug {
                 title: "Положить кружку рядом",
                 resultText: "Ты положил кружку рядом с собой.",
                 sound: .itemPlaceMetal01,
-                requiresHeldItemID: itemID,
+                requiresHeldItemID: heldItemID,
                 producesHeldItem: nil
             ) { runtimeState in
                 runtimeState.player.heldItem = nil
                 runtimeState.setItemLocation(
-                    itemID: itemID,
+                    itemID: heldItemID,
                     roomID: runtimeState.player.roomID,
                     position: nearbyPlacementPosition(for: runtimeState)
                 )
             }
         ]
+    }
+
+    static func makeGeneratedHeldItem(in state: inout WorldRuntimeState) -> HeldItem {
+        let nextIndex = (Int(state.itemStage(itemID: generatedCounterKey, as: IntBackedStage.self, default: IntBackedStage(value: 1)).rawValue) ?? 1)
+        let newID = extraStoreMugPrefix + String(nextIndex)
+        state.setRawItemStage(itemID: generatedCounterKey, rawValue: String(nextIndex + 1))
+        setFillState(.empty, in: &state, itemID: newID)
+        state.clearItemLocation(itemID: newID)
+        return HeldItem(itemID: newID, name: "кружка")
     }
 
     private static func nearbyPlacementPosition(for state: WorldRuntimeState) -> GridPosition {
@@ -198,5 +213,17 @@ enum KitchenMug {
         }
 
         return current
+    }
+}
+
+private struct IntBackedStage: RawRepresentable {
+    let rawValue: String
+
+    init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+
+    init(value: Int) {
+        self.rawValue = String(value)
     }
 }

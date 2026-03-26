@@ -178,6 +178,8 @@ extension StreetTrafficCoordinator {
             let x = (Float(position.x) / Float(max(1, MainStreetRoom.width - 1))) * 180.0 - 90.0
             let z = 23.5 + (Float((MainStreetRoom.height - 1) - position.y) / Float(max(1, MainStreetRoom.height - 1))) * 30.0
             return OutdoorWorldPoint(x: x, z: z)
+        case .groceryStore:
+            return outdoorWorldPoint(for: .mainStreet, position: MainStreetRoom.groceryDoorPosition)
         default:
             return OutdoorWorldPoint(x: 0, z: 0)
         }

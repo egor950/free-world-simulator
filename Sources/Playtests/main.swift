@@ -16,8 +16,10 @@ private final class PlaytestSession {
         runDoorToggleScenario()
         runStreetScenario()
         runStreetBoundaryScenario()
+        runGroceryNavigationScenario()
         runNeighborNoiseScenario()
         await runKitchenWaterScenario()
+        await runCarDrivingScenario()
 
         log("=== Итог ===")
         if failures == 0 {
@@ -123,6 +125,66 @@ private final class PlaytestSession {
         )
     }
 
+    private func runGroceryNavigationScenario() {
+        log("=== Сценарий 5: маяк ведет от калитки до прилавка продуктового ===")
+        let game = makeStartedGame()
+        _ = game.runDebugScenario(named: "main_street_entry")
+
+        press(game, .locationMenuToggle, "Открыть меню маяка")
+        press(game, .locationMenuConfirm, "Включить маяк продуктового")
+
+        for _ in 0..<120 {
+            if game.roomTitle == "Продуктовый" {
+                break
+            }
+
+            let hint = game.currentNavigationBeaconHint()?.lowercased() ?? ""
+            if hint.contains("вправо") {
+                press(game, .moveRight, "Иду вправо по маяку")
+            } else if hint.contains("влево") {
+                press(game, .moveLeft, "Иду влево по маяку")
+            } else if hint.contains("назад") || hint.contains("позади") {
+                press(game, .moveBackward, "Иду назад по маяку")
+            } else {
+                press(game, .moveForward, "Иду вперед по маяку")
+            }
+
+            if game.focusTitle.lowercased().contains("дверь продуктового"),
+               game.focusShortText.lowercased().contains("закрыта") {
+                press(game, .primaryAction, "Открыть дверь продуктового")
+            }
+        }
+
+        expect(
+            game.roomTitle == "Продуктовый",
+            "Маяк довел до магазина",
+            "Маршрут по маяку не довел до магазина"
+        )
+
+        for _ in 0..<40 {
+            if game.focusTitle.lowercased().contains("продавец") {
+                break
+            }
+
+            let hint = game.currentNavigationBeaconHint()?.lowercased() ?? ""
+            if hint.contains("вправо") {
+                press(game, .moveRight, "Иду вправо к прилавку")
+            } else if hint.contains("влево") {
+                press(game, .moveLeft, "Иду влево к прилавку")
+            } else if hint.contains("назад") || hint.contains("позади") {
+                press(game, .moveBackward, "Иду назад к прилавку")
+            } else {
+                press(game, .moveForward, "Иду вперед к прилавку")
+            }
+        }
+
+        expect(
+            game.focusTitle.lowercased().contains("продавец"),
+            "Маяк довел до прилавка",
+            "После входа в магазин маяк не довел до прилавка"
+        )
+    }
+
     private func runNeighborNoiseScenario() {
         log("=== Сценарий 5: соседи реагируют на шум ===")
         let game = makeStartedGame()
@@ -180,7 +242,7 @@ private final class PlaytestSession {
     }
 
     private func runKitchenWaterScenario() async {
-        log("=== Сценарий 6: чайник, кран, плита и кружка ===")
+        log("=== Сценарий 6: чайник, кран, подставка и кружка ===")
         let game = makeStartedGame()
 
         game.debugMovePlayer(to: .kitchen, position: GridPosition(x: 4, y: 2))
@@ -221,28 +283,33 @@ private final class PlaytestSession {
         )
 
         game.debugMovePlayer(to: .kitchen, position: GridPosition(x: 3, y: 1))
-        snapshot(game, title: "Стою у плиты")
+        snapshot(game, title: "Стою у подставки чайника")
         expect(
-            game.focusTitle.lowercased().contains("плита"),
-            "Отладочный переход поставил к плите",
-            "Не удалось поставить игрока к плите"
+            game.focusTitle.lowercased().contains("подставка"),
+            "Отладочный переход поставил к подставке чайника",
+            "Не удалось поставить игрока к подставке"
         )
 
-        press(game, .placeHeldItem, "Поставить чайник на плиту")
+        press(game, .placeHeldItem, "Поставить чайник на подставку")
         expect(
-            game.focusTitle.lowercased().contains("плита"),
-            "После установки чайника фокус остался на плите",
-            "После установки чайника плита не осталась в фокусе"
+            game.focusTitle.lowercased().contains("подставка"),
+            "После установки чайника фокус остался на подставке",
+            "После установки чайника подставка не осталась в фокусе"
         )
 
-        press(game, .primaryAction, "Включить плиту")
+        press(game, .primaryAction, "Включить чайник")
         expect(
             game.statusText.lowercased().contains("начинает греться"),
-            "Плита включилась и чайник греется",
-            "После включения плиты не появилось сообщение о нагреве"
+            "Чайник включился и греется",
+            "После включения чайника не появилось сообщение о нагреве"
         )
 
-        try? await Task.sleep(nanoseconds: UInt64((KitchenStove.kettleBoilDuration + 0.6) * 1_000_000_000))
+        let boilWait =
+            max(
+                KitchenStove.kettleBaseHeatDuration - game.audioCoordinator.duration(of: .kettleHeatFinish),
+                game.audioCoordinator.duration(of: .kettleHeatStart) + KitchenStove.minimumLoopDuration
+            ) + game.audioCoordinator.duration(of: .kettleHeatFinish) + 0.8
+        try? await Task.sleep(nanoseconds: UInt64(boilWait * 1_000_000_000))
         snapshot(game, title: "Жду, пока вода закипит")
         expect(
             game.statusText.lowercased().contains("закипела"),
@@ -250,8 +317,7 @@ private final class PlaytestSession {
             "Вода в чайнике не закипела автоматически"
         )
 
-        press(game, .primaryAction, "Выключить плиту")
-        press(game, .placeHeldItem, "Снять чайник с плиты")
+        press(game, .placeHeldItem, "Снять чайник с подставки")
         expect(
             game.holdText.lowercased().contains("чайник"),
             "После снятия чайник снова в руках",
@@ -279,6 +345,107 @@ private final class PlaytestSession {
             "Описание кружки показывает горячую воду",
             "После наливания описание кружки не обновилось"
         )
+    }
+
+    private func runCarDrivingScenario() async {
+        log("=== Сценарий 7: посадка в машину, короткая поездка и повторная посадка ===")
+        let game = makeStartedGame()
+
+        _ = game.runDebugScenario(named: "street_parked_car")
+        try? await Task.sleep(nanoseconds: 300_000_000)
+
+        expect(
+            game.currentFocusDriveableCarContext() != nil,
+            "Отладочная машина доступна для посадки",
+            "Не удалось получить доступную припаркованную машину"
+        )
+
+        press(game, .primaryAction, "Сесть в машину")
+        try? await Task.sleep(nanoseconds: 2_400_000_000)
+
+        guard let controlledCar = game.state.controlledCar else {
+            expect(false, "После посадки появилась машина игрока", "После посадки машина не перешла под управление игрока")
+            return
+        }
+
+        expect(
+            controlledCar.engineState == .running,
+            "После посадки мотор уже работает",
+            "После полной посадки мотор не оказался в состоянии running"
+        )
+
+        let controlledCarID = controlledCar.id
+        let startZ = controlledCar.worldPosition.z
+        await hold(game, .moveForward, duration: 3.6, title: "Держу газ до калитки")
+
+        let movedZ = game.state.controlledCar?.worldPosition.z ?? startZ
+        expect(
+            movedZ > startZ + 1.0,
+            "Машина реально поехала вперед",
+            "После нескольких нажатий газа машина почти не сдвинулась"
+        )
+        expect(
+            (game.state.controlledCar?.worldPosition.z ?? 0) >= 16.9,
+            "Машина стабильно доехала до калитки",
+            "Даже на удержании газа машина не дошла до линии калитки"
+        )
+        expect(
+            game.statusText.lowercased().contains("калитк"),
+            "У закрытой калитки есть понятная подсказка",
+            "У закрытой калитки игра не подсказала, почему машина остановилась"
+        )
+
+        for _ in 0..<8 {
+            press(game, .moveBackward, "Тормоз")
+            try? await Task.sleep(nanoseconds: 220_000_000)
+            if abs(game.state.controlledCar?.speed ?? 0) <= 0.35 {
+                break
+            }
+        }
+
+        let reverseStartZ = game.state.controlledCar?.worldPosition.z ?? 0
+        await hold(game, .moveBackward, duration: 0.18, title: "Коротко держу тормоз у калитки")
+        let reverseAfterShortHold = game.state.controlledCar?.worldPosition.z ?? reverseStartZ
+        expect(
+            reverseAfterShortHold >= reverseStartZ - 0.2,
+            "Короткое нажатие назад у калитки не уводит машину далеко назад",
+            "После короткого нажатия назад машина слишком резко откатилась от калитки"
+        )
+
+        press(game, .primaryAction, "Выйти из машины")
+        try? await Task.sleep(nanoseconds: 1_700_000_000)
+
+        expect(
+            game.state.controlledCar == nil,
+            "После выхода управление машиной снято",
+            "После полного выхода игрок всё ещё числится внутри машины"
+        )
+        expect(
+            game.state.parkedOwnedCars[controlledCarID] != nil,
+            "Оставленная машина осталась в мире",
+            "После выхода машина не сохранилась как оставленная"
+        )
+
+        press(game, .primaryAction, "Снова сесть в ту же машину")
+        try? await Task.sleep(nanoseconds: 1_500_000_000)
+
+        expect(
+            game.state.controlledCar?.id == controlledCarID,
+            "Повторная посадка возвращает ту же машину",
+            "После повторной посадки игрок не получил ту же машину обратно"
+        )
+        expect(
+            game.state.controlledCar?.engineState == .running,
+            "При повторной посадке мотор остаётся заведённым",
+            "После повторной посадки мотор не оказался в состоянии running"
+        )
+    }
+
+    private func hold(_ game: GameViewModel, _ command: GameCommand, duration: TimeInterval, title: String) async {
+        game.handleKeyboardInput(.press(command))
+        try? await Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
+        game.handleKeyboardInput(.release(command))
+        snapshot(game, title: title)
     }
 
     private func walkToDoorAndPass(_ game: GameViewModel, doorName: String, expectedRoom: String) {

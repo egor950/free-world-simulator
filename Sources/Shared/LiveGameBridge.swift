@@ -290,11 +290,49 @@ final class LiveGameBridge {
             appendBridgeLog("press: \(rawCommand)")
             return game.statePayload(recentPhrases: Array(spokenPhrases.suffix(12)))
 
+        case "key_down":
+            guard let game = viewModel else {
+                throw LiveGameBridgeError("Живая игра еще не запущена. Сначала вызови start_game.")
+            }
+            guard let rawCommand = arguments["command"] as? String,
+                  let command = GameCommand.parse(rawCommand) else {
+                throw LiveGameBridgeError("Неизвестная команда для живой игры.")
+            }
+            game.handleKeyboardInput(.press(command))
+            appendBridgeLog("key_down: \(rawCommand)")
+            return game.statePayload(recentPhrases: Array(spokenPhrases.suffix(12)))
+
+        case "key_up":
+            guard let game = viewModel else {
+                throw LiveGameBridgeError("Живая игра еще не запущена. Сначала вызови start_game.")
+            }
+            guard let rawCommand = arguments["command"] as? String,
+                  let command = GameCommand.parse(rawCommand) else {
+                throw LiveGameBridgeError("Неизвестная команда для живой игры.")
+            }
+            game.handleKeyboardInput(.release(command))
+            appendBridgeLog("key_up: \(rawCommand)")
+            return game.statePayload(recentPhrases: Array(spokenPhrases.suffix(12)))
+
         case "get_state":
             guard let game = viewModel else {
                 throw LiveGameBridgeError("Живая игра еще не запущена. Сначала вызови start_game.")
             }
             return game.statePayload(recentPhrases: Array(spokenPhrases.suffix(12)))
+
+        case "observe_game":
+            guard let game = viewModel else {
+                throw LiveGameBridgeError("Живая игра еще не запущена. Сначала вызови start_game.")
+            }
+            let phraseCursor = max(0, arguments["phraseCursor"] as? Int ?? 0)
+            let gameLogCursor = max(0, arguments["gameLogCursor"] as? Int ?? 0)
+            let bridgeLogCursor = max(0, arguments["bridgeLogCursor"] as? Int ?? 0)
+            return observationPayload(
+                for: game,
+                phraseCursor: phraseCursor,
+                gameLogCursor: gameLogCursor,
+                bridgeLogCursor: bridgeLogCursor
+            )
 
         case "get_phrases":
             let limit = max(1, arguments["limit"] as? Int ?? 20)
@@ -335,6 +373,16 @@ final class LiveGameBridge {
             }
             appendBridgeLog("teleport: \(roomID) \(x),\(y)")
             return game.statePayload(recentPhrases: Array(spokenPhrases.suffix(12)))
+
+        case "debug_world":
+            guard let game = viewModel else {
+                throw LiveGameBridgeError("Живая игра еще не запущена. Сначала вызови start_game.")
+            }
+            guard let operation = arguments["operation"] as? String, !operation.isEmpty else {
+                throw LiveGameBridgeError("Для debug_world нужна operation.")
+            }
+            appendBridgeLog("debug_world: \(operation)")
+            return try game.debugWorld(operation: operation, arguments: arguments)
 
         default:
             throw LiveGameBridgeError("Неизвестное действие для живой игры: \(action)")
@@ -380,6 +428,22 @@ final class LiveGameBridge {
         if lines.count > 2000 {
             lines.removeFirst(lines.count - 2000)
         }
+    }
+
+    private func observationPayload(
+        for game: GameViewModel,
+        phraseCursor: Int,
+        gameLogCursor: Int,
+        bridgeLogCursor: Int
+    ) -> [String: Any] {
+        var payload = game.statePayload(recentPhrases: Array(spokenPhrases.suffix(12)))
+        payload["phraseCursor"] = spokenPhrases.count
+        payload["gameLogCursor"] = gameLog.count
+        payload["bridgeLogCursor"] = bridgeLog.count
+        payload["newPhrases"] = Array(spokenPhrases.dropFirst(min(phraseCursor, spokenPhrases.count)))
+        payload["newGameLog"] = Array(gameLog.dropFirst(min(gameLogCursor, gameLog.count)))
+        payload["newBridgeLog"] = Array(bridgeLog.dropFirst(min(bridgeLogCursor, bridgeLog.count)))
+        return payload
     }
 
     private func appendDebugFileLine(_ line: String) {

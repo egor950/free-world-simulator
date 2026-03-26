@@ -22,6 +22,7 @@ enum RoomID: String, CaseIterable, Identifiable {
     case bathroom
     case street
     case mainStreet
+    case groceryStore
 
     var id: String { rawValue }
 }
@@ -142,6 +143,8 @@ enum GameCommand: String, Identifiable {
     case placeHeldItem
     case inventoryToggle
     case inventoryQuickAction
+    case locationMenuToggle
+    case locationMenuConfirm
 
     var id: String { rawValue }
 
@@ -169,6 +172,10 @@ enum GameCommand: String, Identifiable {
             return "Инвентарь"
         case .inventoryQuickAction:
             return "Инвентарь действие"
+        case .locationMenuToggle:
+            return "Маяк"
+        case .locationMenuConfirm:
+            return "Подтвердить маяк"
         }
     }
 
@@ -196,6 +203,10 @@ enum GameCommand: String, Identifiable {
             return "I / Escape"
         case .inventoryQuickAction:
             return "C"
+        case .locationMenuToggle:
+            return "X"
+        case .locationMenuConfirm:
+            return "Enter"
         }
     }
 
@@ -223,10 +234,20 @@ enum GameCommand: String, Identifiable {
             return .inventoryToggle
         case "inventory_quick", "inventory_place", "c":
             return .inventoryQuickAction
+        case "location_menu", "beacon", "x":
+            return .locationMenuToggle
+        case "location_confirm", "enter", "return":
+            return .locationMenuConfirm
         default:
             return nil
         }
     }
+}
+
+enum KeyboardInputEvent {
+    case press(GameCommand)
+    case release(GameCommand)
+    case command(GameCommand)
 }
 
 struct PlatformButtonDefinition: Identifiable {
@@ -295,6 +316,11 @@ enum AudioCueID: String {
     case gateClose
     case punchHit
     case heartbeatFast
+    case kettleBasePlace
+    case kettleSwitchOn
+    case kettleHeatStart
+    case kettleHeatLoop
+    case kettleHeatFinish
     case trafficEngineBase
     case trafficBrakeSoft
     case trafficEngineLight
@@ -302,6 +328,17 @@ enum AudioCueID: String {
     case trafficEngineSport
     case trafficEngineCoupe
     case trafficEngineRoadster
+    case playerCarDoorOpen
+    case playerCarDoorClose
+    case playerCarBrake
+    case playerEngineLight
+    case playerEngineSedan
+    case playerEngineSport
+    case playerEngineCoupe
+    case playerStartLight
+    case playerStartSedan
+    case playerStartSport
+    case playerStartCoupe
 
     var resourceName: String {
         switch self {
@@ -345,6 +382,16 @@ enum AudioCueID: String {
             return "punch_hit"
         case .heartbeatFast:
             return "heartbeat_fast"
+        case .kettleBasePlace:
+            return "kettle_base_place_01"
+        case .kettleSwitchOn:
+            return "kettle_switch_on_01"
+        case .kettleHeatStart:
+            return "kettle_heat_start"
+        case .kettleHeatLoop:
+            return "kettle_heat_loop"
+        case .kettleHeatFinish:
+            return "kettle_heat_finish"
         case .trafficEngineBase:
             return "traffic_engine_base"
         case .trafficBrakeSoft:
@@ -359,16 +406,40 @@ enum AudioCueID: String {
             return "traffic_engine_coupe"
         case .trafficEngineRoadster:
             return "traffic_engine_roadster"
+        case .playerCarDoorOpen:
+            return "car_door_open"
+        case .playerCarDoorClose:
+            return "car_door_close"
+        case .playerCarBrake:
+            return "player_car_brake"
+        case .playerEngineLight:
+            return "ts3_light_engine"
+        case .playerEngineSedan:
+            return "ts3_sedan_engine"
+        case .playerEngineSport:
+            return "ts3_sport_engine"
+        case .playerEngineCoupe:
+            return "ts3_coupe_engine"
+        case .playerStartLight:
+            return "ts3_start_light"
+        case .playerStartSedan:
+            return "ts3_start_common_b"
+        case .playerStartSport:
+            return "ts3_start_key"
+        case .playerStartCoupe:
+            return "ts3_start_coupe"
         }
     }
 
     var fileExtension: String {
         switch self {
-        case .stepCarpet01, .stepCarpet02, .stepAsphalt01, .stepAsphalt02, .stepAsphalt03, .stepAsphalt04, .stepAsphalt05, .ambientRoom01, .cityStreetBed:
+        case .stepCarpet01, .stepCarpet02, .stepAsphalt01, .stepAsphalt02, .stepAsphalt03, .stepAsphalt04, .stepAsphalt05, .ambientRoom01, .cityStreetBed, .kettleBasePlace, .kettleSwitchOn:
             return "mp3"
         case .obstacleThud, .itemPlaceMetal01:
             return "m4a"
-        case .glassBreakSmall, .cabinetSmash, .doorbellMain, .doorBangingHard, .doorBreakHeavy, .gateOpen, .gateClose, .punchHit, .heartbeatFast, .trafficEngineBase, .trafficBrakeSoft, .trafficEngineLight, .trafficEngineSedan, .trafficEngineSport, .trafficEngineCoupe, .trafficEngineRoadster:
+        case .playerCarDoorOpen, .playerCarDoorClose:
+            return "mp3"
+        case .glassBreakSmall, .cabinetSmash, .doorbellMain, .doorBangingHard, .doorBreakHeavy, .gateOpen, .gateClose, .punchHit, .heartbeatFast, .kettleHeatStart, .kettleHeatLoop, .kettleHeatFinish, .trafficEngineBase, .trafficBrakeSoft, .trafficEngineLight, .trafficEngineSedan, .trafficEngineSport, .trafficEngineCoupe, .trafficEngineRoadster, .playerCarBrake, .playerEngineLight, .playerEngineSedan, .playerEngineSport, .playerEngineCoupe, .playerStartLight, .playerStartSedan, .playerStartSport, .playerStartCoupe:
             return "wav"
         }
     }
@@ -405,6 +476,16 @@ enum AudioCueID: String {
             return 0.82
         case .heartbeatFast:
             return 0.34
+        case .kettleBasePlace:
+            return 0.82
+        case .kettleSwitchOn:
+            return 0.72
+        case .kettleHeatStart:
+            return 0.44
+        case .kettleHeatLoop:
+            return 0.28
+        case .kettleHeatFinish:
+            return 0.38
         case .trafficEngineBase:
             return 0.44
         case .trafficBrakeSoft:
@@ -419,11 +500,33 @@ enum AudioCueID: String {
             return 0.43
         case .trafficEngineRoadster:
             return 0.41
+        case .playerCarDoorOpen:
+            return 0.82
+        case .playerCarDoorClose:
+            return 0.88
+        case .playerCarBrake:
+            return 0.68
+        case .playerEngineLight:
+            return 0.82
+        case .playerEngineSedan:
+            return 0.84
+        case .playerEngineSport:
+            return 0.8
+        case .playerEngineCoupe:
+            return 0.82
+        case .playerStartLight:
+            return 0.92
+        case .playerStartSedan:
+            return 0.95
+        case .playerStartSport:
+            return 0.95
+        case .playerStartCoupe:
+            return 0.95
         }
     }
 
     var loops: Bool {
-        self == .ambientRoom01 || self == .heartbeatFast || self == .cityStreetBed
+        self == .ambientRoom01 || self == .heartbeatFast || self == .cityStreetBed || self == .kettleHeatLoop
     }
 }
 
@@ -474,7 +577,28 @@ struct ItemAction {
     let sound: AudioCueID?
     let requiresHeldItemID: String?
     let producesHeldItem: HeldItem?
+    let interactionID: String?
     let stateMutation: (inout WorldRuntimeState) -> Void
+
+    init(
+        trigger: ActionTrigger,
+        title: String,
+        resultText: String,
+        sound: AudioCueID?,
+        requiresHeldItemID: String?,
+        producesHeldItem: HeldItem?,
+        interactionID: String? = nil,
+        stateMutation: @escaping (inout WorldRuntimeState) -> Void
+    ) {
+        self.trigger = trigger
+        self.title = title
+        self.resultText = resultText
+        self.sound = sound
+        self.requiresHeldItemID = requiresHeldItemID
+        self.producesHeldItem = producesHeldItem
+        self.interactionID = interactionID
+        self.stateMutation = stateMutation
+    }
 }
 
 struct ItemDefinition {
@@ -543,6 +667,8 @@ struct PlayerState {
 
 struct WorldRuntimeState {
     var player: PlayerState
+    var controlledCar: ControlledCarState?
+    var parkedOwnedCars: [UUID: ParkedOwnedCarState] = [:]
     private(set) var itemStages: [String: String] = [:]
     private(set) var itemPositions: [String: GridPosition] = [:]
     private(set) var itemRooms: [String: RoomID] = [:]
@@ -567,12 +693,20 @@ struct WorldRuntimeState {
         itemStages[itemID] = stage?.rawValue
     }
 
+    mutating func setRawItemStage(itemID: String, rawValue: String?) {
+        itemStages[itemID] = rawValue
+    }
+
     func position(for itemID: String) -> GridPosition? {
         itemPositions[itemID]
     }
 
     func room(for itemID: String) -> RoomID? {
         itemRooms[itemID]
+    }
+
+    var locatedItemIDs: [String] {
+        Array(itemRooms.keys)
     }
 
     mutating func setItemLocation(itemID: String, roomID: RoomID, position: GridPosition) {
@@ -583,5 +717,13 @@ struct WorldRuntimeState {
     mutating func clearItemLocation(itemID: String) {
         itemRooms[itemID] = nil
         itemPositions[itemID] = nil
+    }
+
+    mutating func setParkedOwnedCar(_ car: ParkedOwnedCarState) {
+        parkedOwnedCars[car.id] = car
+    }
+
+    mutating func removeParkedOwnedCar(id: UUID) {
+        parkedOwnedCars[id] = nil
     }
 }

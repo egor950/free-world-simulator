@@ -45,6 +45,16 @@ extension GameViewModel {
         statusText = text
     }
 
+    func announceDrivingHintIfNeeded(_ text: String, minimumGap: TimeInterval = 1.25) {
+        statusText = text
+        let now = Date()
+        let shouldSpeak = text != lastDrivingHintText || now.timeIntervalSince(lastDrivingHintAt) >= minimumGap
+        guard shouldSpeak else { return }
+        lastDrivingHintText = text
+        lastDrivingHintAt = now
+        speechCoordinator.speak(text)
+    }
+
     func syncAudioWorldState() {
         guard stage == .exploration else { return }
 
@@ -68,5 +78,12 @@ extension GameViewModel {
             audioCoordinator.setStreetPresence(.off)
             audioCoordinator.setTrafficEnabled(false)
         }
+
+        audioCoordinator.syncParkedOwnedCarAudio(
+            cars: Array(state.parkedOwnedCars.values),
+            listenerRoomID: currentRoom.id,
+            listenerPosition: state.player.roomPosition,
+            controlledCar: state.controlledCar
+        )
     }
 }

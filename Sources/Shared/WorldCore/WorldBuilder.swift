@@ -9,7 +9,8 @@ enum WorldBuilder {
             KitchenRoom.make(),
             BathroomRoom.make(),
             StreetRoom.make(),
-            MainStreetRoom.make()
+            MainStreetRoom.make(),
+            GroceryStoreRoom.make()
         ]
 
         return Dictionary(uniqueKeysWithValues: rooms.map { ($0.id, $0) })

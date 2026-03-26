@@ -72,11 +72,61 @@ final class GameRuntime {
         return try payload(from: response)
     }
 
+    func keyDown(_ commandName: String) throws -> [String: Any] {
+        guard hasActiveSession else {
+            throw RuntimeError("Сессия игры не запущена. Сначала вызови start_game.")
+        }
+        let response = try liveClient.request(action: "key_down", arguments: [
+            "command": commandName
+        ])
+        lastLiveCommandAt = Date()
+        appendLog("key_down live: \(commandName)")
+        return try payload(from: response)
+    }
+
+    func keyUp(_ commandName: String) throws -> [String: Any] {
+        guard hasActiveSession else {
+            throw RuntimeError("Сессия игры не запущена. Сначала вызови start_game.")
+        }
+        let response = try liveClient.request(action: "key_up", arguments: [
+            "command": commandName
+        ])
+        lastLiveCommandAt = Date()
+        appendLog("key_up live: \(commandName)")
+        return try payload(from: response)
+    }
+
+    func holdKey(_ commandName: String, duration: TimeInterval) throws -> [String: Any] {
+        guard hasActiveSession else {
+            throw RuntimeError("Сессия игры не запущена. Сначала вызови start_game.")
+        }
+        let safeDuration = max(0.05, min(10.0, duration))
+        _ = try keyDown(commandName)
+        Thread.sleep(forTimeInterval: safeDuration)
+        return try keyUp(commandName)
+    }
+
     func getState() throws -> [String: Any] {
         guard hasActiveSession else {
             throw RuntimeError("Сессия игры не запущена. Сначала вызови start_game.")
         }
         let response = try liveClient.request(action: "get_state", arguments: [:])
+        return try payload(from: response)
+    }
+
+    func observeGame(
+        phraseCursor: Int,
+        gameLogCursor: Int,
+        bridgeLogCursor: Int
+    ) throws -> [String: Any] {
+        guard hasActiveSession else {
+            throw RuntimeError("Сессия игры не запущена. Сначала вызови start_game.")
+        }
+        let response = try liveClient.request(action: "observe_game", arguments: [
+            "phraseCursor": max(0, phraseCursor),
+            "gameLogCursor": max(0, gameLogCursor),
+            "bridgeLogCursor": max(0, bridgeLogCursor)
+        ])
         return try payload(from: response)
     }
 
@@ -134,6 +184,16 @@ final class GameRuntime {
         ])
         lastLiveCommandAt = Date()
         appendLog("teleport: \(roomID) \(x),\(y)")
+        return try payload(from: response)
+    }
+
+    func debugWorld(arguments: [String: Any]) throws -> [String: Any] {
+        guard hasActiveSession else {
+            throw RuntimeError("Сессия игры не запущена. Сначала вызови start_game.")
+        }
+        let response = try liveClient.request(action: "debug_world", arguments: arguments)
+        lastLiveCommandAt = Date()
+        appendLog("debug_world: \(arguments["operation"] as? String ?? "?")")
         return try payload(from: response)
     }
 
@@ -385,11 +445,78 @@ final class MCPServer {
                         ]
                     ],
                     [
+                        "name": "key_down",
+                        "description": "Зажимает игровую команду. Нужно для машины: держать газ, тормоз или руль.",
+                        "inputSchema": [
+                            "type": "object",
+                            "properties": [
+                                "command": [
+                                    "type": "string",
+                                    "description": "Команда управления."
+                                ]
+                            ],
+                            "required": ["command"]
+                        ]
+                    ],
+                    [
+                        "name": "key_up",
+                        "description": "Отпускает ранее зажатую игровую команду.",
+                        "inputSchema": [
+                            "type": "object",
+                            "properties": [
+                                "command": [
+                                    "type": "string",
+                                    "description": "Команда управления."
+                                ]
+                            ],
+                            "required": ["command"]
+                        ]
+                    ],
+                    [
+                        "name": "hold_key",
+                        "description": "Зажимает команду на указанное время и потом отпускает. Удобно для машинных прогонов через MCP.",
+                        "inputSchema": [
+                            "type": "object",
+                            "properties": [
+                                "command": [
+                                    "type": "string",
+                                    "description": "Команда управления."
+                                ],
+                                "duration": [
+                                    "type": "number",
+                                    "description": "Сколько секунд держать кнопку."
+                                ]
+                            ],
+                            "required": ["command", "duration"]
+                        ]
+                    ],
+                    [
                         "name": "get_state",
                         "description": "Возвращает текущее состояние игры: комната, что рядом, статус и позиция.",
                         "inputSchema": [
                             "type": "object",
                             "properties": [:]
+                        ]
+                    ],
+                    [
+                        "name": "observe_game",
+                        "description": "Тихо наблюдает за живой игрой и возвращает только новые фразы и новые события с прошлого запроса, плюс текущее состояние.",
+                        "inputSchema": [
+                            "type": "object",
+                            "properties": [
+                                "phraseCursor": [
+                                    "type": "integer",
+                                    "description": "Сколько фраз уже было прочитано наблюдателем."
+                                ],
+                                "gameLogCursor": [
+                                    "type": "integer",
+                                    "description": "Сколько игровых строк лога уже было прочитано."
+                                ],
+                                "bridgeLogCursor": [
+                                    "type": "integer",
+                                    "description": "Сколько служебных строк моста уже было прочитано."
+                                ]
+                            ]
                         ]
                     ],
                     [
@@ -434,10 +561,14 @@ final class MCPServer {
                             "properties": [
                                 "name": [
                                     "type": "string",
-                                    "description": "Имя отладочного сценария."
+                                    "description": "Имя или id отладочного сценария."
+                                ],
+                                "id": [
+                                    "type": "string",
+                                    "description": "Id отладочного сценария. Можно передавать вместо name."
                                 ]
                             ],
-                            "required": ["name"]
+                            "required": []
                         ]
                     ],
                     [
@@ -460,6 +591,108 @@ final class MCPServer {
                                 ]
                             ],
                             "required": ["roomID", "x", "y"]
+                        ]
+                    ],
+                    [
+                        "name": "debug_world",
+                        "description": "Низкоуровневое управление миром. Операции: get_runtime_state, set_player, set_held_item, clear_held_item, set_item_location, clear_item_location, set_state, clear_state, neighbor_set_state, neighbor_loud_step, neighbor_start_break_in, neighbor_attack, neighbor_set_config, refresh.",
+                        "inputSchema": [
+                            "type": "object",
+                            "properties": [
+                                "operation": [
+                                    "type": "string",
+                                    "description": "Имя низкоуровневой debug-операции."
+                                ],
+                                "itemID": [
+                                    "type": "string",
+                                    "description": "ID предмета для операций над предметами."
+                                ],
+                                "roomID": [
+                                    "type": "string",
+                                    "description": "Комната для игрока или предмета."
+                                ],
+                                "x": [
+                                    "type": "integer",
+                                    "description": "Координата X."
+                                ],
+                                "y": [
+                                    "type": "integer",
+                                    "description": "Координата Y."
+                                ],
+                                "pose": [
+                                    "type": "string",
+                                    "description": "Поза игрока: standing, lying, crawling."
+                                ],
+                                "name": [
+                                    "type": "string",
+                                    "description": "Имя предмета в руках."
+                                ],
+                                "key": [
+                                    "type": "string",
+                                    "description": "Сырой ключ состояния."
+                                ],
+                                "target": [
+                                    "type": "string",
+                                    "description": "Удобное имя состояния, например kettle.water, kettle.lid, kettle.placement, mug.fill, stove.stage, tv.stage."
+                                ],
+                                "value": [
+                                    "type": "string",
+                                    "description": "Новое строковое значение состояния."
+                                ],
+                                "state": [
+                                    "type": "string",
+                                    "description": "Состояние соседа: calm, warned, doorbell, breakin, resolved."
+                                ],
+                                "introText": [
+                                    "type": "string",
+                                    "description": "Текст старта штурма соседа."
+                                ],
+                                "finalText": [
+                                    "type": "string",
+                                    "description": "Текст состояния штурма."
+                                ],
+                                "text": [
+                                    "type": "string",
+                                    "description": "Текст для прямой соседской атаки."
+                                ],
+                                "logLine": [
+                                    "type": "string",
+                                    "description": "Строка в лог для соседской атаки."
+                                ],
+                                "responsePauseMin": [
+                                    "type": "number",
+                                    "description": "Минимальная пауза между звонками/стуками соседа."
+                                ],
+                                "responsePauseMax": [
+                                    "type": "number",
+                                    "description": "Максимальная пауза между звонками/стуками соседа."
+                                ],
+                                "breakInPauseMin": [
+                                    "type": "number",
+                                    "description": "Минимальная пауза между ударами при штурме."
+                                ],
+                                "breakInPauseMax": [
+                                    "type": "number",
+                                    "description": "Максимальная пауза между ударами при штурме."
+                                ],
+                                "hitsTarget": [
+                                    "type": "integer",
+                                    "description": "Сколько ударов нужно до пролома."
+                                ],
+                                "footstepCount": [
+                                    "type": "integer",
+                                    "description": "Сколько шагов делает сосед после пролома."
+                                ],
+                                "footstepPause": [
+                                    "type": "number",
+                                    "description": "Пауза между шагами соседа."
+                                ],
+                                "reset": [
+                                    "type": "boolean",
+                                    "description": "Сбросить debug-настройки соседей."
+                                ]
+                            ],
+                            "required": ["operation"]
                         ]
                     ]
                 ]
@@ -502,8 +735,39 @@ final class MCPServer {
                 }
                 payload = try runtime.press(command)
 
+            case "key_down":
+                guard let command = arguments["command"] as? String else {
+                    throw RuntimeError("Для key_down нужно поле command.")
+                }
+                payload = try runtime.keyDown(command)
+
+            case "key_up":
+                guard let command = arguments["command"] as? String else {
+                    throw RuntimeError("Для key_up нужно поле command.")
+                }
+                payload = try runtime.keyUp(command)
+
+            case "hold_key":
+                guard let command = arguments["command"] as? String else {
+                    throw RuntimeError("Для hold_key нужно поле command.")
+                }
+                guard let duration = arguments["duration"] as? Double else {
+                    throw RuntimeError("Для hold_key нужно поле duration.")
+                }
+                payload = try runtime.holdKey(command, duration: duration)
+
             case "get_state":
                 payload = try runtime.getState()
+
+            case "observe_game":
+                let phraseCursor = arguments["phraseCursor"] as? Int ?? 0
+                let gameLogCursor = arguments["gameLogCursor"] as? Int ?? 0
+                let bridgeLogCursor = arguments["bridgeLogCursor"] as? Int ?? 0
+                payload = try runtime.observeGame(
+                    phraseCursor: phraseCursor,
+                    gameLogCursor: gameLogCursor,
+                    bridgeLogCursor: bridgeLogCursor
+                )
 
             case "get_phrases":
                 let limit = arguments["limit"] as? Int ?? 20
@@ -517,8 +781,11 @@ final class MCPServer {
                 payload = try runtime.listDebugScenarios()
 
             case "run_debug_scenario":
-                guard let name = arguments["name"] as? String, !name.isEmpty else {
-                    throw RuntimeError("Для run_debug_scenario нужно поле name.")
+                let scenarioName = (arguments["name"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
+                let scenarioID = (arguments["id"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
+                let resolvedName = scenarioName?.isEmpty == false ? scenarioName : scenarioID
+                guard let name = resolvedName, !name.isEmpty else {
+                    throw RuntimeError("Для run_debug_scenario нужно поле name или id.")
                 }
                 payload = try runtime.runDebugScenario(name)
 
@@ -529,6 +796,9 @@ final class MCPServer {
                     throw RuntimeError("Для teleport нужны roomID, x и y.")
                 }
                 payload = try runtime.teleport(roomID: roomID, x: x, y: y)
+
+            case "debug_world":
+                payload = try runtime.debugWorld(arguments: arguments)
 
             default:
                 throw RuntimeError("Неизвестный инструмент: \(name)")

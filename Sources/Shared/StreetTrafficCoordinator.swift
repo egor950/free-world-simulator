@@ -21,6 +21,9 @@ final class StreetTrafficCoordinator {
         let shortPrompt: String
         let fullDescription: String
         let position: GridPosition
+        let worldPosition: OutdoorCarWorldPosition
+        let directionLeftToRight: Bool
+        let vehicleKind: DriveableVehicleKind
         let isParked: Bool
         let isInspectable: Bool
     }
@@ -469,7 +472,7 @@ final class StreetTrafficCoordinator {
         isEnabled = enabled
 
         if enabled {
-            parkingSpawnDirector.reset(initiallyReady: true)
+            parkingSpawnDirector.reset(initiallyReady: false)
             if let scenario = activeDebugScenario {
                 if activeTrafficPlayers.isEmpty {
                     runDebugScenarioInternal(scenario)
@@ -519,10 +522,86 @@ final class StreetTrafficCoordinator {
                 "shortPrompt": snapshot.shortPrompt,
                 "x": snapshot.position.x,
                 "y": snapshot.position.y,
+                "worldX": snapshot.worldPosition.x,
+                "worldZ": snapshot.worldPosition.z,
+                "vehicleKind": snapshot.vehicleKind.rawValue,
+                "directionLeftToRight": snapshot.directionLeftToRight,
                 "isParked": snapshot.isParked,
                 "isInspectable": snapshot.isInspectable
             ]
         }
+    }
+
+    func ensureDriveableCourtyardCar() {
+        let alreadyHasDriveable = activeStreetCarSnapshots.values.contains {
+            $0.isParked && $0.vehicleKind != .roadster
+        }
+        guard !alreadyHasDriveable else { return }
+        guard activeDebugScenario == nil else { return }
+
+        let preferredProfiles = trafficProfiles.filter {
+            vehicleKind(for: $0.cue) != .roadster
+        }
+        guard let profile = preferredProfiles.randomElement() else { return }
+        let buffer = trafficBufferCache[profile.cue] ?? loadPCMBuffer(for: profile.cue)
+        guard let buffer else { return }
+        trafficBufferCache[profile.cue] = buffer
+
+        let plan = makeCourtyardAccessPlan(
+            entrySide: .left,
+            exitSide: .right,
+            parkingPoint: OutdoorWorldPoint(x: -4.5, z: 3.4)
+        )
+
+        let object = TrafficObject(
+            id: UUID(),
+            profile: profile,
+            speedBand: .slow,
+            directionLeftToRight: true,
+            routeStyle: .courtyardParking,
+            courtyardAccessPlan: plan,
+            startPhase: .parked,
+            baseVolume: min(1.0, profile.cue.defaultVolume * profile.volumeBoost * 1.25),
+            toneOffset: 0,
+            sampleRate: buffer.format.sampleRate,
+            startX: plan.parkingPoint.x,
+            startZ: plan.parkingPoint.z,
+            endX: plan.parkingPoint.x,
+            finalExitX: plan.streetDeparturePoint.x,
+            roadZ: courtyardMainStreetLaneZ,
+            nearZ: plan.parkingPoint.z,
+            entrySpeed: 0,
+            cruiseSpeed: 2.8,
+            maxSpeed: 3.6,
+            acceleration: 2.8,
+            brakeDeceleration: 3.4,
+            rollingDeceleration: 0.32,
+            dragFactor: 0.028,
+            brakeTargetSpeed: 0.34,
+            brakeCenterX: plan.parkingPoint.x,
+            brakeHalfWidth: max(6.0, abs(plan.parkingPoint.x - plan.courtyardEntryPoint.x)),
+            parkHoldDuration: 600
+        )
+
+        parkingSpawnDirector.markParkingRouteStarted(at: Date())
+        startTrafficObject(object, buffer: buffer)
+    }
+
+    func claimParkedCar(id: UUID) -> StreetCarSnapshot? {
+        guard let snapshot = activeStreetCarSnapshots[id], snapshot.isParked else {
+            return nil
+        }
+
+        if let task = activeTrafficTasks.removeValue(forKey: id) {
+            task.cancel()
+        }
+        activeTrafficRoutes.removeValue(forKey: id)
+        activeTrafficCues.removeValue(forKey: id)
+        activeTrafficSpeedBands.removeValue(forKey: id)
+        activeCourtyardParkingIDs.remove(id)
+        forcedDepartureIDs.remove(id)
+        clearStreetCarSnapshot(for: id)
+        return snapshot
     }
 
     private func startLoop() {
@@ -1323,6 +1402,10 @@ final class StreetTrafficCoordinator {
     }
 
     private func trafficVolume(for object: TrafficObject, x: Float, z: Float, speed: Float, isParked: Bool) -> Float {
+        if isParked {
+            return 0
+        }
+
         let listenerPoint = listenerOutdoorWorldPoint()
         let listenerX = listenerPoint.x
         let listenerZ = listenerPoint.z
@@ -1332,7 +1415,7 @@ final class StreetTrafficCoordinator {
         let audibleRadius: Float = object.routeStyle == .courtyardParking ? 30 : 42
         let distanceFade = max(0, 1 - (distance / audibleRadius))
         let distanceMix = pow(distanceFade, 1.8)
-        let motionBoost = isParked ? 0.8 : min(1.0, 0.48 + (speed / max(0.1, object.maxSpeed)) * 0.94)
+        let motionBoost = min(1.0, 0.48 + (speed / max(0.1, object.maxSpeed)) * 0.94)
         let travelDistance = max(1, abs(object.finalExitX - object.startX))
         let traveled = abs(x - object.startX)
         let remaining = abs(object.finalExitX - x)
@@ -1341,9 +1424,7 @@ final class StreetTrafficCoordinator {
         let fadeIn = min(1.0, fadeInDistance / max(6, travelDistance * 0.18))
         let fadeOut = min(1.0, remaining / max(7, travelDistance * 0.16))
         let routeFade: Float
-        if isParked {
-            routeFade = usesInteriorDebugStart ? 1.0 : fadeIn
-        } else if usesInteriorDebugStart {
+        if usesInteriorDebugStart {
             routeFade = max(0.76, min(fadeIn, fadeOut))
         } else {
             routeFade = min(fadeIn, fadeOut)
@@ -1360,7 +1441,7 @@ final class StreetTrafficCoordinator {
             } else if listenerOutdoorRoomID == .street, !isParked, z >= courtyardMainStreetLaneZ - 1 {
                 routeBoost = 0.72
             } else {
-                routeBoost = isParked ? 0.94 : 1.05
+                routeBoost = 1.05
             }
         }
         return min(1.0, object.baseVolume * motionBoost * routeBoost * distanceMix * routeFade)
@@ -1430,8 +1511,8 @@ final class StreetTrafficCoordinator {
             shortPrompt = "\(hint) \(title). Мотор ожил, машина начинает уезжать."
             fullDescription = "Перед тобой \(title). \(streetCarAppearanceDescription(for: object.profile.cue)) Она уже тронулась, мотор набирает силу, и машина уходит со двора."
         } else if isParked {
-            shortPrompt = "\(hint) \(title). Она стоит во дворе и тихо урчит на холостых."
-            fullDescription = "Перед тобой \(title). \(streetCarAppearanceDescription(for: object.profile.cue)) Она припаркована во дворе, мотор мягко урчит, а если подойти ближе, хорошо чувствуются двери, стекла, капот и спокойные холостые обороты."
+            shortPrompt = "\(hint) \(title). Она припаркована во дворе."
+            fullDescription = "Перед тобой \(title). \(streetCarAppearanceDescription(for: object.profile.cue)) Она просто стоит во дворе. Если подойти ближе, хорошо чувствуются двери, стекла и линия капота."
         } else if object.routeStyle == .courtyardParking {
             shortPrompt = "\(hint) \(title). Она заезжает во двор."
             fullDescription = "Перед тобой \(title). \(streetCarAppearanceDescription(for: object.profile.cue)) Она ещё едет и тормозит, докатываясь до парковочного места."
@@ -1447,6 +1528,9 @@ final class StreetTrafficCoordinator {
             shortPrompt: shortPrompt,
             fullDescription: fullDescription,
             position: snapshotPosition,
+            worldPosition: OutdoorCarWorldPosition(x: x, z: z),
+            directionLeftToRight: object.directionLeftToRight,
+            vehicleKind: vehicleKind(for: object.profile.cue),
             isParked: isParked,
             isInspectable: isInspectable
         )
@@ -1517,6 +1601,23 @@ final class StreetTrafficCoordinator {
             return "родстер"
         default:
             return "машина"
+        }
+    }
+
+    private func vehicleKind(for cue: AudioCueID) -> DriveableVehicleKind {
+        switch cue {
+        case .trafficEngineLight:
+            return .light
+        case .trafficEngineSedan:
+            return .sedan
+        case .trafficEngineSport:
+            return .sport
+        case .trafficEngineCoupe:
+            return .coupe
+        case .trafficEngineRoadster:
+            return .roadster
+        default:
+            return .sedan
         }
     }
 

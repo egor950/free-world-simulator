@@ -284,6 +284,9 @@ final class GameViewModel: ObservableObject {
     @Published var isInventoryOpen: Bool = false
     @Published var inventoryTitle: String = ""
     @Published var inventoryText: String = ""
+    @Published var isLocationMenuOpen: Bool = false
+    @Published var locationMenuTitle: String = ""
+    @Published var locationMenuText: String = ""
 
     let platformControls = PlatformControls.current
     let speechCoordinator: SpeechCoordinator
@@ -301,17 +304,26 @@ final class GameViewModel: ObservableObject {
     var kettleBoilingTask: Task<Void, Never>?
     var neighborResponseTask: Task<Void, Never>?
     var neighborBreakInTask: Task<Void, Never>?
+    var navigationBeaconTask: Task<Void, Never>?
+    var activeNavigationBeaconID: String?
+    var selectedLocationMenuIndex: Int = 0
     lazy var neighborEncounterMachine = NeighborEncounterMachine()
+    let groceryStoreClerkMachine = GroceryStoreClerkMachine()
     let roomTraversalMachine = RoomTraversalMachine()
     let poseMachine = PoseMachine()
     let inventoryMachine = InventoryMachine()
+    let vehicleRuntime = GameVehicleRuntime()
     var lastMovementAt: Date = .distantPast
     var bedAnchorPosition: GridPosition?
     var doorLifecycleMachines: [String: DoorLifecycleMachine] = [:]
     var gateLifecycleMachines: [String: GateLifecycleMachine] = [:]
     var gateTransitionTasks: [String: Task<Void, Never>] = [:]
     var neighborDoorHitsTarget = 0
-    var streetCarSnapshots: [StreetTrafficCoordinator.StreetCarSnapshot] = []
+    var debugNeighborResponsePauseRange: ClosedRange<Double>?
+    var debugNeighborBreakInPauseRange: ClosedRange<Double>?
+    var debugNeighborDoorHitsTargetOverride: Int?
+    var debugNeighborFootstepCountOverride: Int?
+    var debugNeighborFootstepPauseOverride: TimeInterval?
 
     init(
         speechCoordinator: SpeechCoordinator? = nil,
@@ -448,6 +460,16 @@ final class GameViewModel: ObservableObject {
                     command: .placeHeldItem,
                     title: action.title,
                     hint: "Положить обратно"
+                )
+            )
+        }
+
+        if let quickAction = inventoryQuickAction() {
+            buttons.append(
+                PlatformButtonDefinition(
+                    command: .inventoryQuickAction,
+                    title: quickAction.title,
+                    hint: "Быстрое действие с предметом"
                 )
             )
         }

@@ -2,11 +2,13 @@ import Foundation
 
 enum KitchenStove {
     static let itemID = "kitchen.stove"
-    static let kettleBoilDuration: TimeInterval = 4.2
+    static let kettleBaseHeatDuration: TimeInterval = 16
+    static let minimumLoopDuration: TimeInterval = 2.4
 
     enum Stage: String {
         case off
         case on
+        case finishing
     }
 
     static func stage(in state: WorldRuntimeState) -> Stage {
@@ -20,30 +22,46 @@ enum KitchenStove {
     static func make() -> ItemDefinition {
         ItemDefinition(
             id: itemID,
-            name: "плита",
+            name: "подставка чайника",
             shortPromptProvider: { state in
-                stage(in: state) == .on ? "Включенная плита." : "Плита."
+                switch stage(in: state) {
+                case .off:
+                    return "Подставка чайника."
+                case .on:
+                    return "Включенная подставка чайника."
+                case .finishing:
+                    return "Подставка чайника. Чайник уже почти докипел."
+                }
             },
             fullDescriptionProvider: { state in
                 let kettleText: String
-                if KitchenKettle.placement(in: state) == .onStove {
-                    kettleText = "На плите стоит чайник."
+                if KitchenKettle.placement(in: state) == .onBase {
+                    kettleText = "На подставке стоит электрический чайник."
                 } else {
-                    kettleText = "Сейчас чайника на плите нет."
+                    kettleText = "Сейчас чайника на подставке нет."
                 }
 
-                let stageText = stage(in: state) == .on ? "Плита включена." : "Плита выключена."
-                return "Перед тобой плита. \(stageText) \(kettleText)"
+                let stageText: String
+                switch stage(in: state) {
+                case .off:
+                    stageText = "Подставка выключена."
+                case .on:
+                    stageText = "Подставка включена, чайник греется."
+                case .finishing:
+                    stageText = "Чайник уже шумит почти как кипящий."
+                }
+                return "Перед тобой подставка электрического чайника. \(stageText) \(kettleText)"
             },
             actionsProvider: { state in
-                let kettleOnStove = KitchenKettle.placement(in: state) == .onStove
+                let kettleOnBase = KitchenKettle.placement(in: state) == .onBase
 
-                if kettleOnStove {
+                if kettleOnBase {
                     var actions: [ItemAction] = []
                     let waterState = KitchenKettle.waterState(in: state)
-                    let stoveStage = stage(in: state)
+                    let baseStage = stage(in: state)
 
-                    if stoveStage == .off {
+                    switch baseStage {
+                    case .off:
                         let resultText: String
                         let shouldTurnOn: Bool
 
@@ -52,20 +70,20 @@ enum KitchenStove {
                             resultText = "Сначала налей воду в чайник."
                             shouldTurnOn = false
                         case .filled:
-                            resultText = "Ты включил плиту. Чайник начинает греться."
+                            resultText = "Ты включил чайник. Он начинает греться на подставке."
                             shouldTurnOn = true
                         case .boiling:
                             resultText = "Чайник уже греется."
                             shouldTurnOn = false
                         case .boiled:
-                            resultText = "Вода уже закипела. Можно выключить плиту и снять чайник."
+                            resultText = "Вода уже закипела. Можно снять чайник с подставки."
                             shouldTurnOn = false
                         }
 
                         actions.append(
                             ItemAction(
                                 trigger: .primary,
-                                title: "Включить плиту",
+                                title: "Включить чайник",
                                 resultText: resultText,
                                 sound: nil,
                                 requiresHeldItemID: nil,
@@ -76,12 +94,12 @@ enum KitchenStove {
                                 }
                             }
                         )
-                    } else {
+                    case .on:
                         actions.append(
                             ItemAction(
                                 trigger: .primary,
-                                title: "Выключить плиту",
-                                resultText: "Ты выключил плиту.",
+                                title: "Выключить чайник",
+                                resultText: "Ты выключил чайник.",
                                 sound: nil,
                                 requiresHeldItemID: nil,
                                 producesHeldItem: nil
@@ -89,17 +107,28 @@ enum KitchenStove {
                                 setStage(.off, in: &runtimeState)
                             }
                         )
+                    case .finishing:
+                        actions.append(
+                            ItemAction(
+                                trigger: .primary,
+                                title: "Послушать чайник",
+                                resultText: "Чайник уже почти докипел. Подожди ещё немного или сними его с подставки.",
+                                sound: nil,
+                                requiresHeldItemID: nil,
+                                producesHeldItem: nil
+                            ) { _ in }
+                        )
                     }
 
-                    if stoveStage == .off && state.player.heldItem == nil {
+                    if state.player.heldItem == nil {
                         actions.append(
                             ItemAction(
                                 trigger: .placeHeldItem,
-                                title: "Снять чайник с плиты",
-                                resultText: "Ты снял чайник с плиты.",
-                                sound: .itemPlaceMetal01,
+                                title: "Снять чайник с подставки",
+                                resultText: "Ты снял чайник с подставки.",
+                                sound: nil,
                                 requiresHeldItemID: nil,
-                                producesHeldItem: HeldItem(itemID: KitchenKettle.itemID, name: "чайник")
+                                producesHeldItem: HeldItem(itemID: KitchenKettle.itemID, name: "электрический чайник")
                             ) { runtimeState in
                                 KitchenKettle.setPlacement(.held, in: &runtimeState)
                                 setStage(.off, in: &runtimeState)
@@ -114,23 +143,23 @@ enum KitchenStove {
                     return [
                         ItemAction(
                             trigger: .primary,
-                            title: "Посмотреть на плиту",
-                            resultText: "Чтобы поставить чайник на плиту, удерживай E.",
+                            title: "Посмотреть на подставку",
+                            resultText: "Чтобы поставить чайник на подставку, удерживай E.",
                             sound: nil,
                             requiresHeldItemID: nil,
                             producesHeldItem: nil
                         ) { _ in },
                         ItemAction(
                             trigger: .placeHeldItem,
-                            title: "Поставить чайник на плиту",
-                            resultText: "Ты поставил чайник на плиту.",
-                            sound: .itemPlaceMetal01,
+                            title: "Поставить чайник на подставку",
+                            resultText: "Ты поставил чайник на подставку.",
+                            sound: .kettleBasePlace,
                             requiresHeldItemID: KitchenKettle.itemID,
                             producesHeldItem: nil
                         ) { runtimeState in
                             runtimeState.player.heldItem = nil
                             runtimeState.clearItemLocation(itemID: KitchenKettle.itemID)
-                            KitchenKettle.setPlacement(.onStove, in: &runtimeState)
+                            KitchenKettle.setPlacement(.onBase, in: &runtimeState)
                             setStage(.off, in: &runtimeState)
                         }
                     ]
@@ -139,8 +168,8 @@ enum KitchenStove {
                 return [
                     ItemAction(
                         trigger: .primary,
-                        title: "Проверить плиту",
-                        resultText: "Сначала поставь чайник на плиту.",
+                        title: "Проверить подставку",
+                        resultText: "Сначала поставь чайник на подставку.",
                         sound: nil,
                         requiresHeldItemID: nil,
                         producesHeldItem: nil
@@ -155,18 +184,31 @@ extension GameViewModel {
     func cancelKettleBoilingTask(resetWaterState: Bool = true) {
         kettleBoilingTask?.cancel()
         kettleBoilingTask = nil
+        audioCoordinator.stopKettleHeatingAudio()
 
-        if resetWaterState, KitchenKettle.waterState(in: state) == .boiling {
-            KitchenKettle.setWaterState(.filled, in: &state)
+        if resetWaterState {
+            let waterState = KitchenKettle.waterState(in: state)
+            if waterState == .boiling {
+                KitchenKettle.setWaterState(.filled, in: &state)
+            }
         }
     }
 
     func syncKettleBoilingTask() {
-        let kettleOnStove = KitchenKettle.placement(in: state) == .onStove
-        let stoveOn = KitchenStove.stage(in: state) == .on
+        let kettleOnBase = KitchenKettle.placement(in: state) == .onBase
+        let baseStage = KitchenStove.stage(in: state)
         let waterState = KitchenKettle.waterState(in: state)
 
-        let shouldRunTask = kettleOnStove && stoveOn && (waterState == .filled || waterState == .boiling)
+        if baseStage == .finishing {
+            if kettleOnBase && waterState == .boiling && kettleBoilingTask != nil {
+                return
+            }
+
+            cancelKettleBoilingTask()
+            return
+        }
+
+        let shouldRunTask = kettleOnBase && baseStage == .on && (waterState == .filled || waterState == .boiling)
 
         if !shouldRunTask {
             cancelKettleBoilingTask()
@@ -178,21 +220,45 @@ extension GameViewModel {
         }
 
         guard kettleBoilingTask == nil else { return }
+        audioCoordinator.startKettleHeatingAudio()
 
         kettleBoilingTask = Task { @MainActor [weak self] in
-            try? await Task.sleep(nanoseconds: UInt64(KitchenStove.kettleBoilDuration * 1_000_000_000))
-            guard let self, !Task.isCancelled else { return }
+            guard let self else { return }
+            defer { self.kettleBoilingTask = nil }
 
-            self.kettleBoilingTask = nil
+            let startDuration = self.audioCoordinator.duration(of: .kettleHeatStart)
+            let finishDuration = self.audioCoordinator.duration(of: .kettleHeatFinish)
+            let leadDuration = max(
+                KitchenStove.kettleBaseHeatDuration - finishDuration,
+                startDuration + KitchenStove.minimumLoopDuration
+            )
+
+            try? await Task.sleep(nanoseconds: UInt64(leadDuration * 1_000_000_000))
+            guard !Task.isCancelled else { return }
 
             let stillHeating =
-                KitchenKettle.placement(in: self.state) == .onStove &&
+                KitchenKettle.placement(in: self.state) == .onBase &&
                 KitchenStove.stage(in: self.state) == .on &&
                 KitchenKettle.waterState(in: self.state) == .boiling
 
             guard stillHeating else { return }
 
+            KitchenStove.setStage(.finishing, in: &self.state)
+            self.refreshScreenState()
+            self.audioCoordinator.finishKettleHeatingAudio()
+
+            try? await Task.sleep(nanoseconds: UInt64(finishDuration * 1_000_000_000))
+            guard !Task.isCancelled else { return }
+
+            let stillFinishing =
+                KitchenKettle.placement(in: self.state) == .onBase &&
+                KitchenStove.stage(in: self.state) == .finishing &&
+                KitchenKettle.waterState(in: self.state) == .boiling
+
+            guard stillFinishing else { return }
+
             KitchenKettle.setWaterState(.boiled, in: &self.state)
+            KitchenStove.setStage(.off, in: &self.state)
             self.refreshScreenState()
             self.addLog("Вода в чайнике закипела.")
             self.announce("Вода в чайнике закипела.")

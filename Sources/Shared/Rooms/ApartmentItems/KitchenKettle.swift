@@ -21,7 +21,7 @@ enum KitchenKettle {
         case defaultSpot
         case held
         case onFloor
-        case onStove
+        case onBase
     }
 
     static func waterState(in state: WorldRuntimeState) -> WaterState {
@@ -45,8 +45,8 @@ enum KitchenKettle {
             return .held
         }
 
-        if state.itemStage(itemID: placementKey, as: Placement.self, default: .defaultSpot) == .onStove {
-            return .onStove
+        if state.itemStage(itemID: placementKey, as: Placement.self, default: .defaultSpot) == .onBase {
+            return .onBase
         }
 
         if state.position(for: itemID) != nil || state.room(for: itemID) != nil {
@@ -71,14 +71,14 @@ enum KitchenKettle {
             name: "чайник",
             shortPromptProvider: { state in
                 if state.player.heldItem?.itemID == itemID {
-                    return "В руках чайник."
+                    return "В руках электрический чайник."
                 }
 
                 if placement(in: state) == .onFloor {
-                    return "Чайник рядом."
+                    return "Электрический чайник рядом."
                 }
 
-                return "Чайник."
+                return "Электрический чайник."
             },
             fullDescriptionProvider: { state in
                 let lidText = lidState(in: state) == .open ? "Крышка открыта." : "Крышка закрыта."
@@ -95,10 +95,10 @@ enum KitchenKettle {
                 }
 
                 if state.player.heldItem?.itemID == itemID {
-                    return "У тебя в руках чайник. \(lidText) \(waterText) Его можно поставить рядом, открыть или закрыть крышку."
+                    return "У тебя в руках электрический чайник. \(lidText) \(waterText) Его можно поставить рядом, открыть или закрыть крышку."
                 }
 
-                return "Перед тобой чайник. \(lidText) \(waterText)"
+                return "Перед тобой электрический чайник. \(lidText) \(waterText)"
             },
             actionsProvider: { state in
                 if state.player.heldItem?.itemID == itemID {
@@ -129,7 +129,7 @@ enum KitchenKettle {
                         resultText: takeText,
                         sound: nil,
                         requiresHeldItemID: nil,
-                        producesHeldItem: HeldItem(itemID: itemID, name: "чайник")
+                        producesHeldItem: HeldItem(itemID: itemID, name: "электрический чайник")
                     ) { runtimeState in
                         runtimeState.clearItemLocation(itemID: itemID)
                         setPlacement(.held, in: &runtimeState)
@@ -212,7 +212,7 @@ enum KitchenKettle {
         case .boiled:
             waterText = "Внутри уже кипяток."
         }
-        return "У тебя в руках чайник. \(lidText) \(waterText)"
+        return "У тебя в руках электрический чайник. \(lidText) \(waterText)"
     }
 
     private static func nearbyPlacementPosition(for state: WorldRuntimeState) -> GridPosition {

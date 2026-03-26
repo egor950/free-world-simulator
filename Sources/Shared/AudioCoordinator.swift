@@ -1,10 +1,17 @@
 @preconcurrency import AVFoundation
 import Foundation
+#if os(macOS)
+import AppKit
+#endif
 
 @MainActor
 final class AudioCoordinator {
     private static let defaultGlobalReverbPreset: AVAudioUnitReverbPreset = .largeHall
     private static let defaultGlobalReverbWetDryMix: Float = 46
+    private static let kettleLoopOverlapBeforeStartEnd: TimeInterval = 1.85
+    private static let kettleLoopFadeInDuration: TimeInterval = 0.22
+    private static let kettleLoopFadeOutForFinish: TimeInterval = 0.7
+    private static let kettleLoopInitialVolumeMultiplier: Float = 0.38
 
     enum StreetPresence: Equatable {
         case off
@@ -23,8 +30,8 @@ final class AudioCoordinator {
         let volumeMultiplier: Float
     }
 
-    private let isMuted: Bool
-    private let effectEngine = AVAudioEngine()
+    let isMuted: Bool
+    let effectEngine = AVAudioEngine()
     private let environmentNode = AVAudioEnvironmentNode()
     private let effectReverb = AVAudioUnitReverb()
     private let streetBedPlayer = AVAudioPlayerNode()
@@ -39,7 +46,16 @@ final class AudioCoordinator {
     private var streetBedBuffer: AVAudioPCMBuffer?
     private var streetPresence: StreetPresence = .off
     private var streetBedTransitionTask: Task<Void, Never>?
-    private var streetTraffic: StreetTrafficCoordinator?
+    var streetTraffic: StreetTrafficCoordinator?
+    let playerCarAudioRuntime = PlayerCarAudioRuntime()
+    let parkedOwnedCarAudioRuntime = ParkedOwnedCarAudioRuntime()
+    private var cueDurationCache: [AudioCueID: TimeInterval] = [:]
+    private var kettleSwitchPlayer: AVAudioPlayer?
+    private var kettleHeatStartPlayer: AVAudioPlayer?
+    private var kettleHeatLoopPlayer: AVAudioPlayer?
+    private var kettleHeatFinishPlayer: AVAudioPlayer?
+    private var kettleHeatLoopStartTask: Task<Void, Never>?
+    private var navigationMarkerPlayers: [AVAudioPlayer] = []
 
     init(isMuted: Bool = false) {
         self.isMuted = isMuted
@@ -188,6 +204,30 @@ final class AudioCoordinator {
         playEffect(.obstacleThud)
     }
 
+    func playNavigationMarker(pan: Float = 0) {
+        guard !isMuted else { return }
+        navigationMarkerPlayers.removeAll { !$0.isPlaying }
+
+        if let url = resourceURL(for: .itemPlaceMetal01) {
+            do {
+                let player = try AVAudioPlayer(contentsOf: url)
+                player.volume = 0.42
+                player.pan = max(-1, min(1, pan))
+                player.prepareToPlay()
+                player.play()
+                navigationMarkerPlayers.append(player)
+                return
+            } catch {
+            }
+        }
+
+        #if os(macOS)
+        NSSound.beep()
+        #else
+        playEffect(.obstacleThud)
+        #endif
+    }
+
     func playEffect(_ cue: AudioCueID?) {
         guard !isMuted else { return }
         guard let cue, let url = resourceURL(for: cue) else { return }
@@ -208,12 +248,91 @@ final class AudioCoordinator {
         }
     }
 
-    private func resourceURL(for cue: AudioCueID) -> URL? {
+    func duration(of cue: AudioCueID) -> TimeInterval {
+        if let cached = cueDurationCache[cue] {
+            return cached
+        }
+
+        let duration: TimeInterval
+        if let url = resourceURL(for: cue),
+           let file = try? AVAudioFile(forReading: url) {
+            duration = Double(file.length) / file.processingFormat.sampleRate
+        } else {
+            duration = 0
+        }
+
+        cueDurationCache[cue] = duration
+        return duration
+    }
+
+    func startKettleHeatingAudio() {
+        stopKettleHeatingAudio()
+        guard !isMuted else { return }
+
+        kettleSwitchPlayer = makePlayer(for: .kettleSwitchOn)
+        kettleSwitchPlayer?.play()
+
+        kettleHeatStartPlayer = makePlayer(for: .kettleHeatStart)
+        kettleHeatStartPlayer?.play()
+
+        let delay = max(0.05, duration(of: .kettleHeatStart) - Self.kettleLoopOverlapBeforeStartEnd)
+        kettleHeatLoopStartTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+            guard let self, !Task.isCancelled else { return }
+            self.startKettleHeatLoopIfNeeded()
+        }
+    }
+
+    func finishKettleHeatingAudio() {
+        kettleHeatLoopStartTask?.cancel()
+        kettleHeatLoopStartTask = nil
+        stopPlayer(&kettleHeatStartPlayer)
+        stopPlayer(&kettleSwitchPlayer)
+
+        if let loopPlayer = kettleHeatLoopPlayer {
+            loopPlayer.setVolume(0, fadeDuration: Self.kettleLoopFadeOutForFinish)
+            Task { @MainActor [weak self, weak loopPlayer] in
+                try? await Task.sleep(nanoseconds: UInt64(Self.kettleLoopFadeOutForFinish * 1_000_000_000))
+                guard let self else { return }
+                loopPlayer?.stop()
+                if self.kettleHeatLoopPlayer === loopPlayer {
+                    self.kettleHeatLoopPlayer = nil
+                }
+            }
+        } else {
+            kettleHeatLoopPlayer = nil
+        }
+
+        guard !isMuted else { return }
+        kettleHeatFinishPlayer = makePlayer(for: .kettleHeatFinish)
+        kettleHeatFinishPlayer?.play()
+    }
+
+    func stopKettleHeatingAudio() {
+        kettleHeatLoopStartTask?.cancel()
+        kettleHeatLoopStartTask = nil
+        stopPlayer(&kettleSwitchPlayer)
+        stopPlayer(&kettleHeatStartPlayer)
+        stopPlayer(&kettleHeatFinishPlayer)
+        stopPlayer(&kettleHeatLoopPlayer)
+    }
+
+    func resourceURL(for cue: AudioCueID) -> URL? {
         if let url = Bundle.main.url(forResource: cue.resourceName, withExtension: cue.fileExtension, subdirectory: "Audio") {
             return url
         }
 
-        return Bundle.main.url(forResource: cue.resourceName, withExtension: cue.fileExtension)
+        if let bundled = Bundle.main.url(forResource: cue.resourceName, withExtension: cue.fileExtension) {
+            return bundled
+        }
+
+        let workingDirectoryURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath, isDirectory: true)
+        let fallback = workingDirectoryURL
+            .appendingPathComponent("Resources", isDirectory: true)
+            .appendingPathComponent("Audio", isDirectory: true)
+            .appendingPathComponent("\(cue.resourceName).\(cue.fileExtension)")
+
+        return FileManager.default.fileExists(atPath: fallback.path) ? fallback : nil
     }
 
     private func configureAudioEngine() {
@@ -277,7 +396,7 @@ final class AudioCoordinator {
         streetBedPlayer.play()
     }
 
-    private func loadPCMBuffer(for cue: AudioCueID) -> AVAudioPCMBuffer? {
+    func loadPCMBuffer(for cue: AudioCueID) -> AVAudioPCMBuffer? {
         guard let url = resourceURL(for: cue) else { return nil }
 
         do {
@@ -294,6 +413,29 @@ final class AudioCoordinator {
         } catch {
             return nil
         }
+    }
+
+    private func makePlayer(for cue: AudioCueID) -> AVAudioPlayer? {
+        guard !isMuted, let url = resourceURL(for: cue) else { return nil }
+
+        do {
+            let player = try AVAudioPlayer(contentsOf: url)
+            player.volume = cue.defaultVolume
+            player.numberOfLoops = cue.loops ? -1 : 0
+            player.prepareToPlay()
+            return player
+        } catch {
+            return nil
+        }
+    }
+
+    private func startKettleHeatLoopIfNeeded() {
+        guard !isMuted else { return }
+        guard kettleHeatLoopPlayer == nil else { return }
+        kettleHeatLoopPlayer = makePlayer(for: .kettleHeatLoop)
+        kettleHeatLoopPlayer?.volume = AudioCueID.kettleHeatLoop.defaultVolume * Self.kettleLoopInitialVolumeMultiplier
+        kettleHeatLoopPlayer?.play()
+        kettleHeatLoopPlayer?.setVolume(AudioCueID.kettleHeatLoop.defaultVolume, fadeDuration: Self.kettleLoopFadeInDuration)
     }
 
     private func streetBedMix(for presence: StreetPresence) -> (volume: Float, frequency: Float) {
@@ -314,10 +456,12 @@ final class AudioCoordinator {
     }
 
     private func spatialStyle(for cue: AudioCueID) -> SpatialEffectStyle? {
+        let neighborDoorPosition = AVAudio3DPoint(x: -8, y: 0, z: -10)
+
         switch cue {
         case .doorbellMain:
             return SpatialEffectStyle(
-                position: AVAudio3DPoint(x: -8, y: 0, z: -10),
+                position: neighborDoorPosition,
                 reverbBlend: 95,
                 reverbPreset: .largeHall,
                 wetDryMix: 76,
@@ -325,7 +469,7 @@ final class AudioCoordinator {
             )
         case .doorBangingHard:
             return SpatialEffectStyle(
-                position: AVAudio3DPoint(x: 7, y: 0, z: -9),
+                position: neighborDoorPosition,
                 reverbBlend: 92,
                 reverbPreset: .largeHall,
                 wetDryMix: 80,
@@ -333,19 +477,11 @@ final class AudioCoordinator {
             )
         case .doorBreakHeavy:
             return SpatialEffectStyle(
-                position: AVAudio3DPoint(x: 4, y: 0, z: -10),
+                position: neighborDoorPosition,
                 reverbBlend: 94,
                 reverbPreset: .cathedral,
                 wetDryMix: 90,
                 volumeMultiplier: 1.08
-            )
-        case .punchHit:
-            return SpatialEffectStyle(
-                position: AVAudio3DPoint(x: 1, y: 0, z: -2),
-                reverbBlend: 35,
-                reverbPreset: .mediumRoom,
-                wetDryMix: 24,
-                volumeMultiplier: 1.0
             )
         default:
             return nil
@@ -407,10 +543,16 @@ final class AudioCoordinator {
         }
     }
 
+    private func stopPlayer(_ player: inout AVAudioPlayer?) {
+        player?.stop()
+        player = nil
+    }
+
     private func applyDefaultGlobalReverb() {
         effectReverb.loadFactoryPreset(Self.defaultGlobalReverbPreset)
         effectReverb.wetDryMix = Self.defaultGlobalReverbWetDryMix
     }
+
 }
 
 private func interpolate(from start: Float, to end: Float, progress: Float) -> Float {

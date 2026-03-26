@@ -26,8 +26,8 @@ struct RootGameView: View {
 
             #if os(macOS)
             if viewModel.stage == .exploration {
-                MacKeyboardCapture { command in
-                    viewModel.handle(command)
+                MacKeyboardCapture { input in
+                    viewModel.handleKeyboardInput(input)
                 }
                 .frame(width: 1, height: 1)
                 .opacity(0.01)
@@ -102,6 +102,10 @@ struct RootGameView: View {
                     inventoryBlock
                 }
 
+                if viewModel.isLocationMenuOpen {
+                    locationMenuBlock
+                }
+
                 if viewModel.isTutorialVisible {
                     VStack(alignment: .leading, spacing: 12) {
                     Text("Обучение")
@@ -170,7 +174,7 @@ struct RootGameView: View {
             if viewModel.isInventoryOpen {
                 Text("Инвентарь открыт. E делает главное действие предмета. F делает силовое действие. C кладет предмет рядом. R читает описание предмета. Escape или I закрывают инвентарь.")
             } else {
-                Text("Стрелки ведут тебя по комнате шагами. Q читает полное описание. E делает главное действие. F бьет или ломает. Пробел сбрасывает. Удержание E кладет предмет обратно. I открывает инвентарь.")
+                Text("Стрелки ведут тебя по комнате шагами. Q читает полное описание. E делает главное действие. F бьет или ломает. Пробел сбрасывает. Удержание E кладет предмет обратно. I открывает инвентарь. X открывает меню маяка, Enter подтверждает точку.")
             }
             commandRow(viewModel.movementButtons, usesMacKeyTitle: true)
             commandRow(viewModel.actionButtons, usesMacKeyTitle: true)
@@ -195,6 +199,17 @@ struct RootGameView: View {
                 .font(.title3.bold())
             Text(viewModel.inventoryText)
             commandRow(viewModel.inventoryButtons, usesMacKeyTitle: true)
+        }
+        .cardStyle()
+    }
+
+    private var locationMenuBlock: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(viewModel.locationMenuTitle)
+                .font(.title3.bold())
+            Text(viewModel.locationMenuText)
+            Text("X закрывает меню. Enter включает маяк.")
+                .foregroundStyle(.secondary)
         }
         .cardStyle()
     }

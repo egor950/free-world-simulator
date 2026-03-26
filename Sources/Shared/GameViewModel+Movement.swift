@@ -100,6 +100,20 @@ extension GameViewModel {
             case .street:
                 return "Справа дальше уже край двора."
             case .mainStreet:
+                if state.player.roomPosition.x == currentRoom.width - 1 {
+                    let storefrontBandStart = MainStreetRoom.groceryFacadeNorth.y - 4
+                    let storefrontBandEnd = MainStreetRoom.groceryFacadeSouth.y + 4
+                    if storefrontBandStart...storefrontBandEnd ~= state.player.roomPosition.y {
+                        let dy = MainStreetRoom.groceryDoorPosition.y - state.player.roomPosition.y
+                        if MainStreetRoom.groceryDoorPositions.contains(state.player.roomPosition) {
+                            return "Справа вход в продуктовый. Открой дверь и нажми вправо, чтобы войти."
+                        }
+                        if dy < 0 {
+                            return "Справа стена продуктового. Дверь чуть впереди вдоль фасада."
+                        }
+                        return "Справа стена продуктового. Дверь чуть позади вдоль фасада."
+                    }
+                }
                 return "Справа дальше уже край улицы."
             default:
                 return "Дальше хода нет."
@@ -147,6 +161,10 @@ extension GameViewModel {
         state.player.focusedTarget = normalizedFocusTarget(focusTarget)
         audioCoordinator.playStep()
         refreshScreenState()
+
+        if let hint = currentNavigationBeaconHint() {
+            setSilentStatus("\(statusText) Маяк: \(hint)")
+        }
     }
 
     func moveAlongRoom(_ command: GameCommand) {
@@ -341,7 +359,9 @@ extension GameViewModel {
         case .street:
             return [GridPosition(x: 7, y: 14)]
         case .mainStreet:
-            return [GridPosition(x: 10, y: 18)]
+            return [MainStreetRoom.gatePosition]
+        case .groceryStore:
+            return [GroceryStoreRoom.entryPosition]
         }
     }
 

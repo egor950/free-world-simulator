@@ -27,12 +27,31 @@ extension GameViewModel {
     }
 
     var currentFocusNode: FocusNode? {
+        if let controlledCar = state.controlledCar {
+            return FocusNode(
+                id: "controlled.car.\(controlledCar.id.uuidString)",
+                title: controlledCar.title,
+                position: state.player.roomPosition,
+                target: .none,
+                shortPrompt: controlledCarShortPrompt(controlledCar),
+                fullDescription: controlledCarFullDescription(controlledCar)
+            )
+        }
+
         if let explicitNode = node(for: state.player.focusedTarget) {
             return explicitNode
         }
 
         if let exactNode = visibleNode(at: state.player.roomPosition) {
             return exactNode
+        }
+
+        if let nearbyDoor = nearbyDoorNode(maxDistance: 1) {
+            return nearbyDoor
+        }
+
+        if let ownedNode = nearbyOwnedParkedCarNode(maxDistance: streetCarInteractionDistance) {
+            return ownedNode
         }
 
         return nearbyParkedStreetCarNode(maxDistance: streetCarInteractionDistance)
@@ -73,7 +92,29 @@ extension GameViewModel {
             })
         }
 
-        let relocatedItemIDs = [KitchenKettle.itemID, KitchenMug.itemID]
+        if currentRoom.id == .street || currentRoom.id == .mainStreet {
+            let ownedCars = state.parkedOwnedCars.values
+                .filter { $0.roomID == currentRoom.id }
+                .sorted { lhs, rhs in
+                    if lhs.gridPosition.y == rhs.gridPosition.y {
+                        return lhs.gridPosition.x < rhs.gridPosition.x
+                    }
+                    return lhs.gridPosition.y < rhs.gridPosition.y
+                }
+
+            nodes.append(contentsOf: ownedCars.map { car in
+                FocusNode(
+                    id: "dynamic.ownedCar.\(car.id.uuidString)",
+                    title: car.title,
+                    position: car.gridPosition,
+                    target: .none,
+                    shortPrompt: parkedOwnedCarShortPrompt(car),
+                    fullDescription: parkedOwnedCarFullDescription(car)
+                )
+            })
+        }
+
+        let relocatedItemIDs = state.locatedItemIDs.sorted()
         for itemID in relocatedItemIDs {
             guard state.room(for: itemID) == currentRoom.id,
                   currentRoom.items[itemID] == nil,
@@ -104,10 +145,22 @@ extension GameViewModel {
             }
         }
 
+        if KitchenMug.isMugItemID(itemID) {
+            return KitchenMug.make(itemID: itemID)
+        }
+
         return nil
     }
 
     func currentShortPrompt() -> String {
+        if let controlledCar = state.controlledCar {
+            return controlledCarShortPrompt(controlledCar)
+        }
+
+        if let driveableCar = currentFocusDriveableCarContext() {
+            return driveableCarShortPrompt(driveableCar)
+        }
+
         if let door = currentFocusDoor {
             if timedDoorConfiguration(for: door) != nil {
                 let machine = gateMachine(for: door)
@@ -127,7 +180,11 @@ extension GameViewModel {
                 return "\(door.shortPrompt) Заперто."
             }
             if isDoorOpened(door) {
-                return "\(door.shortPrompt) Дверь открыта. Нажми \(passCommandHint(for: door)), чтобы пройти."
+                let base = "\(door.shortPrompt) Дверь открыта. Нажми \(passCommandHint(for: door)), чтобы пройти."
+                if door.id == MainStreetRoom.groceryDoorID, activeNavigationBeaconID == "grocery_store" {
+                    return "\(base) Маяк довел тебя до входа."
+                }
+                return base
             }
             return "\(door.shortPrompt) Дверь закрыта."
         }
@@ -146,14 +203,22 @@ extension GameViewModel {
             return hint
         }
 
+        if let hint = currentNavigationBeaconHint() {
+            return "Маяк: \(hint)"
+        }
+
         return currentFocusNode?.shortPrompt ?? ""
     }
 
     func refreshScreenState() {
+        syncNavigationBeaconState()
         syncGameplayStateMachines()
         roomTitle = currentRoom.title
         focusTitle = currentFocusNode?.title ?? "Свободное место"
         focusShortText = currentShortPrompt()
+        if let controlledCar = state.controlledCar {
+            statusText = controlledCarStatusText(controlledCar)
+        }
         updateInventoryState()
 
         if let heldItem = state.player.heldItem {
@@ -195,12 +260,20 @@ extension GameViewModel {
     }
 
     func roomEmptyDescription() -> String {
+        if state.controlledCar != nil {
+            return "Ты за рулем. Сейчас важнее дорога, скорость и машина, а не пешая точка в комнате."
+        }
+
         if currentRoom.id == .street {
             return streetEmptyDescription()
         }
 
         if currentRoom.id == .mainStreet {
             return mainStreetEmptyDescription()
+        }
+
+        if currentRoom.id == .groceryStore {
+            return groceryStoreEmptyDescription()
         }
 
         if currentRoom.id == .hallway {
@@ -281,32 +354,57 @@ extension GameViewModel {
 
     func mainStreetEmptyDescription() -> String {
         let pos = state.player.roomPosition
+        let leftBand = 14
+        let rightBand = currentRoom.width - 15
+        let storefrontBandStart = MainStreetRoom.groceryFacadeNorth.y - 6
+        let storefrontBandEnd = MainStreetRoom.groceryFacadeSouth.y + 6
 
         if pos == MainStreetRoom.gatePosition {
             return "Ты стоишь сразу за калиткой. Позади двор, а впереди уже большая улица. Здесь заметно больше пространства."
         }
 
-        if pos.y <= 3 {
+        if pos.y <= 8 {
             return "Ты почти у дальнего конца улицы. Дальше потом пойдет продолжение города."
         }
 
-        if pos.x <= 4 {
+        if pos.x <= 8 {
             return "Ты у левого края большой улицы. Здесь потом можно будет разместить дома, витрины и другие места."
         }
 
-        if pos.x >= currentRoom.width - 5 {
+        if pos.x >= currentRoom.width - 9 {
+            if storefrontBandStart...storefrontBandEnd ~= pos.y {
+                return "Ты идешь вдоль большого фасада продуктового. Где-то рядом вход в магазин."
+            }
             return "Ты у правого края большой улицы. Здесь тоже есть место под будущие здания и точки назначения."
         }
 
-        if pos.x <= 10 {
+        if pos.x <= leftBand {
             return "Ты идешь по большой улице. Слева тянется свободная линия под будущие дома и магазины."
         }
 
-        if pos.x >= currentRoom.width - 11 {
-            return "Ты идешь по большой улице. Справа тянется свободная линия под будущие дома и магазины."
+        if pos.x >= rightBand {
+            if storefrontBandStart...storefrontBandEnd ~= pos.y {
+                return "Ты идешь рядом с продуктовым. Вдоль стены тянется длинный фасад, а дверь находится в средней части здания."
+            }
+            return "Ты идешь по большой улице. Справа тянется линия фасадов и будущих входов."
         }
 
-        return "Ты идешь по большой улице. Вокруг много пространства, а по сторонам уже есть место под будущие здания."
+        if pos.x == MainStreetRoom.groceryApproachPosition.x && pos.y == MainStreetRoom.groceryApproachPosition.y {
+            return "Ты как раз напротив продуктового. Если хочешь войти, иди вправо."
+        }
+
+        if pos.x >= MainStreetRoom.gatePosition.x - 2 &&
+            pos.x <= MainStreetRoom.gatePosition.x + 2 &&
+            pos.y >= MainStreetRoom.groceryApproachPosition.y - 8 &&
+            pos.y <= MainStreetRoom.groceryApproachPosition.y + 8 {
+            return "Ты почти напротив продуктового. Еще немного вперед, а потом иди вправо к магазину."
+        }
+
+        if pos.y > MainStreetRoom.groceryDoorPosition.y + 16 {
+            return "Ты идешь по большой улице от калитки. Продуктовый дальше впереди справа."
+        }
+
+        return "Ты идешь по большой улице. Вокруг много пространства, а справа впереди уже чувствуется большой продуктовый."
     }
 
     func nearestStreetCarGuidance(maxDistance: Int, includeDistance: Bool, parkedOnly: Bool = false) -> String? {
@@ -389,7 +487,31 @@ extension GameViewModel {
         visibleNodes.first { $0.position == position }
     }
 
+    func nearbyDoorNode(maxDistance: Int) -> FocusNode? {
+        let playerPosition = state.player.roomPosition
+        let doorNodes = visibleNodes.filter {
+            if case .door = $0.target {
+                return true
+            }
+            return false
+        }
+
+        guard let nearest = doorNodes.min(by: {
+            manhattanDistance(from: $0.position, to: playerPosition) <
+            manhattanDistance(from: $1.position, to: playerPosition)
+        }) else {
+            return nil
+        }
+
+        let distance = manhattanDistance(from: nearest.position, to: playerPosition)
+        return distance <= maxDistance ? nearest : nil
+    }
+
     func currentFocusStreetCarSnapshot() -> StreetTrafficCoordinator.StreetCarSnapshot? {
+        guard state.controlledCar == nil else {
+            return nil
+        }
+
         guard let node = currentFocusNode,
               node.id.hasPrefix("street.dynamic.car.") else {
             return nearestParkedStreetCarSnapshot(maxDistance: streetCarInteractionDistance)
@@ -406,6 +528,10 @@ extension GameViewModel {
     }
 
     func nearbyParkedStreetCarNode(maxDistance: Int) -> FocusNode? {
+        guard state.controlledCar == nil else {
+            return nil
+        }
+
         guard let snapshot = nearestParkedStreetCarSnapshot(maxDistance: maxDistance) else {
             return nil
         }
@@ -453,19 +579,12 @@ extension GameViewModel {
         switch id {
         case BedroomPillow.itemID:
             customPosition = currentPositionForPillow()
-        case KitchenKettle.itemID:
-            customPosition = currentPositionForVisibleItem(
-                itemID: id,
-                defaultPosition: GridPosition(x: 4, y: 2),
-                hiddenWhenOnStove: true
-            )
-        case KitchenMug.itemID:
-            customPosition = currentPositionForVisibleItem(
-                itemID: id,
-                defaultPosition: GridPosition(x: 2, y: 1)
-            )
         default:
-            return node
+            customPosition = currentPositionForVisibleItem(
+                itemID: id,
+                defaultPosition: node.position,
+                hiddenWhenOnStove: id == KitchenKettle.itemID
+            )
         }
 
         guard let customPosition else {
@@ -511,7 +630,7 @@ extension GameViewModel {
             return nil
         }
 
-        if hiddenWhenOnStove && KitchenKettle.placement(in: state) == .onStove {
+        if hiddenWhenOnStove && KitchenKettle.placement(in: state) == .onBase {
             return nil
         }
 

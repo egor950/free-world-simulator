@@ -2,16 +2,16 @@ import AppKit
 import SwiftUI
 
 struct MacKeyboardCapture: NSViewRepresentable {
-    let onCommand: (GameCommand) -> Void
+    let onInput: (KeyboardInputEvent) -> Void
 
     func makeNSView(context: Context) -> KeyCatcherView {
         let view = KeyCatcherView()
-        view.onCommand = onCommand
+        view.onInput = onInput
         return view
     }
 
     func updateNSView(_ nsView: KeyCatcherView, context: Context) {
-        nsView.onCommand = onCommand
+        nsView.onInput = onInput
         DispatchQueue.main.async {
             nsView.window?.makeFirstResponder(nsView)
         }
@@ -19,8 +19,9 @@ struct MacKeyboardCapture: NSViewRepresentable {
 }
 
 final class KeyCatcherView: NSView {
-    var onCommand: ((GameCommand) -> Void)?
+    var onInput: ((KeyboardInputEvent) -> Void)?
     private var eKeyDownDate: Date?
+    private var pressedMovementCommands: Set<String> = []
 
     override var acceptsFirstResponder: Bool {
         true
@@ -34,6 +35,18 @@ final class KeyCatcherView: NSView {
         }
     }
 
+    override func resignFirstResponder() -> Bool {
+        releaseAllPressedMovementCommands()
+        return super.resignFirstResponder()
+    }
+
+    override func viewWillMove(toWindow newWindow: NSWindow?) {
+        if newWindow == nil {
+            releaseAllPressedMovementCommands()
+        }
+        super.viewWillMove(toWindow: newWindow)
+    }
+
     override func keyDown(with event: NSEvent) {
         if event.keyCode == 14 && !event.isARepeat {
             eKeyDownDate = Date()
@@ -45,10 +58,26 @@ final class KeyCatcherView: NSView {
             return
         }
 
-        onCommand?(command)
+        switch command {
+        case .moveForward, .moveBackward, .moveLeft, .moveRight:
+            pressedMovementCommands.insert(command.rawValue)
+            onInput?(.press(command))
+        default:
+            onInput?(.command(command))
+        }
     }
 
     override func keyUp(with event: NSEvent) {
+        if let command = command(for: event) {
+            switch command {
+            case .moveForward, .moveBackward, .moveLeft, .moveRight:
+                pressedMovementCommands.remove(command.rawValue)
+                onInput?(.release(command))
+            default:
+                break
+            }
+        }
+
         guard event.keyCode == 14 else {
             super.keyUp(with: event)
             return
@@ -59,9 +88,9 @@ final class KeyCatcherView: NSView {
         let duration = Date().timeIntervalSince(pressStartedAt)
 
         if duration >= 0.45 {
-            onCommand?(.placeHeldItem)
+            onInput?(.command(.placeHeldItem))
         } else {
-            onCommand?(.primaryAction)
+            onInput?(.command(.primaryAction))
         }
     }
 
@@ -85,10 +114,22 @@ final class KeyCatcherView: NSView {
             return .throwObject
         case 8:
             return .inventoryQuickAction
+        case 7:
+            return .locationMenuToggle
+        case 36:
+            return .locationMenuConfirm
         case 34, 53:
             return .inventoryToggle
         default:
             return nil
+        }
+    }
+
+    private func releaseAllPressedMovementCommands() {
+        let commands = pressedMovementCommands.compactMap(GameCommand.parse)
+        pressedMovementCommands.removeAll()
+        for command in commands {
+            onInput?(.release(command))
         }
     }
 }

@@ -2,6 +2,24 @@ import Foundation
 
 extension GameViewModel {
     func performPrimaryAction() {
+        if state.controlledCar != nil {
+            performControlledCarPrimaryAction()
+            return
+        }
+
+        if let driveableCar = currentFocusDriveableCarContext() {
+            attemptEnterDriveableCar(driveableCar)
+            return
+        }
+
+        if let door = currentFocusDoor,
+           timedDoorConfiguration(for: door) != nil,
+           isDoorOpened(door),
+           let nearbyCar = nearestDriveableCarContext(maxDistance: 1) {
+            attemptEnterDriveableCar(nearbyCar)
+            return
+        }
+
         if let door = currentFocusDoor {
             handleDoorAction(door)
             return
@@ -99,6 +117,37 @@ extension GameViewModel {
     }
 
     func describeCurrentFocus() {
+        if let controlledCar = state.controlledCar {
+            announce(controlledCarFullDescription(controlledCar))
+            return
+        }
+
+        if let driveableCar = currentFocusDriveableCarContext() {
+            let description: String
+            if driveableCar.kind == .roadster {
+                description = "Перед тобой \(driveableCar.title). В этой версии в него пока нельзя сесть, но его можно осмотреть как часть мира."
+            } else if driveableCar.isOwned {
+                description = parkedOwnedCarFullDescription(
+                    state.parkedOwnedCars[driveableCar.id] ??
+                    ParkedOwnedCarState(
+                        id: driveableCar.id,
+                        kind: driveableCar.kind,
+                        title: driveableCar.title,
+                        roomID: currentRoom.id,
+                        worldPosition: driveableCar.worldPosition,
+                        gridPosition: driveableCar.gridPosition,
+                        headingRadians: 0,
+                        directionLeftToRight: driveableCar.directionLeftToRight,
+                        isEngineRunning: driveableCar.isEngineRunning
+                    )
+                )
+            } else {
+                description = "Перед тобой \(driveableCar.title). Если подойти вплотную и нажать E, можно сесть внутрь. После посадки мотор нужно завести отдельно ещё одним нажатием E."
+            }
+            announce(description)
+            return
+        }
+
         if currentFocusItem == nil,
            currentFocusDoor == nil,
            currentFocusStreetCarSnapshot() == nil,
@@ -181,8 +230,8 @@ extension GameViewModel {
             actions = BedroomPillow.heldActions(for: state)
         case KitchenKettle.itemID:
             actions = KitchenKettle.heldActions(for: state)
-        case KitchenMug.itemID:
-            actions = KitchenMug.heldActions(for: state)
+        case _ where KitchenMug.isMugItemID(heldItemID):
+            actions = KitchenMug.heldActions(for: state, itemID: heldItemID)
         default:
             actions = []
         }
@@ -252,6 +301,17 @@ extension GameViewModel {
     func apply(_ action: ItemAction) {
         if let required = action.requiresHeldItemID, state.player.heldItem?.itemID != required {
             announce("Сейчас у тебя нет нужного предмета.")
+            return
+        }
+
+        if let specialText = handleSpecialInteraction(for: action) {
+            poseMachine.sync(pose: state.player.pose)
+            syncBedAnchorAfterAction()
+            syncKettleBoilingTask()
+            audioCoordinator.playEffect(action.sound)
+            refreshScreenState()
+            addLog(specialText)
+            announce(specialText)
             return
         }
 
@@ -330,6 +390,15 @@ extension GameViewModel {
     ) {
         cancelNeighborTasks()
         cancelGateTransitionTasks(resetMachines: true)
+        cancelKettleBoilingTask(resetWaterState: false)
+        carLifecycleTask?.cancel()
+        carLifecycleTask = nil
+        stopDrivingLoop()
+        resetDrivingInput()
+        state.controlledCar = nil
+        state.parkedOwnedCars = [:]
+        carLifecycleMachine.reset()
+        audioCoordinator.stopControlledCarAudio()
         flowController.enter(.finished)
         stage = flowController.currentStage
         state.player.focusedTarget = .none
@@ -351,4 +420,5 @@ extension GameViewModel {
         announce(text, delay: announcementDelay)
         onGameFinished?()
     }
+
 }

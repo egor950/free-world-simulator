@@ -1,6 +1,25 @@
 import Foundation
 
 extension GameViewModel {
+    func handleKeyboardInput(_ input: KeyboardInputEvent) {
+        switch input {
+        case let .press(command):
+            handleKeyPress(command)
+        case let .release(command):
+            handleKeyRelease(command)
+        case let .command(command):
+            if state.controlledCar != nil {
+                switch command {
+                case .moveForward, .moveBackward, .moveLeft, .moveRight:
+                    return
+                default:
+                    break
+                }
+            }
+            handle(command)
+        }
+    }
+
     func statePayload(recentPhrases: [String]) -> [String: Any] {
         let stageTitle: String
         switch stage {
@@ -31,6 +50,18 @@ extension GameViewModel {
                 "x": debugRoomPosition.x,
                 "y": debugRoomPosition.y
             ],
+            "controlledCar": state.controlledCar.map { car in
+                [
+                    "id": car.id.uuidString,
+                    "title": car.title,
+                    "kind": car.kind.rawValue,
+                    "speed": car.speed,
+                    "phase": car.phase.rawValue,
+                    "engineState": car.engineState.rawValue,
+                    "worldX": car.worldPosition.x,
+                    "worldZ": car.worldPosition.z
+                ]
+            } ?? NSNull(),
             "streetCars": audioCoordinator.streetDebugSnapshotPayload(),
             "recentEvents": Array(eventLog.prefix(12)),
             "recentPhrases": recentPhrases
@@ -67,12 +98,29 @@ extension GameViewModel {
                 hasCompletedTutorial: state.player.hasCompletedTutorial
             )
         )
+        stopDrivingLoop()
+        resetDrivingInput()
+        carLifecycleTask?.cancel()
+        carLifecycleTask = nil
+        carLifecycleMachine.reset()
+        driveElapsedTime = 0
+        reverseHoldElapsed = 0
+        gateAutoPassLockedZ = nil
+        lastDrivingHintText = ""
+        lastDrivingHintAt = .distantPast
+        audioCoordinator.stopControlledCarAudio()
         bedAnchorPosition = nil
         doorLifecycleMachines.removeAll()
         cancelGateTransitionTasks(resetMachines: true)
         cancelNeighborTasks()
         neighborEncounterMachine.resetToCalm()
         neighborDoorHitsTarget = 0
+        groceryStoreClerkMachine.reset()
+        debugNeighborResponsePauseRange = nil
+        debugNeighborBreakInPauseRange = nil
+        debugNeighborDoorHitsTargetOverride = nil
+        debugNeighborFootstepCountOverride = nil
+        debugNeighborFootstepPauseOverride = nil
 
         refreshScreenState()
         addLog("Создан персонаж: \(selectedCharacterKind.rawValue), \(safeName)")
@@ -86,6 +134,38 @@ extension GameViewModel {
 
     func handle(_ command: GameCommand) {
         guard stage == .exploration else { return }
+
+        if state.controlledCar != nil || carLifecycleMachine.isBusyWithDoorOrEngine {
+            switch command {
+            case .moveForward, .moveBackward, .moveLeft, .moveRight:
+                if state.controlledCar != nil {
+                    if state.controlledCar?.engineState != .running {
+                        announceDrivingHintIfNeeded("Мотор заглушен. Нажми E, чтобы завести машину.", minimumGap: 1.4)
+                        return
+                    }
+                    applyDriveCommandImpulse(for: command)
+                }
+                return
+            case .primaryAction:
+                performPrimaryAction()
+                return
+            case .describeFocus:
+                describeCurrentFocus()
+                return
+            default:
+                return
+            }
+        }
+
+        if command == .locationMenuToggle {
+            toggleLocationMenu()
+            return
+        }
+
+        if isLocationMenuOpen {
+            handleLocationMenuCommand(command)
+            return
+        }
 
         if command == .inventoryToggle {
             toggleInventory()
@@ -120,7 +200,17 @@ extension GameViewModel {
             describeCurrentFocus()
         case .placeHeldItem:
             performAction(for: .placeHeldItem, missingText: "Сейчас предмет некуда положить.")
-        case .inventoryToggle, .inventoryQuickAction:
+        case .inventoryQuickAction:
+            if let action = inventoryQuickAction() {
+                apply(action)
+            } else if state.player.heldItem != nil {
+                announce("Сейчас предмет некуда быстро положить.")
+            }
+        case .locationMenuConfirm:
+            confirmLocationMenuSelection()
+        case .locationMenuToggle:
+            break
+        case .inventoryToggle:
             break
         }
     }
@@ -132,7 +222,25 @@ extension GameViewModel {
     func resetForNewSession() {
         cancelNeighborTasks()
         cancelKettleBoilingTask(resetWaterState: false)
+        carLifecycleTask?.cancel()
+        carLifecycleTask = nil
+        stopDrivingLoop()
+        resetDrivingInput()
+        state.controlledCar = nil
+        state.parkedOwnedCars = [:]
+        carLifecycleMachine.reset()
+        driveElapsedTime = 0
+        reverseHoldElapsed = 0
+        gateAutoPassLockedZ = nil
+        lastDrivingHintText = ""
+        lastDrivingHintAt = .distantPast
         neighborDoorHitsTarget = 0
+        groceryStoreClerkMachine.reset()
+        debugNeighborResponsePauseRange = nil
+        debugNeighborBreakInPauseRange = nil
+        debugNeighborDoorHitsTargetOverride = nil
+        debugNeighborFootstepCountOverride = nil
+        debugNeighborFootstepPauseOverride = nil
         audioCoordinator.playAmbient(nil)
         audioCoordinator.setStreetPresence(.off, fadeDuration: 0)
         audioCoordinator.setTrafficEnabled(false)
@@ -145,28 +253,31 @@ extension GameViewModel {
         doorLifecycleMachines.removeAll()
         cancelGateTransitionTasks(resetMachines: true)
         neighborEncounterMachine.resetToCalm()
+        audioCoordinator.stopControlledCarAudio()
     }
 
     func availableDebugScenarios() -> [[String: String]] {
         [
-            ["id": "hallway_neighbor_door", "title": "Соседская дверь"],
-            ["id": "hallway_coat_rack", "title": "Вешалка"],
-            ["id": "bedroom_bed", "title": "Кровать"],
-            ["id": "bedroom_pillow", "title": "Подушка"],
-            ["id": "living_room_tv", "title": "Телевизор"],
-            ["id": "living_room_table", "title": "Стол"],
-            ["id": "kitchen_fridge", "title": "Холодильник"],
-            ["id": "bathroom_mirror", "title": "Зеркало"],
-            ["id": "bathroom_street_door", "title": "Дверь на улицу"],
-            ["id": "street_entry", "title": "Выход во двор"],
-            ["id": "street_gate", "title": "Калитка во дворе"],
-            ["id": "main_street_entry", "title": "Большая улица"],
-            ["id": "street_parked_car", "title": "Припаркованная машина"],
-            ["id": "street_approaching_car", "title": "Машина заезжает"],
-            ["id": "street_departing_car", "title": "Машина уезжает"],
-            ["id": "main_street_car_entry_left", "title": "Машина заезжает слева"],
-            ["id": "main_street_car_entry_right", "title": "Машина заезжает справа"],
-            ["id": "main_street_car_exit", "title": "Машина выезжает на улицу"]
+            ["id": "hallway_neighbor_door", "name": "hallway_neighbor_door", "title": "Соседская дверь"],
+            ["id": "hallway_coat_rack", "name": "hallway_coat_rack", "title": "Вешалка"],
+            ["id": "bedroom_bed", "name": "bedroom_bed", "title": "Кровать"],
+            ["id": "bedroom_pillow", "name": "bedroom_pillow", "title": "Подушка"],
+            ["id": "living_room_tv", "name": "living_room_tv", "title": "Телевизор"],
+            ["id": "living_room_table", "name": "living_room_table", "title": "Стол"],
+            ["id": "kitchen_fridge", "name": "kitchen_fridge", "title": "Холодильник"],
+            ["id": "bathroom_mirror", "name": "bathroom_mirror", "title": "Зеркало"],
+            ["id": "bathroom_street_door", "name": "bathroom_street_door", "title": "Дверь на улицу"],
+            ["id": "street_entry", "name": "street_entry", "title": "Выход во двор"],
+            ["id": "street_gate", "name": "street_gate", "title": "Калитка во дворе"],
+            ["id": "main_street_entry", "name": "main_street_entry", "title": "Большая улица"],
+            ["id": "main_street_grocery_entry", "name": "main_street_grocery_entry", "title": "Вход в продуктовый"],
+            ["id": "grocery_store_counter", "name": "grocery_store_counter", "title": "Прилавок продуктового"],
+            ["id": "street_parked_car", "name": "street_parked_car", "title": "Припаркованная машина"],
+            ["id": "street_approaching_car", "name": "street_approaching_car", "title": "Машина заезжает"],
+            ["id": "street_departing_car", "name": "street_departing_car", "title": "Машина уезжает"],
+            ["id": "main_street_car_entry_left", "name": "main_street_car_entry_left", "title": "Машина заезжает слева"],
+            ["id": "main_street_car_entry_right", "name": "main_street_car_entry_right", "title": "Машина заезжает справа"],
+            ["id": "main_street_car_exit", "name": "main_street_car_exit", "title": "Машина выезжает на улицу"]
         ]
     }
 
@@ -212,6 +323,12 @@ extension GameViewModel {
         case "main_street_entry":
             audioCoordinator.clearStreetDebugScenario()
             debugMovePlayer(to: .mainStreet, position: MainStreetRoom.gatePosition)
+        case "main_street_grocery_entry":
+            audioCoordinator.clearStreetDebugScenario()
+            debugMovePlayer(to: .mainStreet, position: MainStreetRoom.groceryDoorPosition)
+        case "grocery_store_counter":
+            audioCoordinator.clearStreetDebugScenario()
+            debugMovePlayer(to: .groceryStore, position: GridPosition(x: 7, y: 4))
         case "street_parked_car":
             debugMovePlayer(to: .street, position: GridPosition(x: 6, y: 6))
             return audioCoordinator.runStreetDebugScenario(name)
@@ -219,13 +336,13 @@ extension GameViewModel {
             debugMovePlayer(to: .street, position: GridPosition(x: 7, y: 14))
             return audioCoordinator.runStreetDebugScenario(name)
         case "main_street_car_entry_left":
-            debugMovePlayer(to: .mainStreet, position: GridPosition(x: 4, y: 24))
+            debugMovePlayer(to: .mainStreet, position: GridPosition(x: 18, y: min(MainStreetRoom.height - 1, 138)))
             return audioCoordinator.runStreetDebugScenario(name)
         case "main_street_car_entry_right":
-            debugMovePlayer(to: .mainStreet, position: GridPosition(x: 36, y: 24))
+            debugMovePlayer(to: .mainStreet, position: GridPosition(x: MainStreetRoom.width - 19, y: min(MainStreetRoom.height - 1, 138)))
             return audioCoordinator.runStreetDebugScenario(name)
         case "main_street_car_exit":
-            debugMovePlayer(to: .mainStreet, position: GridPosition(x: 33, y: 24))
+            debugMovePlayer(to: .mainStreet, position: GridPosition(x: MainStreetRoom.width - 28, y: min(MainStreetRoom.height - 1, 138)))
             return audioCoordinator.runStreetDebugScenario(name)
         default:
             return false
