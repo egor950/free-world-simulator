@@ -127,6 +127,10 @@ final class LiveGameBridge {
     private var bridgeLog: [String] = []
     private let debugLogURL = FileManager.default.temporaryDirectory.appendingPathComponent("freeworld_live_bridge.log")
 
+    private init() {
+        startServerIfNeeded()
+    }
+
     func makeViewModel(onGameFinished: (() -> Void)? = nil) -> GameViewModel {
         if let viewModel {
             startServerIfNeeded()
