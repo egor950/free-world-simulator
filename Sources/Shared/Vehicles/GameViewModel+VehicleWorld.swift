@@ -238,10 +238,10 @@ extension GameViewModel {
             }
 
             if currentCarNearStoreBand(car) {
-                if car.worldPosition.x < 26 {
+                if car.worldPosition.x < 30 {
                     return "Ты уже на уровне продуктового. Скорость \(speedText) километров в час. Плавно держись правее к парковке."
                 }
-                if car.worldPosition.x < 44 {
+                if car.worldPosition.x < 54 {
                     return "Ты почти у парковки продуктового. Скорость \(speedText) километров в час. Ещё немного правее."
                 }
                 return "Ты у парковки продуктового. Скорость \(speedText) километров в час."

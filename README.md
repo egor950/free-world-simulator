@@ -90,16 +90,12 @@
 - `Sources/Shared/LiveGameBridge.swift`
   Связь живой игры и внешнего управления.
 
-- `Sources/Playtests/main.swift`
-  Быстрые игровые проверки.
-
 ## Что собирается
 
 В проекте есть несколько целей:
 
 - `FreeWorldMac` — версия для macOS;
 - `FreeWorldiOS` — версия для iPhone;
-- `FreeWorldPlaytests` — проверки игровых сценариев;
 - `FreeWorldMCP` — управление игрой извне;
 - `FreeWorldVarispeedProbe` — отдельная маленькая проверка звука.
 

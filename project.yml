@@ -62,26 +62,6 @@ targets:
       - sdk: AVFoundation.framework
       - sdk: Network.framework
 
-  FreeWorldPlaytests:
-    type: tool
-    platform: macOS
-    sources:
-      - path: Sources/Shared
-      - path: Sources/macOSApp
-        includes:
-          - MacKeyboardCapture.swift
-      - path: Sources/Playtests
-      - path: Resources
-        buildPhase: resources
-    settings:
-      base:
-        PRODUCT_NAME: FreeWorldPlaytests
-        PRODUCT_MODULE_NAME: FreeWorldPlaytests
-    dependencies:
-      - sdk: GameplayKit.framework
-      - sdk: AVFoundation.framework
-      - sdk: Network.framework
-
   FreeWorldMCP:
     type: tool
     platform: macOS
@@ -125,11 +105,6 @@ schemes:
     build:
       targets:
         FreeWorldiOS: all
-
-  FreeWorldPlaytests:
-    build:
-      targets:
-        FreeWorldPlaytests: all
 
   FreeWorldMCP:
     build:

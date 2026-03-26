@@ -219,7 +219,7 @@ extension GameViewModel {
 
             if isNearStoreBand && car.speed > 0.18 {
                 if isRightPressed {
-                    let parkingTargetX = 54.0
+                    let parkingTargetX = 74.0
                     let assistedX = moveToward(
                         current: Double(car.worldPosition.x),
                         target: parkingTargetX,
@@ -452,19 +452,19 @@ extension GameViewModel {
             }
 
             if currentCar.worldPosition.z <= storeZ + 7 {
-                if currentCar.worldPosition.x < 8 {
+                if currentCar.worldPosition.x < 10 {
                     announceDrivingHintIfNeeded("Ты поравнялся с магазином. Теперь начинай плавно уходить вправо.", minimumGap: 1.9)
                     return
                 }
-                if currentCar.worldPosition.x < 26 {
+                if currentCar.worldPosition.x < 30 {
                     announceDrivingHintIfNeeded("Поворот правильный. Продолжай плавно держаться правее.", minimumGap: 1.8)
                     return
                 }
-                if currentCar.worldPosition.x < 44 {
+                if currentCar.worldPosition.x < 54 {
                     announceDrivingHintIfNeeded("Хорошо. Ещё немного правее к парковке продуктового.", minimumGap: 1.6)
                     return
                 }
-                if currentCar.worldPosition.x <= 60 {
+                if currentCar.worldPosition.x <= 78 {
                     announceDrivingHintIfNeeded("Ты у парковки продуктового. Сбавляй ход и готовься остановиться.", minimumGap: 1.8)
                     return
                 }

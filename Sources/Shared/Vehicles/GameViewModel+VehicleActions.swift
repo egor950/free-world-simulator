@@ -243,6 +243,13 @@ extension GameViewModel {
                 GridPosition(x: carPosition.x + 1, y: carPosition.y),
                 GridPosition(x: carPosition.x, y: carPosition.y - 1)
             ]
+        } else if roomID == .mainStreet && carPosition.x >= MainStreetRoom.width - 10 {
+            candidates = [
+                GridPosition(x: carPosition.x + 1, y: carPosition.y),
+                GridPosition(x: carPosition.x, y: carPosition.y - 1),
+                GridPosition(x: carPosition.x, y: carPosition.y + 1),
+                GridPosition(x: carPosition.x - 1, y: carPosition.y)
+            ]
         } else {
             candidates = [
                 GridPosition(x: carPosition.x - 1, y: carPosition.y),
