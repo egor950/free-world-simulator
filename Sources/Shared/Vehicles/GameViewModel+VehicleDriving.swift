@@ -93,10 +93,15 @@ extension GameViewModel {
     func stopDrivingLoop() {
         drivingLoopTask?.cancel()
         drivingLoopTask = nil
+        lastDrivingUIRefreshAt = 0
+        lastDrivingWorldAudioSyncAt = 0
+        lastDrivingRoomID = nil
+        lastDrivingRoomPosition = nil
     }
 
     func updateControlledCar(deltaTime: TimeInterval) {
         guard var car = state.controlledCar else { return }
+        let previousCar = car
         let blueprint = DriveableVehicleBlueprint.blueprint(for: car.kind)
         let engineRunning = car.engineState == .running
         let reverseMaxSpeed = min(14.0, blueprint.maxSpeed * 0.28)
@@ -110,7 +115,7 @@ extension GameViewModel {
         let useDirectGatePass = gateIsOpen &&
             engineRunning &&
             isGasPressed &&
-            car.worldPosition.z >= 17.2 &&
+            car.worldPosition.z >= 16.8 &&
             car.worldPosition.z <= 23.3 &&
             abs(car.worldPosition.x) <= 12.5
 
@@ -190,7 +195,7 @@ extension GameViewModel {
         )
 
         if useDirectGatePass {
-            car.speed = max(car.speed, 4.6)
+            car.speed = max(car.speed, 1.9)
             let centeredX = moveToward(
                 current: Double(car.worldPosition.x),
                 target: 0,
@@ -214,12 +219,12 @@ extension GameViewModel {
 
         if car.roomID == .mainStreet {
             let storeZ: Float = 30.25
-            let isNearStoreBand = car.worldPosition.z >= storeZ - 2.5 && car.worldPosition.z <= storeZ + 6.5
-            let steeringAssistDelta = (8.8 + abs(car.speed) * 0.55) * deltaTime
+            let isNearStoreBand = car.worldPosition.z >= storeZ - 2.0 && car.worldPosition.z <= storeZ + 4.8
+            let steeringAssistDelta = (10.8 + abs(car.speed) * 0.7) * deltaTime
 
             if isNearStoreBand && car.speed > 0.18 {
                 if isRightPressed {
-                    let parkingTargetX = 74.0
+                    let parkingTargetX = 68.0
                     let assistedX = moveToward(
                         current: Double(car.worldPosition.x),
                         target: parkingTargetX,
@@ -272,12 +277,11 @@ extension GameViewModel {
         let isInOpenGatePassage = gateIsOpen &&
             engineRunning &&
             isGasPressed &&
-            car.speed > 0.2 &&
-            positionBefore.z >= 17.3 &&
+            positionBefore.z >= 16.8 &&
             positionBefore.z <= 23.3
         if isInOpenGatePassage {
             let lockedZ = max(gateAutoPassLockedZ ?? positionBefore.z, positionBefore.z)
-            let minForwardStep = Float(0.55 * deltaTime)
+            let minForwardStep = Float(0.35 * deltaTime)
             let nextLockedZ = lockedZ + minForwardStep
             gateAutoPassLockedZ = nextLockedZ
             car.worldPosition.z = max(car.worldPosition.z, nextLockedZ)
@@ -299,7 +303,7 @@ extension GameViewModel {
             }
         }
 
-        car.roomID = worldRoomID(for: car.worldPosition)
+        car.roomID = resolvedOutdoorRoomID(for: car.worldPosition, previousRoomID: car.roomID)
         let roomPosition = gridPosition(for: car.worldPosition, roomID: car.roomID)
         state.player.roomID = car.roomID
         state.player.roomPosition = roomPosition
@@ -325,8 +329,46 @@ extension GameViewModel {
             elapsedTime: driveElapsedTime,
             lanePan: lanePan
         )
-        refreshScreenState()
+        refreshDrivingPresentationIfNeeded(
+            currentCar: car,
+            previousCar: previousCar,
+            roomPosition: roomPosition
+        )
         updateDrivingHint(currentCar: car, previousSpeed: speedBefore)
+    }
+
+    func refreshDrivingPresentationIfNeeded(
+        currentCar: ControlledCarState,
+        previousCar: ControlledCarState,
+        roomPosition: GridPosition
+    ) {
+        let now = ProcessInfo.processInfo.systemUptime
+        let roomChanged = previousCar.roomID != currentCar.roomID
+        let phaseChanged = previousCar.phase != currentCar.phase || previousCar.engineState != currentCar.engineState
+        let speedBucketChanged = displayedSpeedKilometersPerHour(for: previousCar.speed) != displayedSpeedKilometersPerHour(for: currentCar.speed)
+        let steeringChanged = abs(previousCar.steeringAxis - currentCar.steeringAxis) >= 0.45
+        let shouldRefreshUI = roomChanged ||
+            phaseChanged ||
+            speedBucketChanged ||
+            steeringChanged ||
+            now - lastDrivingUIRefreshAt >= 0.12
+
+        if shouldRefreshUI {
+            refreshScreenState(syncAudio: false)
+            lastDrivingUIRefreshAt = now
+        }
+
+        let roomPositionChanged = lastDrivingRoomID != currentCar.roomID || lastDrivingRoomPosition != roomPosition
+        let shouldSyncWorldAudio = roomChanged ||
+            roomPositionChanged ||
+            now - lastDrivingWorldAudioSyncAt >= 0.22
+
+        if shouldSyncWorldAudio {
+            syncAudioWorldState()
+            lastDrivingWorldAudioSyncAt = now
+            lastDrivingRoomID = currentCar.roomID
+            lastDrivingRoomPosition = roomPosition
+        }
     }
 
     func computeSteeringPower(
@@ -451,21 +493,21 @@ extension GameViewModel {
                 return
             }
 
-            if currentCar.worldPosition.z <= storeZ + 7 {
-                if currentCar.worldPosition.x < 10 {
+            if currentCar.worldPosition.z <= storeZ + 5 {
+                if currentCar.worldPosition.x < 12 {
                     announceDrivingHintIfNeeded("Ты поравнялся с магазином. Теперь начинай плавно уходить вправо.", minimumGap: 1.9)
                     return
                 }
-                if currentCar.worldPosition.x < 30 {
+                if currentCar.worldPosition.x < 32 {
                     announceDrivingHintIfNeeded("Поворот правильный. Продолжай плавно держаться правее.", minimumGap: 1.8)
                     return
                 }
-                if currentCar.worldPosition.x < 54 {
+                if currentCar.worldPosition.x < 56 {
                     announceDrivingHintIfNeeded("Хорошо. Ещё немного правее к парковке продуктового.", minimumGap: 1.6)
                     return
                 }
-                if currentCar.worldPosition.x <= 78 {
-                    announceDrivingHintIfNeeded("Ты у парковки продуктового. Сбавляй ход и готовься остановиться.", minimumGap: 1.8)
+                if currentCar.worldPosition.x <= 76 {
+                    announceDrivingHintIfNeeded("Ты уже в точке парковки у входа продуктового. Дальше вправо не нужно, можно останавливаться и выходить.", minimumGap: 1.8)
                     return
                 }
             }
@@ -532,7 +574,7 @@ extension GameViewModel {
         }
 
         if car.roomID == .mainStreet {
-            return car.worldPosition.z >= 23.2 &&
+            return car.worldPosition.z >= 17.2 &&
                 car.worldPosition.z <= 26.8 &&
                 abs(car.worldPosition.x) <= 12.5
         }

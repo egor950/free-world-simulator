@@ -12,6 +12,27 @@ struct DriveableCarContext {
 }
 
 extension GameViewModel {
+    func resolvedOutdoorRoomID(
+        for point: OutdoorCarWorldPosition,
+        previousRoomID: RoomID? = nil
+    ) -> RoomID {
+        let switchToMainStreetZ: Float = 23.55
+        let switchToCourtyardZ: Float = 17.35
+
+        if let previousRoomID {
+            switch previousRoomID {
+            case .street:
+                return point.z >= switchToMainStreetZ ? .mainStreet : .street
+            case .mainStreet:
+                return point.z <= switchToCourtyardZ ? .street : .mainStreet
+            default:
+                break
+            }
+        }
+
+        return point.z >= switchToMainStreetZ ? .mainStreet : .street
+    }
+
     func currentFocusDriveableCarContext() -> DriveableCarContext? {
         if let node = currentFocusNode,
            node.id.hasPrefix("dynamic.ownedCar."),
@@ -180,6 +201,20 @@ extension GameViewModel {
         "\(controlledCarStatusText(car)) Выйти можно только после полной остановки."
     }
 
+    func displayedSpeedKilometersPerHour(for speed: Double) -> Int {
+        let kilometersPerHour = abs(speed) * 3.6
+        if kilometersPerHour < 1.5 {
+            return 0
+        }
+        if kilometersPerHour < 12 {
+            return Int(kilometersPerHour.rounded())
+        }
+        if kilometersPerHour < 30 {
+            return Int((kilometersPerHour / 2).rounded() * 2)
+        }
+        return Int((kilometersPerHour / 5).rounded() * 5)
+    }
+
     func controlledCarStatusText(_ car: ControlledCarState) -> String {
         switch car.phase {
         case .carDoorOpeningForEnter:
@@ -204,7 +239,7 @@ extension GameViewModel {
             }
         }
 
-        let speedText = Int(abs(car.speed) * 3.6)
+        let speedText = displayedSpeedKilometersPerHour(for: car.speed)
 
         if car.roomID == .street {
             let gateOpen = currentGateIsOpen()
@@ -238,13 +273,13 @@ extension GameViewModel {
             }
 
             if currentCarNearStoreBand(car) {
-                if car.worldPosition.x < 30 {
+                if car.worldPosition.x < 32 {
                     return "Ты уже на уровне продуктового. Скорость \(speedText) километров в час. Плавно держись правее к парковке."
                 }
-                if car.worldPosition.x < 54 {
+                if car.worldPosition.x < 56 {
                     return "Ты почти у парковки продуктового. Скорость \(speedText) километров в час. Ещё немного правее."
                 }
-                return "Ты у парковки продуктового. Скорость \(speedText) километров в час."
+                return "Ты уже в точке парковки у входа продуктового. Скорость \(speedText) километров в час. Дальше вправо не нужно, можно останавливаться и выходить."
             }
 
             if car.worldPosition.z >= 53.4 {
@@ -259,11 +294,11 @@ extension GameViewModel {
 
     func currentCarNearStoreBand(_ car: ControlledCarState) -> Bool {
         let storeZ: Float = 30.25
-        return car.worldPosition.z >= storeZ - 2.5 && car.worldPosition.z <= storeZ + 6.5
+        return car.worldPosition.z >= storeZ - 2.0 && car.worldPosition.z <= storeZ + 4.8
     }
 
     func worldRoomID(for point: OutdoorCarWorldPosition) -> RoomID {
-        point.z < 20.5 ? .street : .mainStreet
+        resolvedOutdoorRoomID(for: point)
     }
 
     func initialHeadingRadians(
@@ -275,7 +310,7 @@ extension GameViewModel {
         case .mainStreet:
             return directionLeftToRight ? (.pi / 2) : (-.pi / 2)
         case .street:
-            return point.z < 20.5 ? 0 : (directionLeftToRight ? (.pi / 2) : (-.pi / 2))
+            return point.z < 23.55 ? 0 : (directionLeftToRight ? (.pi / 2) : (-.pi / 2))
         default:
             return 0
         }

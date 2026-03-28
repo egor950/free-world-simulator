@@ -52,7 +52,7 @@ extension GameViewModel {
                 announce("Эта машина уже уехала или больше недоступна.")
                 return
             }
-            let roomID = worldRoomID(for: snapshot.worldPosition)
+            let roomID = resolvedOutdoorRoomID(for: snapshot.worldPosition)
             controlledCar = ControlledCarState(
                 id: snapshot.id,
                 kind: snapshot.vehicleKind,
@@ -193,7 +193,10 @@ extension GameViewModel {
             try? await Task.sleep(nanoseconds: 120_000_000)
             guard !Task.isCancelled, let car = self.state.controlledCar, car.id == controlledCar.id else { return }
 
-            let parkedRoomID = self.worldRoomID(for: car.worldPosition)
+            let parkedRoomID = self.resolvedOutdoorRoomID(
+                for: car.worldPosition,
+                previousRoomID: car.roomID
+            )
             let parkedGridPosition = self.gridPosition(for: car.worldPosition, roomID: parkedRoomID)
             let exitPosition = self.nearestExitPosition(for: parkedGridPosition, roomID: parkedRoomID)
 
@@ -236,12 +239,24 @@ extension GameViewModel {
 
     func nearestExitPosition(for carPosition: GridPosition, roomID: RoomID) -> GridPosition {
         let candidates: [GridPosition]
-        if roomID == .street && carPosition.y == 0 {
+        if roomID == .street && carPosition.y <= 1 {
             candidates = [
-                GridPosition(x: carPosition.x, y: carPosition.y + 1),
+                GridPosition(x: StreetRoom.gatePosition.x, y: 1),
+                GridPosition(x: carPosition.x, y: min(StreetRoom.spawnPosition.y, carPosition.y + 1)),
                 GridPosition(x: carPosition.x - 1, y: carPosition.y),
                 GridPosition(x: carPosition.x + 1, y: carPosition.y),
                 GridPosition(x: carPosition.x, y: carPosition.y - 1)
+            ]
+        } else if roomID == .mainStreet &&
+                    carPosition.x >= MainStreetRoom.width - 16 &&
+                    abs(carPosition.y - MainStreetRoom.groceryDoorMidY) <= 6 {
+            candidates = [
+                GridPosition(x: MainStreetRoom.width - 2, y: MainStreetRoom.groceryDoorMidY),
+                GridPosition(x: MainStreetRoom.width - 2, y: MainStreetRoom.groceryDoorMidY - 1),
+                GridPosition(x: MainStreetRoom.width - 2, y: MainStreetRoom.groceryDoorMidY + 1),
+                GridPosition(x: MainStreetRoom.width - 3, y: MainStreetRoom.groceryDoorMidY),
+                GridPosition(x: MainStreetRoom.width - 3, y: MainStreetRoom.groceryDoorMidY - 1),
+                GridPosition(x: MainStreetRoom.width - 3, y: MainStreetRoom.groceryDoorMidY + 1)
             ]
         } else if roomID == .mainStreet && carPosition.x >= MainStreetRoom.width - 10 {
             candidates = [
