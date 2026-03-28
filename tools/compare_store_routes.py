@@ -123,14 +123,15 @@ def record_run(mode: str, timeout_sec: float, notes: str | None) -> Path:
         bridge_log_cursor = observed.get("bridgeLogCursor", bridge_log_cursor)
         saw_activity = False
 
+        # observe_game может пропустить чистую смену комнаты в длинном ручном прогоне,
+        # поэтому каждый цикл отдельно сверяемся с живым состоянием.
+        polled_state = bridge.get_state()
+        if polled_state:
+            final_state = polled_state
+
         if observed.get("stateChanged"):
             final_state = observed.get("state") or final_state
             state_change_count += 1
-            room = room_id_from_state(final_state)
-            if room:
-                room_counter[room] += 1
-            if not is_grocery_store_state(final_state):
-                has_left_store_zone = True
             saw_activity = True
             print(
                 "state "
@@ -144,6 +145,12 @@ def record_run(mode: str, timeout_sec: float, notes: str | None) -> Path:
                 ),
                 flush=True,
             )
+
+        room = room_id_from_state(final_state)
+        if room:
+            room_counter[room] += 1
+        if not is_grocery_store_state(final_state):
+            has_left_store_zone = True
 
         new_phrases = observed.get("newPhrases") or []
         if new_phrases:
