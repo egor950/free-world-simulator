@@ -37,6 +37,11 @@ def is_grocery_store_state(state: dict) -> bool:
     return room == "grocerystore" or "продуктов" in title
 
 
+def phrases_confirm_store_entry(phrases: list[str]) -> bool:
+    joined = " ".join(phrases).lower()
+    return "ты вошел в большой продуктовый" in joined or "ты вошёл в большой продуктовый" in joined
+
+
 @dataclass
 class RunSummary:
     mode: str
@@ -139,6 +144,9 @@ def record_run(mode: str, timeout_sec: float, notes: str | None) -> Path:
             recent_phrases.extend(new_phrases)
             recent_phrases = recent_phrases[-12:]
             print("phrases " + " | ".join(new_phrases[-2:]), flush=True)
+            if phrases_confirm_store_entry(new_phrases):
+                completed = True
+                break
 
         if is_grocery_store_state(final_state):
             completed = True
