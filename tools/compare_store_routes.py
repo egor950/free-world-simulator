@@ -89,7 +89,9 @@ def record_run(mode: str, timeout_sec: float, notes: str | None) -> Path:
     state = bridge.get_state()
 
     started_at = datetime.now().astimezone().isoformat()
-    start_monotonic = time.monotonic()
+    watch_started_monotonic = time.monotonic()
+    movement_started_at: str | None = None
+    movement_started_monotonic: float | None = None
 
     phrase_cursor = 999999
     game_log_cursor = 999999
@@ -114,11 +116,12 @@ def record_run(mode: str, timeout_sec: float, notes: str | None) -> Path:
     completed = False
     final_state = state
 
-    while time.monotonic() - start_monotonic <= timeout_sec:
+    while time.monotonic() - watch_started_monotonic <= timeout_sec:
         observed = bridge.observe_game(phrase_cursor, game_log_cursor, bridge_log_cursor)
         phrase_cursor = observed.get("phraseCursor", phrase_cursor)
         game_log_cursor = observed.get("gameLogCursor", game_log_cursor)
         bridge_log_cursor = observed.get("bridgeLogCursor", bridge_log_cursor)
+        saw_activity = False
 
         if observed.get("stateChanged"):
             final_state = observed.get("state") or final_state
@@ -128,6 +131,7 @@ def record_run(mode: str, timeout_sec: float, notes: str | None) -> Path:
                 room_counter[room] += 1
             if not is_grocery_store_state(final_state):
                 has_left_store_zone = True
+            saw_activity = True
             print(
                 "state "
                 + json.dumps(
@@ -146,10 +150,16 @@ def record_run(mode: str, timeout_sec: float, notes: str | None) -> Path:
             phrase_count += len(new_phrases)
             recent_phrases.extend(new_phrases)
             recent_phrases = recent_phrases[-12:]
+            saw_activity = True
             print("phrases " + " | ".join(new_phrases[-2:]), flush=True)
             if has_left_store_zone and phrases_confirm_store_entry(new_phrases):
                 completed = True
                 break
+
+        if saw_activity and movement_started_monotonic is None:
+            movement_started_monotonic = time.monotonic()
+            movement_started_at = datetime.now().astimezone().isoformat()
+            print("Таймер пошёл: поймал первое движение.", flush=True)
 
         if has_left_store_zone and is_grocery_store_state(final_state):
             completed = True
@@ -159,12 +169,18 @@ def record_run(mode: str, timeout_sec: float, notes: str | None) -> Path:
         time.sleep(1)
 
     finished_at = datetime.now().astimezone().isoformat()
+    effective_started_at = movement_started_at or started_at
+    effective_duration_sec = (
+        time.monotonic() - movement_started_monotonic
+        if movement_started_monotonic is not None
+        else 0.0
+    )
     summary = RunSummary(
         mode=mode,
-        started_at=started_at,
+        started_at=effective_started_at,
         finished_at=finished_at,
         completed=completed,
-        duration_sec=time.monotonic() - start_monotonic,
+        duration_sec=effective_duration_sec,
         starting_room=starting_room,
         final_room=room_id_from_state(final_state),
         final_focus=focus_from_state(final_state),
