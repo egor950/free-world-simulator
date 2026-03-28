@@ -102,6 +102,7 @@ def record_run(mode: str, timeout_sec: float, notes: str | None) -> Path:
     starting_room = room_id_from_state(state)
     if starting_room:
         room_counter[starting_room] += 1
+    has_left_store_zone = not is_grocery_store_state(state)
 
     print(f"Старт прогона: {mode}", flush=True)
     print(
@@ -125,6 +126,8 @@ def record_run(mode: str, timeout_sec: float, notes: str | None) -> Path:
             room = room_id_from_state(final_state)
             if room:
                 room_counter[room] += 1
+            if not is_grocery_store_state(final_state):
+                has_left_store_zone = True
             print(
                 "state "
                 + json.dumps(
@@ -144,11 +147,11 @@ def record_run(mode: str, timeout_sec: float, notes: str | None) -> Path:
             recent_phrases.extend(new_phrases)
             recent_phrases = recent_phrases[-12:]
             print("phrases " + " | ".join(new_phrases[-2:]), flush=True)
-            if phrases_confirm_store_entry(new_phrases):
+            if has_left_store_zone and phrases_confirm_store_entry(new_phrases):
                 completed = True
                 break
 
-        if is_grocery_store_state(final_state):
+        if has_left_store_zone and is_grocery_store_state(final_state):
             completed = True
             break
 
