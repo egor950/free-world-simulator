@@ -42,6 +42,21 @@ def phrases_confirm_store_entry(phrases: list[str]) -> bool:
     return "ты вошел в большой продуктовый" in joined or "ты вошёл в большой продуктовый" in joined
 
 
+def controlled_car_from_state(state: dict):
+    return state.get("controlledCar")
+
+
+def car_has_started_moving(state: dict) -> bool:
+    car = controlled_car_from_state(state)
+    if not isinstance(car, dict):
+        return False
+    speed = car.get("speed")
+    try:
+        return float(speed or 0) > 0.05
+    except Exception:
+        return False
+
+
 @dataclass
 class RunSummary:
     mode: str
@@ -163,10 +178,17 @@ def record_run(mode: str, timeout_sec: float, notes: str | None) -> Path:
                 completed = True
                 break
 
-        if saw_activity and movement_started_monotonic is None:
+        should_start_timer = saw_activity
+        if mode == "car":
+            should_start_timer = car_has_started_moving(final_state)
+
+        if should_start_timer and movement_started_monotonic is None:
             movement_started_monotonic = time.monotonic()
             movement_started_at = datetime.now().astimezone().isoformat()
-            print("Таймер пошёл: поймал первое движение.", flush=True)
+            if mode == "car":
+                print("Таймер пошёл: машина реально поехала.", flush=True)
+            else:
+                print("Таймер пошёл: поймал первое движение.", flush=True)
 
         if has_left_store_zone and is_grocery_store_state(final_state):
             completed = True
