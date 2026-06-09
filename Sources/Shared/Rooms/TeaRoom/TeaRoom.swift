@@ -34,7 +34,7 @@ enum TeaRoom {
         return RoomDefinition(
             id: .teaRoom,
             title: "Чайная",
-            entryAnnouncement: "Ты в чайной. Здесь небольшой столик для заваривания чая. Слева дверь на кухню, справа — в ванную.",
+            entryAnnouncement: "Ты в чайной. Слева дверь на кухню, справа — в ванную. В центре столик для заваривания чая.",
             ambientSound: .ambientRoom01,
             width: 5,
             height: 4,

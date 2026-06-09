@@ -46,10 +46,6 @@ extension GameViewModel {
             return exactNode
         }
 
-        if let nearbyDoor = nearbyDoorNode(maxDistance: 1) {
-            return nearbyDoor
-        }
-
         if let ownedNode = nearbyOwnedParkedCarNode(maxDistance: streetCarInteractionDistance) {
             return ownedNode
         }
@@ -210,42 +206,71 @@ extension GameViewModel {
         return currentFocusNode?.shortPrompt ?? ""
     }
 
-    func refreshScreenState() {
+    func refreshScreenState(syncAudio: Bool = true) {
         syncNavigationBeaconState()
         syncGameplayStateMachines()
-        roomTitle = currentRoom.title
-        focusTitle = currentFocusNode?.title ?? "Свободное место"
-        focusShortText = currentShortPrompt()
+        let nextRoomTitle = currentRoom.title
+        if roomTitle != nextRoomTitle {
+            roomTitle = nextRoomTitle
+        }
+
+        let nextFocusTitle = currentFocusNode?.title ?? "Свободное место"
+        if focusTitle != nextFocusTitle {
+            focusTitle = nextFocusTitle
+        }
+
+        let nextFocusShortText = currentShortPrompt()
+        if focusShortText != nextFocusShortText {
+            focusShortText = nextFocusShortText
+        }
+
         if let controlledCar = state.controlledCar {
-            statusText = controlledCarStatusText(controlledCar)
+            let nextStatusText = controlledCarStatusText(controlledCar)
+            if statusText != nextStatusText {
+                statusText = nextStatusText
+            }
         }
         updateInventoryState()
 
+        let nextHoldText: String
         if let heldItem = state.player.heldItem {
-            holdText = "В руках: \(heldItem.name). \(state.player.pose.title.lowercased())."
+            nextHoldText = "В руках: \(heldItem.name). \(state.player.pose.title.lowercased())."
         } else {
-            holdText = state.player.pose.title
+            nextHoldText = state.player.pose.title
+        }
+        if holdText != nextHoldText {
+            holdText = nextHoldText
         }
 
-        syncAudioWorldState()
+        if syncAudio {
+            syncAudioWorldState()
+        }
     }
 
     func updateInventoryState() {
         if let heldItem = state.player.heldItem {
-            inventoryTitle = "Инвентарь: \(heldItem.name)"
-
             var lines: [String] = []
             lines.append("E: \(heldItemAction(for: .primary)?.title ?? "Нет главного действия")")
             lines.append("F: \(heldItemAction(for: .force)?.title ?? "Нет силового действия")")
             lines.append("C: \(inventoryQuickAction()?.title ?? "Нет быстрого действия")")
             lines.append("R: Осмотреть предмет")
             lines.append("Escape: закрыть инвентарь")
-            inventoryText = lines.joined(separator: "\n")
+            let nextInventoryText = lines.joined(separator: "\n")
+            if inventoryTitle != "Инвентарь: \(heldItem.name)" {
+                inventoryTitle = "Инвентарь: \(heldItem.name)"
+            }
+            if inventoryText != nextInventoryText {
+                inventoryText = nextInventoryText
+            }
             return
         }
 
-        inventoryTitle = "Инвентарь пуст"
-        inventoryText = "Сейчас у тебя ничего нет в руках."
+        if inventoryTitle != "Инвентарь пуст" {
+            inventoryTitle = "Инвентарь пуст"
+        }
+        if inventoryText != "Сейчас у тебя ничего нет в руках." {
+            inventoryText = "Сейчас у тебя ничего нет в руках."
+        }
     }
 
     func node(for target: FocusTarget) -> FocusNode? {
@@ -631,6 +656,12 @@ extension GameViewModel {
         }
 
         if hiddenWhenOnStove && KitchenKettle.placement(in: state) == .onBase {
+            return nil
+        }
+
+        if itemID == KitchenMug.itemID,
+           currentRoom.id == .kitchen,
+           KitchenMug.isKitchenMugTaken(in: state) {
             return nil
         }
 

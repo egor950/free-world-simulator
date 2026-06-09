@@ -41,7 +41,7 @@ enum TeaRoomTable {
             fullDescriptionProvider: { state in
                 switch stage(in: state) {
                 case .empty:
-                    return "Перед тобой небольшой деревянный столик. На нём можно заварить чай: поставить кружку с кипятком и добавить пакетик."
+                    return "Перед тобой небольшой деревянный столик. На нём можно заварить чай.\n\nКак заварить чай:\n1. Возьми кружку на кухне (E)\n2. Налей кипяток из чайника (E рядом с кружкой)\n3. Купи пакетик чая у продавца (Пробел)\n4. Поставь кружку на столик (E)\n5. Добавь пакетик (E)\n6. Забери кружку (F) и продай на стойке"
                 case .mugPlaced:
                     return "На столике стоит кружка с горячей водой. Добавь пакетик чая, чтобы начать заваривание."
                 case .brewing:
@@ -75,6 +75,21 @@ enum TeaRoomTable {
                                 setMugIDOnTable(heldID, in: &runtimeState)
                                 setStage(.mugPlaced, in: &runtimeState)
                             }
+                        ]
+                    }
+
+                    if let heldID = heldItemID,
+                       KitchenMug.isMugItemID(heldID),
+                       KitchenMug.fillState(in: state, itemID: heldID) == .empty {
+                        return [
+                            ItemAction(
+                                trigger: .primary,
+                                title: "Поставить кружку",
+                                resultText: "Кружка пустая. Сначала налей кипяток из чайника на кухне.",
+                                sound: nil,
+                                requiresHeldItemID: heldID,
+                                producesHeldItem: nil
+                            ) { _ in }
                         ]
                     }
 

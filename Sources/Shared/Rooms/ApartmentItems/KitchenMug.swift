@@ -12,6 +12,16 @@ enum KitchenMug {
         case sweetTea
     }
 
+    private static let kitchenMugTakenKey = "kitchen.mug.taken"
+
+    static func isKitchenMugTaken(in state: WorldRuntimeState) -> Bool {
+        state.itemStage(itemID: kitchenMugTakenKey, as: BoolBackedStage.self, default: BoolBackedStage(value: false)).value
+    }
+
+    static func markKitchenMugTaken(in state: inout WorldRuntimeState) {
+        state.setItemStage(itemID: kitchenMugTakenKey, stage: BoolBackedStage(value: true))
+    }
+
     static func isMugItemID(_ candidateID: String) -> Bool {
         candidateID == itemID || candidateID.hasPrefix(extraStoreMugPrefix)
     }
@@ -128,6 +138,9 @@ enum KitchenMug {
                         producesHeldItem: HeldItem(itemID: definitionItemID, name: name)
                     ) { runtimeState in
                         runtimeState.clearItemLocation(itemID: definitionItemID)
+                        if definitionItemID == KitchenMug.itemID {
+                            KitchenMug.markKitchenMugTaken(in: &runtimeState)
+                        }
                     }
                 ]
             }
@@ -254,6 +267,13 @@ enum KitchenMug {
             if current == GridPosition(x: 2, y: 1) {
                 return GridPosition(x: 1, y: 1)
             }
+        case .teaRoom:
+            if current == GridPosition(x: 2, y: 1) {
+                return GridPosition(x: 1, y: 1)
+            }
+            if current == GridPosition(x: 3, y: 1) {
+                return GridPosition(x: 2, y: 1)
+            }
         default:
             break
         }
@@ -271,5 +291,18 @@ private struct IntBackedStage: RawRepresentable {
 
     init(value: Int) {
         self.rawValue = String(value)
+    }
+}
+
+private struct BoolBackedStage: RawRepresentable {
+    let rawValue: String
+    var value: Bool { rawValue == "true" }
+
+    init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+
+    init(value: Bool) {
+        self.rawValue = value ? "true" : "false"
     }
 }
