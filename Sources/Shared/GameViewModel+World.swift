@@ -145,6 +145,14 @@ extension GameViewModel {
             return KitchenMug.make(itemID: itemID)
         }
 
+        if itemID == GroceryStoreTeabag.itemID {
+            return GroceryStoreTeabag.make()
+        }
+
+        if itemID == GroceryStoreSugar.itemID {
+            return GroceryStoreSugar.make()
+        }
+
         return nil
     }
 
