@@ -12,7 +12,7 @@ enum TeaRoom {
             targetRoomPosition: GridPosition(x: 6, y: 1),
             state: .closed,
             focusNodeID: "teaRoom.node.kitchenDoor",
-            shortPrompt: "Слева дверь обратно на кухню.",
+            shortPrompt: "Дверь обратно на кухню.",
             openResultText: "Ты открыл дверь и вышел на кухню.",
             lockedText: "Дверь не открывается.",
             sound: nil
@@ -24,7 +24,7 @@ enum TeaRoom {
             targetRoomPosition: GridPosition(x: 0, y: 1),
             state: .closed,
             focusNodeID: "teaRoom.node.bathroomDoor",
-            shortPrompt: "Справа дверь в ванную.",
+            shortPrompt: "Дверь в ванную.",
             openResultText: "Ты открыл дверь и зашёл в ванную.",
             lockedText: "Дверь не открывается.",
             sound: nil
@@ -34,9 +34,9 @@ enum TeaRoom {
         return RoomDefinition(
             id: .teaRoom,
             title: "Чайная",
-            entryAnnouncement: "Ты в чайной. Слева дверь на кухню, справа — в ванную. В центре столик для заваривания чая.",
+            entryAnnouncement: "Ты в чайной. Дверь на кухню, впереди столик для заваривания чая, дальше дверь в ванную.",
             ambientSound: .ambientRoom01,
-            width: 5,
+            width: 8,
             height: 4,
             nodes: [
                 FocusNode(
@@ -44,21 +44,21 @@ enum TeaRoom {
                     title: kitchenDoor.name,
                     position: GridPosition(x: 0, y: 1),
                     target: .door(kitchenDoor.id),
-                    shortPrompt: "Слева дверь обратно на кухню. Если она открыта, нажми влево, чтобы выйти.",
+                    shortPrompt: "Дверь обратно на кухню. Если она открыта, нажми влево, чтобы выйти.",
                     fullDescription: "Дверь ведёт обратно на кухню."
                 ),
                 FocusNode(
                     id: bathroomDoor.focusNodeID,
                     title: bathroomDoor.name,
-                    position: GridPosition(x: 4, y: 1),
+                    position: GridPosition(x: 7, y: 1),
                     target: .door(bathroomDoor.id),
-                    shortPrompt: "Справа дверь в ванную. Если она открыта, нажми вправо, чтобы выйти.",
+                    shortPrompt: "Дверь в ванную. Если она открыта, нажми вправо, чтобы выйти.",
                     fullDescription: "Дверь ведёт в ванную комнату с краном и зеркалом."
                 ),
                 FocusNode(
                     id: table.id,
                     title: table.name,
-                    position: GridPosition(x: 2, y: 1),
+                    position: GridPosition(x: 3, y: 1),
                     target: .item(table.id)
                 )
             ],
