@@ -48,7 +48,7 @@ extension GameViewModel {
             return true
         }
 
-        return action.trigger == .force && action.sound != nil
+        return false
     }
 
     func handleNeighborDoor() {
