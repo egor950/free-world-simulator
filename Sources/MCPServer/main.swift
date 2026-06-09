@@ -595,7 +595,7 @@ final class MCPServer {
                     ],
                     [
                         "name": "debug_world",
-                        "description": "Низкоуровневое управление миром. Операции: get_runtime_state, set_player, set_held_item, clear_held_item, set_item_location, clear_item_location, set_state, clear_state, neighbor_set_state, neighbor_loud_step, neighbor_start_break_in, neighbor_attack, neighbor_set_config, refresh.",
+                        "description": "Низкоуровневое управление миром. Операции: get_runtime_state, set_player, set_held_item, clear_held_item, set_item_location, clear_item_location, set_state, clear_state, spawn_car, neighbor_set_state, neighbor_loud_step, neighbor_start_break_in, neighbor_attack, neighbor_set_config, refresh.",
                         "inputSchema": [
                             "type": "object",
                             "properties": [

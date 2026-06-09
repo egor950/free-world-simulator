@@ -58,6 +58,9 @@ extension GameViewModel {
         case "neighbor_set_config":
             return debugSetNeighborConfig(arguments: arguments)
 
+        case "spawn_car":
+            return try debugSpawnCar()
+
         case "refresh":
             refreshScreenState()
             return debugRuntimeStatePayload(message: "Экран и мир обновлены.")
@@ -219,6 +222,43 @@ extension GameViewModel {
         return debugRuntimeStatePayload(
             message: "Машина игрока перенесена в \(roomID.rawValue) \(Int(worldX.rounded())),\(Int(worldZ.rounded()))."
         )
+    }
+
+    private func debugSpawnCar() throws -> [String: Any] {
+        let roomID = state.player.roomID
+        guard roomID == .street || roomID == .mainStreet else {
+            throw LiveGameBridgeError("Машину можно заспавнить только на street или mainStreet.")
+        }
+
+        let playerPos = state.player.roomPosition
+        let worldPos: OutdoorCarWorldPosition
+        switch roomID {
+        case .mainStreet:
+            let x = (Float(playerPos.x) / Float(MainStreetRoom.width - 1)) * 180.0 - 90.0
+            let z = 23.5 + (Float((MainStreetRoom.height - 1) - playerPos.y) / Float(MainStreetRoom.height - 1)) * 30.0
+            worldPos = OutdoorCarWorldPosition(x: x + 2, z: z)
+        case .street:
+            worldPos = OutdoorCarWorldPosition(x: (Float(playerPos.x) / 14.0) * 68.0 - 34.0, z: Float(7 - playerPos.y) * 2.5)
+        default:
+            throw LiveGameBridgeError("Неподдерживаемая комната.")
+        }
+
+        let title = "седан"
+        let car = ParkedOwnedCarState(
+            id: UUID(),
+            kind: .sedan,
+            title: title,
+            roomID: roomID,
+            worldPosition: worldPos,
+            gridPosition: playerPos,
+            headingRadians: roomID == .mainStreet ? .pi / 2 : 0,
+            directionLeftToRight: true,
+            isEngineRunning: true
+        )
+        state.setParkedOwnedCar(car)
+        refreshScreenState()
+
+        return debugRuntimeStatePayload(message: "Заспавнен \(title) с работающим мотором рядом с игроком.")
     }
 
     private func debugSetHeldItem(arguments: [String: Any]) throws -> [String: Any] {
