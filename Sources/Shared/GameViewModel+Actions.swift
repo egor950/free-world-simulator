@@ -232,6 +232,10 @@ extension GameViewModel {
             actions = KitchenKettle.heldActions(for: state)
         case _ where KitchenMug.isMugItemID(heldItemID):
             actions = KitchenMug.heldActions(for: state, itemID: heldItemID)
+        case GroceryStoreTeabag.itemID:
+            actions = GroceryStoreTeabag.heldActions(for: state)
+        case GroceryStoreSugar.itemID:
+            actions = GroceryStoreSugar.heldActions(for: state)
         default:
             actions = []
         }

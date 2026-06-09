@@ -8,6 +8,7 @@ enum WorldBuilder {
             LivingRoomRoom.make(),
             KitchenRoom.make(),
             BathroomRoom.make(),
+            TeaRoom.make(),
             StreetRoom.make(),
             MainStreetRoom.make(),
             GroceryStoreRoom.make()

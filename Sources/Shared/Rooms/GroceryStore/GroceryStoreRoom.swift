@@ -16,6 +16,8 @@ enum GroceryStoreRoom {
     static let askFreebieInteractionID = "groceryStore.askFreebie"
     static let askWaterInteractionID = "groceryStore.askWater"
     static let takeShelfMugInteractionID = "groceryStore.takeShelfMug"
+    static let buyTeabagInteractionID = "groceryStore.buyTeabag"
+    static let buySugarInteractionID = "groceryStore.buySugar"
 
     static func make() -> RoomDefinition {
         let streetDoor = DoorDefinition(
@@ -93,10 +95,10 @@ enum GroceryStoreRoom {
             id: clerkItemID,
             name: "продавец",
             shortPromptProvider: { _ in
-                "За прилавком продавец. Можно спросить, что у него есть, попросить кружку или уточнить что-нибудь бесплатное."
+                "За прилавком продавец. Можно спросить, что у него есть, попросить кружку или купить чай и сахар."
             },
             fullDescriptionProvider: { _ in
-                "Перед тобой продавец за длинным прилавком. Он спокойно ждет вопроса и явно привык, что к нему подходят за мелочами."
+                "Перед тобой продавец за длинным прилавком. Он спокойно ждет вопроса и явно привык, что к нему подходят за мелочами. На ценнике: пакетик чая — 2 монеты, сахар — 1 монета."
             },
             actionsProvider: { _ in
                 [
@@ -107,7 +109,7 @@ enum GroceryStoreRoom {
                         sound: nil,
                         requiresHeldItemID: nil,
                         producesHeldItem: nil,
-                        interactionID: listGoodsInteractionID
+                        interactionID: GroceryStoreRoom.listGoodsInteractionID
                     ) { _ in },
                     ItemAction(
                         trigger: .force,
@@ -116,16 +118,25 @@ enum GroceryStoreRoom {
                         sound: nil,
                         requiresHeldItemID: nil,
                         producesHeldItem: nil,
-                        interactionID: askForMugInteractionID
+                        interactionID: GroceryStoreRoom.askForMugInteractionID
                     ) { _ in },
                     ItemAction(
                         trigger: .throwItem,
-                        title: "Можно что-нибудь бесплатно?",
+                        title: "Купить пакетик чая — \(GroceryStoreTeabag.price) монеты",
                         resultText: "",
                         sound: nil,
                         requiresHeldItemID: nil,
                         producesHeldItem: nil,
-                        interactionID: askFreebieInteractionID
+                        interactionID: GroceryStoreRoom.buyTeabagInteractionID
+                    ) { _ in },
+                    ItemAction(
+                        trigger: .placeHeldItem,
+                        title: "Купить сахар — \(GroceryStoreSugar.price) монета",
+                        resultText: "",
+                        sound: nil,
+                        requiresHeldItemID: nil,
+                        producesHeldItem: nil,
+                        interactionID: GroceryStoreRoom.buySugarInteractionID
                     ) { _ in }
                 ]
             }

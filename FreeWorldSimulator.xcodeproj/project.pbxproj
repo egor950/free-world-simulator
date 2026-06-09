@@ -28,8 +28,10 @@
 		10BF2FA5D00667A348E52AE9 /* city_street_bed.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 043450244A81A3749DCE01DF /* city_street_bed.mp3 */; };
 		10C30CF8624D7B33FA2D2BBC /* GameViewModel+VehicleActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC41AF1729B608D87B2B92C /* GameViewModel+VehicleActions.swift */; };
 		1100E43E896CA59C5C8D7C81 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4998B68D44D89C20C715E6A /* AVFoundation.framework */; };
+		110F3E9FE94380F6FF8C6405 /* EmbeddedMCPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E743FBE2AE3E3952C48BE539 /* EmbeddedMCPServer.swift */; };
 		12EC23DEB39B2B4E3E196F85 /* item_place_metal_01.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 24E913316391B2F8CC2F781F /* item_place_metal_01.m4a */; };
 		13E38ECB4F3E50A0F4627338 /* traffic_engine_light.wav in Resources */ = {isa = PBXBuildFile; fileRef = A8249E518C89328D18940F0A /* traffic_engine_light.wav */; };
+		1457FDA3ED3A038DAFF358A6 /* GroceryStoreSugar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1000C22BC0E9BB2FDB7DF55 /* GroceryStoreSugar.swift */; };
 		14C6044BD8B93832ED1B6365 /* LiveGameBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5959BD7C1D6739EAC43657B /* LiveGameBridge.swift */; };
 		17C9EE5A09FFD6B113212FEE /* cabinet_smash.wav in Resources */ = {isa = PBXBuildFile; fileRef = 206EC78B10A9164FD3EC0FB2 /* cabinet_smash.wav */; };
 		17F208DECF27941773617082 /* step_asphalt_05.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 45A806FB972EF77BDDD2C7BD /* step_asphalt_05.mp3 */; };
@@ -86,6 +88,7 @@
 		35E47F9728856B839F4E9E27 /* MainStreetRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66804F75972C9A0325F9F168 /* MainStreetRoom.swift */; };
 		35FB9FAC43B86BAE03FD8DA3 /* step_asphalt_04.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AFA7372A8234FABA9214063C /* step_asphalt_04.mp3 */; };
 		37B9EDE886F69943B6C5FC55 /* step_asphalt_02.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = BB34C26A1A78412AC745A63A /* step_asphalt_02.mp3 */; };
+		383F3B99921E30678C7274E9 /* TeaRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234F6CFC32B10BE0D2428372 /* TeaRoom.swift */; };
 		38A9C47A79C023B09DB4BED5 /* GameViewModel+VehicleDriving.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC932F3E3211D33E608CED1D /* GameViewModel+VehicleDriving.swift */; };
 		39188333D2C8A624F1EE9A4F /* GameViewModel+World.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F26AFFB3A12129B23B1A8F2 /* GameViewModel+World.swift */; };
 		393A1CA1C057C1F4AAE7217F /* ts3_start_common_b.wav in Resources */ = {isa = PBXBuildFile; fileRef = 694A94AE4999C919604D9594 /* ts3_start_common_b.wav */; };
@@ -101,7 +104,9 @@
 		3FB0B7AAF0A4C84C7AF539D1 /* traffic_brake_soft.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7F95D302593FCDCB65958EAA /* traffic_brake_soft.wav */; };
 		422677F6AF90D5EE102D92B7 /* GameViewModel+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE4C98E8EF4F75E13ACBC6B /* GameViewModel+Audio.swift */; };
 		442944B4E007114E6E91ED4E /* ts3_start_common_b.wav in Resources */ = {isa = PBXBuildFile; fileRef = 694A94AE4999C919604D9594 /* ts3_start_common_b.wav */; };
+		4454B79937BB8D0131748CDE /* TeaShop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C637CAB0CD3B743F4F9878 /* TeaShop.swift */; };
 		44C4623CF54016BC41721B90 /* kettle_heat_start.wav in Resources */ = {isa = PBXBuildFile; fileRef = C3ADF2268BA312D14E83194D /* kettle_heat_start.wav */; };
+		45512C0443BD6D8009B0B92B /* GroceryStoreTeabag.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6C9730A4538D67C2515951 /* GroceryStoreTeabag.swift */; };
 		455BC5428FBDF31079B3714B /* cabinet_smash.wav in Resources */ = {isa = PBXBuildFile; fileRef = 206EC78B10A9164FD3EC0FB2 /* cabinet_smash.wav */; };
 		459E9ECCB8214C171B1E122A /* kettle_heat_start.wav in Resources */ = {isa = PBXBuildFile; fileRef = C3ADF2268BA312D14E83194D /* kettle_heat_start.wav */; };
 		46474118F183EBB4555C6406 /* GameViewModel+Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = B730C6D651C4C2D06ADA9FED /* GameViewModel+Session.swift */; };
@@ -128,12 +133,14 @@
 		581A3DEBDA354C03A5055FA3 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 222982F14D2F777539752E99 /* Network.framework */; };
 		589193FF565098CBD5ADA043 /* LivingRoomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB9865D6A5C834A60036B4C /* LivingRoomRoom.swift */; };
 		5B3C082F5FD569F6066599D5 /* Parking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907ECF76E3CC9760129ADB4D /* Parking.swift */; };
+		5E772FA5BFF89AEE32417C2F /* EmbeddedMCPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E743FBE2AE3E3952C48BE539 /* EmbeddedMCPServer.swift */; };
 		5F179A85FF8BD13C9CCEB59A /* GameViewModel+Movement.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD85185B7E2D807BEACC5E3A /* GameViewModel+Movement.swift */; };
 		5F1E1918FBAA054EE1249875 /* ts3_start_light.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7297D5DAAF1BFAF125DD3B42 /* ts3_start_light.wav */; };
 		5F692C7E193EDBBB65A2E5B6 /* ts3_start_key.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8B7DD75B6E9B254B76916603 /* ts3_start_key.wav */; };
 		5FBE376F294910798332DFF2 /* KitchenKettle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E121BCA920E3AAC21557750E /* KitchenKettle.swift */; };
 		5FD1BE1DA7B74C878D6843BC /* GameViewModel+VehicleDriving.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC932F3E3211D33E608CED1D /* GameViewModel+VehicleDriving.swift */; };
 		6060BA3738E51D7BE72162AA /* WorldBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAF5C38A20B5069BEC2DAA /* WorldBuilder.swift */; };
+		6061BCF8DCCD39EF53EBC3CC /* GroceryStoreSugar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1000C22BC0E9BB2FDB7DF55 /* GroceryStoreSugar.swift */; };
 		6061BE75D783D0B4A4DAB8F3 /* ts3_start_coupe.wav in Resources */ = {isa = PBXBuildFile; fileRef = CA32955C6E428BEC6A101C71 /* ts3_start_coupe.wav */; };
 		60C6EA6AB696D94CBB43B6E1 /* GroceryStoreRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234CAA8BA71A07F6E08F4D8C /* GroceryStoreRoom.swift */; };
 		614ED8AB255C91B1F10AF66F /* Mirror.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7C4A955FBD5B1997BA364D /* Mirror.swift */; };
@@ -142,6 +149,7 @@
 		63753DEE5B957B60B13A2AE0 /* kettle_heat_finish.wav in Resources */ = {isa = PBXBuildFile; fileRef = FCE752DCE365DA46C52F43A2 /* kettle_heat_finish.wav */; };
 		638A6149D97CB79BE0CE3D34 /* ts3_start_light.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7297D5DAAF1BFAF125DD3B42 /* ts3_start_light.wav */; };
 		64138C849E413BDAE051BB82 /* Mirror.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7C4A955FBD5B1997BA364D /* Mirror.swift */; };
+		64BCD1EDDAF1D200F453F280 /* GroceryStoreTeabag.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6C9730A4538D67C2515951 /* GroceryStoreTeabag.swift */; };
 		64E0B0E33B78021E9333A4AC /* door_break_heavy.wav in Resources */ = {isa = PBXBuildFile; fileRef = BD4D3183B8DA6D995B2B996A /* door_break_heavy.wav */; };
 		6600C43EB93A720A1D9AEC15 /* Bed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77D0566229DA2669BEC252FE /* Bed.swift */; };
 		67BD6E8B9CC61A1D590B031C /* traffic_engine_sport.wav in Resources */ = {isa = PBXBuildFile; fileRef = E468E6DBD0931FD588C9FBA2 /* traffic_engine_sport.wav */; };
@@ -175,6 +183,7 @@
 		7F610B8A3616885C6FFD113B /* FlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CC80B06B3F049B82729EDFD /* FlowController.swift */; };
 		7FBE77564C895025568C0893 /* ambient_room_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1B5DD9BE823FBDFDB4E6A9D8 /* ambient_room_01.mp3 */; };
 		806788361E57E7E60C49A758 /* AudioCoordinator+DriveableCars.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C96296BF48DB01BFBD303B6 /* AudioCoordinator+DriveableCars.swift */; };
+		80D2998E5CDDA2E5D8D3A2BD /* TeaRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234F6CFC32B10BE0D2428372 /* TeaRoom.swift */; };
 		810DEB21A67CB21C0B75D02B /* punch_hit.wav in Resources */ = {isa = PBXBuildFile; fileRef = 204993DDC77CE778610428AF /* punch_hit.wav */; };
 		828802744AE5C8A12171B51E /* step_asphalt_04.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AFA7372A8234FABA9214063C /* step_asphalt_04.mp3 */; };
 		8329872D3A01C62770F7B423 /* VehicleWorldModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0EE5E9300CDFC11D6B09CC /* VehicleWorldModels.swift */; };
@@ -215,6 +224,7 @@
 		9995E3C1283662BC57CE234A /* traffic_engine_coupe.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8305143CA420C2CF0B356BBC /* traffic_engine_coupe.wav */; };
 		99F0AE344401923C95A7A598 /* CoatRack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98525CCA15D0CA51155B23A /* CoatRack.swift */; };
 		9BB60FC2C6CF31E44B56B169 /* gate_close.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5A4BCC2BA5BAA032F862D426 /* gate_close.wav */; };
+		9BE96456FA22AC67F4CBF2E5 /* TeaRoomTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE3CD33ADD9C2957DB83A3 /* TeaRoomTable.swift */; };
 		9C3761E29D5DDBB15535046A /* BathroomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE17EF1B5947855F9092B857 /* BathroomRoom.swift */; };
 		9E57678096E2771A5317C40A /* AudioCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422AE568411A45281AB086DC /* AudioCoordinator.swift */; };
 		A004A86EF7C685F49A059D76 /* StreetTrafficCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94EA3A91C6537F093A33C0BA /* StreetTrafficCoordinator.swift */; };
@@ -223,6 +233,7 @@
 		A0E9FF9678386EEA255B39D8 /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A672BF4FDE31AD4B9CC373A1 /* GameViewModel.swift */; };
 		A149E2A90768C66C285C8F1F /* step_carpet_02.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DB2B915989252BC9445E62EF /* step_carpet_02.mp3 */; };
 		A16EBEB3BF03CAB918412BD5 /* traffic_engine_roadster.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8839E3FB941B90991AE53BCE /* traffic_engine_roadster.wav */; };
+		A27E2283125B662844F44C01 /* TeaShop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C637CAB0CD3B743F4F9878 /* TeaShop.swift */; };
 		A2DD32F341DF6CF13777C018 /* MainStreetRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66804F75972C9A0325F9F168 /* MainStreetRoom.swift */; };
 		A5FAD5636406F0DB0A5B9F06 /* step_asphalt_03.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CD382F6DF0AD992404D5624A /* step_asphalt_03.mp3 */; };
 		A61841EA929EF0A49A132A64 /* GameplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 605335D08F7BCF03C3D0F04E /* GameplayKit.framework */; };
@@ -245,6 +256,7 @@
 		B68238945AA75F73C84B6AB9 /* AudioCoordinator+DriveableCars.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C96296BF48DB01BFBD303B6 /* AudioCoordinator+DriveableCars.swift */; };
 		B6C0CDD4C0163B3572140727 /* ts3_sport_engine.wav in Resources */ = {isa = PBXBuildFile; fileRef = A77C4C4009723962649E5459 /* ts3_sport_engine.wav */; };
 		B76953B324B387FB28670685 /* HallwayRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7369C9785D4D3F5F19763804 /* HallwayRoom.swift */; };
+		B83AEFBFFC3F38AF339B32C3 /* EmbeddedMCPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E743FBE2AE3E3952C48BE539 /* EmbeddedMCPServer.swift */; };
 		B8933D077A835F819612594F /* traffic_engine_sedan.wav in Resources */ = {isa = PBXBuildFile; fileRef = D8A3648B39035FCD7FB63C48 /* traffic_engine_sedan.wav */; };
 		B8989D1E269FEE19791F9CBA /* traffic_engine_sedan.wav in Resources */ = {isa = PBXBuildFile; fileRef = D8A3648B39035FCD7FB63C48 /* traffic_engine_sedan.wav */; };
 		B89F08244ED38425467A061B /* heartbeat_fast.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9D0CFB0ABCAB78C1210B2920 /* heartbeat_fast.wav */; };
@@ -253,6 +265,7 @@
 		BA604B14D614C4E5A1C427C0 /* RootGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C0E8D3613B8C88562A375 /* RootGameView.swift */; };
 		BB3EF7995262583D3DE99262 /* LivingRoomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB9865D6A5C834A60036B4C /* LivingRoomRoom.swift */; };
 		BD90520E1C7A0D3260146262 /* LivingRoomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB9865D6A5C834A60036B4C /* LivingRoomRoom.swift */; };
+		BDD81A1B31CEFE15F9CBD669 /* GroceryStoreTeabag.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6C9730A4538D67C2515951 /* GroceryStoreTeabag.swift */; };
 		BEED859C92FE210279778017 /* KitchenStove.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB2A6D25F290524935220225 /* KitchenStove.swift */; };
 		BEFB3BABFC6CBB23FA5C7A89 /* HallwayRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7369C9785D4D3F5F19763804 /* HallwayRoom.swift */; };
 		BF345E983AB3792B84C9ACA3 /* ts3_light_engine.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4B1D8FA0446449F6FE1FB470 /* ts3_light_engine.wav */; };
@@ -267,6 +280,7 @@
 		C371DC1CBE4B5FC0C2F4CC26 /* kettle_switch_on_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5865A86A1820A0DCBD16DCC7 /* kettle_switch_on_01.mp3 */; };
 		C3959616A3A59679EAD5937D /* KitchenKettle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E121BCA920E3AAC21557750E /* KitchenKettle.swift */; };
 		C3D4F4AD5282AB159140670B /* ts3_coupe_engine.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA18FAD4224FAE1FF4F6ED6C /* ts3_coupe_engine.wav */; };
+		C5A7BF865621D214C0DE7849 /* TeaRoomTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE3CD33ADD9C2957DB83A3 /* TeaRoomTable.swift */; };
 		C69A133643677369C60FCD27 /* GameVehicleRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EDE9E4E86999173FFAA4C85 /* GameVehicleRuntime.swift */; };
 		C7385EA498B885988223462F /* ts3_sport_engine.wav in Resources */ = {isa = PBXBuildFile; fileRef = A77C4C4009723962649E5459 /* ts3_sport_engine.wav */; };
 		C76A2052F2DA1D0A4B29FA75 /* step_asphalt_03.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CD382F6DF0AD992404D5624A /* step_asphalt_03.mp3 */; };
@@ -285,6 +299,7 @@
 		D37D39FF8DB1773EBDF8C788 /* door_banging_hard.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5CDFE8966DBF84B33E2B05CC /* door_banging_hard.wav */; };
 		D4B66A50A396635085F11000 /* CoatRack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98525CCA15D0CA51155B23A /* CoatRack.swift */; };
 		D567EE7EE0A61E2489A1E404 /* GameViewModel+NavigationBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B639B7A579B15B543995B84 /* GameViewModel+NavigationBeacon.swift */; };
+		D58536D9C3D0E983BA3485D1 /* TeaShop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C637CAB0CD3B743F4F9878 /* TeaShop.swift */; };
 		D60CB00AFD54E54434508C30 /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A672BF4FDE31AD4B9CC373A1 /* GameViewModel.swift */; };
 		D61CA7C8BDB6DB1EA6A96463 /* ts3_light_engine.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4B1D8FA0446449F6FE1FB470 /* ts3_light_engine.wav */; };
 		D68352C544E69FF7E9B9E4EE /* glass_break_small.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0FE30E30380E983F6AD14081 /* glass_break_small.wav */; };
@@ -293,9 +308,11 @@
 		D90B0658E3823D89D94B03EE /* KitchenKettle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E121BCA920E3AAC21557750E /* KitchenKettle.swift */; };
 		D963D1E4721A2F230FC7024E /* door_banging_hard.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5CDFE8966DBF84B33E2B05CC /* door_banging_hard.wav */; };
 		D9BF056C3EE7018DE066E271 /* GameViewModel+Gate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D817B3A6F81B496CB335143 /* GameViewModel+Gate.swift */; };
+		DA6236A51D030FE5203AF783 /* GroceryStoreSugar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1000C22BC0E9BB2FDB7DF55 /* GroceryStoreSugar.swift */; };
 		DA9B79C287116CDF732CCB02 /* Pillow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC8A4A3F6568C9EFDDF3E75 /* Pillow.swift */; };
 		DACD5D8919CFF2DA0D2B6DBB /* SpeechCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 339CBAB2EBF45D24F500CA5E /* SpeechCoordinator.swift */; };
 		DC6A84836C9E22A4E2AAA249 /* GameViewModel+NavigationBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B639B7A579B15B543995B84 /* GameViewModel+NavigationBeacon.swift */; };
+		DD94A62F9CDA477951AE4C77 /* TeaRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234F6CFC32B10BE0D2428372 /* TeaRoom.swift */; };
 		DE3B4DEAD59D3AD3378521A1 /* GameViewModel+VehicleWorld.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0099E144974C818D0EF1A3 /* GameViewModel+VehicleWorld.swift */; };
 		DF1522477968C9A1E3537399 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89390D5364A83D472482F771 /* main.swift */; };
 		DF846E6797AF88DD9E636AC0 /* step_carpet_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2443C6417F9E025DFC0F565D /* step_carpet_01.mp3 */; };
@@ -311,6 +328,7 @@
 		E8A5D22A5D5DECD797F013AB /* SpeechCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 339CBAB2EBF45D24F500CA5E /* SpeechCoordinator.swift */; };
 		E8CA54EBAF07C5C474BB5288 /* step_asphalt_03.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CD382F6DF0AD992404D5624A /* step_asphalt_03.mp3 */; };
 		E93A6B7FACD8245C5EF89C84 /* Bed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77D0566229DA2669BEC252FE /* Bed.swift */; };
+		ED13345AB204ED1604D13C16 /* TeaRoomTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE3CD33ADD9C2957DB83A3 /* TeaRoomTable.swift */; };
 		ED3C7005636D04DEF465C813 /* door_banging_hard.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5CDFE8966DBF84B33E2B05CC /* door_banging_hard.wav */; };
 		EDA5B3857B2FB7A727C72318 /* GameplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 605335D08F7BCF03C3D0F04E /* GameplayKit.framework */; };
 		EEAD11DD5ABC011C1F898348 /* WorldBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEAF5C38A20B5069BEC2DAA /* WorldBuilder.swift */; };
@@ -336,6 +354,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		01C637CAB0CD3B743F4F9878 /* TeaShop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaShop.swift; sourceTree = "<group>"; };
 		0396C37B0938F73C6B4F7A19 /* Fridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fridge.swift; sourceTree = "<group>"; };
 		043450244A81A3749DCE01DF /* city_street_bed.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = city_street_bed.mp3; sourceTree = "<group>"; };
 		0FE30E30380E983F6AD14081 /* glass_break_small.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = glass_break_small.wav; sourceTree = "<group>"; };
@@ -347,6 +366,7 @@
 		206EC78B10A9164FD3EC0FB2 /* cabinet_smash.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = cabinet_smash.wav; sourceTree = "<group>"; };
 		222982F14D2F777539752E99 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = System/Library/Frameworks/Network.framework; sourceTree = SDKROOT; };
 		234CAA8BA71A07F6E08F4D8C /* GroceryStoreRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryStoreRoom.swift; sourceTree = "<group>"; };
+		234F6CFC32B10BE0D2428372 /* TeaRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaRoom.swift; sourceTree = "<group>"; };
 		2443C6417F9E025DFC0F565D /* step_carpet_01.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = step_carpet_01.mp3; sourceTree = "<group>"; };
 		24E913316391B2F8CC2F781F /* item_place_metal_01.m4a */ = {isa = PBXFileReference; path = item_place_metal_01.m4a; sourceTree = "<group>"; };
 		28E0C018A1A32C891255C54E /* CarLifecycleMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarLifecycleMachine.swift; sourceTree = "<group>"; };
@@ -373,6 +393,7 @@
 		66804F75972C9A0325F9F168 /* MainStreetRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainStreetRoom.swift; sourceTree = "<group>"; };
 		694A94AE4999C919604D9594 /* ts3_start_common_b.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ts3_start_common_b.wav; sourceTree = "<group>"; };
 		6EF953433DC7FB50056534A6 /* WorldModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldModels.swift; sourceTree = "<group>"; };
+		6FEE3CD33ADD9C2957DB83A3 /* TeaRoomTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaRoomTable.swift; sourceTree = "<group>"; };
 		7297D5DAAF1BFAF125DD3B42 /* ts3_start_light.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ts3_start_light.wav; sourceTree = "<group>"; };
 		73399F4F81E6955153AB198C /* KitchenRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenRoom.swift; sourceTree = "<group>"; };
 		7369C9785D4D3F5F19763804 /* HallwayRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HallwayRoom.swift; sourceTree = "<group>"; };
@@ -413,7 +434,9 @@
 		BA18FAD4224FAE1FF4F6ED6C /* ts3_coupe_engine.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ts3_coupe_engine.wav; sourceTree = "<group>"; };
 		BA2A7D89F8EEA87B427C4C73 /* StreetTrafficCoordinator+CourtyardAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StreetTrafficCoordinator+CourtyardAccess.swift"; sourceTree = "<group>"; };
 		BB34C26A1A78412AC745A63A /* step_asphalt_02.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = step_asphalt_02.mp3; sourceTree = "<group>"; };
+		BC6C9730A4538D67C2515951 /* GroceryStoreTeabag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryStoreTeabag.swift; sourceTree = "<group>"; };
 		BD4D3183B8DA6D995B2B996A /* door_break_heavy.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = door_break_heavy.wav; sourceTree = "<group>"; };
+		C1000C22BC0E9BB2FDB7DF55 /* GroceryStoreSugar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryStoreSugar.swift; sourceTree = "<group>"; };
 		C12AF19D309D4AACCAA52513 /* BathroomFaucet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BathroomFaucet.swift; sourceTree = "<group>"; };
 		C3ADF2268BA312D14E83194D /* kettle_heat_start.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = kettle_heat_start.wav; sourceTree = "<group>"; };
 		C46D184F0064168FBA634A8A /* FreeWorldMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreeWorldMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -433,6 +456,7 @@
 		E121BCA920E3AAC21557750E /* KitchenKettle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchenKettle.swift; sourceTree = "<group>"; };
 		E468E6DBD0931FD588C9FBA2 /* traffic_engine_sport.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = traffic_engine_sport.wav; sourceTree = "<group>"; };
 		E4998B68D44D89C20C715E6A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		E743FBE2AE3E3952C48BE539 /* EmbeddedMCPServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedMCPServer.swift; sourceTree = "<group>"; };
 		E98525CCA15D0CA51155B23A /* CoatRack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoatRack.swift; sourceTree = "<group>"; };
 		EA0099E144974C818D0EF1A3 /* GameViewModel+VehicleWorld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameViewModel+VehicleWorld.swift"; sourceTree = "<group>"; };
 		ECED716DFE265F2CA62A1D35 /* GameViewModel+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameViewModel+Actions.swift"; sourceTree = "<group>"; };
@@ -530,6 +554,8 @@
 			isa = PBXGroup;
 			children = (
 				234CAA8BA71A07F6E08F4D8C /* GroceryStoreRoom.swift */,
+				C1000C22BC0E9BB2FDB7DF55 /* GroceryStoreSugar.swift */,
+				BC6C9730A4538D67C2515951 /* GroceryStoreTeabag.swift */,
 			);
 			path = GroceryStore;
 			sourceTree = "<group>";
@@ -547,6 +573,7 @@
 			isa = PBXGroup;
 			children = (
 				422AE568411A45281AB086DC /* AudioCoordinator.swift */,
+				E743FBE2AE3E3952C48BE539 /* EmbeddedMCPServer.swift */,
 				A672BF4FDE31AD4B9CC373A1 /* GameViewModel.swift */,
 				ECED716DFE265F2CA62A1D35 /* GameViewModel+Actions.swift */,
 				4AE4C98E8EF4F75E13ACBC6B /* GameViewModel+Audio.swift */,
@@ -587,6 +614,7 @@
 			children = (
 				E98525CCA15D0CA51155B23A /* CoatRack.swift */,
 				7369C9785D4D3F5F19763804 /* HallwayRoom.swift */,
+				01C637CAB0CD3B743F4F9878 /* TeaShop.swift */,
 			);
 			path = Hallway;
 			sourceTree = "<group>";
@@ -602,6 +630,15 @@
 			path = Sources/macOSApp;
 			sourceTree = "<group>";
 		};
+		958ECF2B8737156049A7B40E /* TeaRoom */ = {
+			isa = PBXGroup;
+			children = (
+				234F6CFC32B10BE0D2428372 /* TeaRoom.swift */,
+				6FEE3CD33ADD9C2957DB83A3 /* TeaRoomTable.swift */,
+			);
+			path = TeaRoom;
+			sourceTree = "<group>";
+		};
 		A6CE612062DD1BB55A6FCFEA /* Rooms */ = {
 			isa = PBXGroup;
 			children = (
@@ -612,6 +649,7 @@
 				72CFA428184BAD8614EA38AC /* Hallway */,
 				5054D181F8CE16C6922F38D9 /* Kitchen */,
 				D174E8BA947A9C476ACC0FDC /* LivingRoom */,
+				958ECF2B8737156049A7B40E /* TeaRoom */,
 			);
 			path = Rooms;
 			sourceTree = "<group>";
@@ -1093,6 +1131,7 @@
 				3D22B9346A9DEE135C23422F /* BedroomRoom.swift in Sources */,
 				33D3124421DE3DF3DA938084 /* CarLifecycleMachine.swift in Sources */,
 				D4B66A50A396635085F11000 /* CoatRack.swift in Sources */,
+				5E772FA5BFF89AEE32417C2F /* EmbeddedMCPServer.swift in Sources */,
 				D838D267BA47D822F5D9A556 /* FlowController.swift in Sources */,
 				F2A7F2E62E7053F709848CE0 /* Fridge.swift in Sources */,
 				23B3B952BE07F959B2194EB1 /* GameVehicleRuntime.swift in Sources */,
@@ -1111,6 +1150,8 @@
 				7BCE1D36567FEC77BDBDB05F /* GameViewModel+World.swift in Sources */,
 				A0E9FF9678386EEA255B39D8 /* GameViewModel.swift in Sources */,
 				B08ADE8778F0035C70C6E1A7 /* GroceryStoreRoom.swift in Sources */,
+				6061BCF8DCCD39EF53EBC3CC /* GroceryStoreSugar.swift in Sources */,
+				BDD81A1B31CEFE15F9CBD669 /* GroceryStoreTeabag.swift in Sources */,
 				B76953B324B387FB28670685 /* HallwayRoom.swift in Sources */,
 				C3959616A3A59679EAD5937D /* KitchenKettle.swift in Sources */,
 				2609BBACEA88450A77D6F127 /* KitchenMug.swift in Sources */,
@@ -1127,6 +1168,9 @@
 				2B6A357201528F272DFCCB59 /* StreetTrafficCoordinator+CourtyardAccess.swift in Sources */,
 				C2FF440805D0B24163049821 /* StreetTrafficCoordinator.swift in Sources */,
 				3DECFE06BDC3CA9F9B8F00E7 /* Table.swift in Sources */,
+				383F3B99921E30678C7274E9 /* TeaRoom.swift in Sources */,
+				ED13345AB204ED1604D13C16 /* TeaRoomTable.swift in Sources */,
+				4454B79937BB8D0131748CDE /* TeaShop.swift in Sources */,
 				8329872D3A01C62770F7B423 /* VehicleWorldModels.swift in Sources */,
 				FC7D97060DC85A38AA5160D8 /* WorldBuilder.swift in Sources */,
 				C30BA2F94D75D702AAFE6EF8 /* WorldModels.swift in Sources */,
@@ -1148,6 +1192,7 @@
 				E4CF476BDDE9C07D02533DA4 /* BedroomRoom.swift in Sources */,
 				9861B2F7FA945EDFEC426C30 /* CarLifecycleMachine.swift in Sources */,
 				99F0AE344401923C95A7A598 /* CoatRack.swift in Sources */,
+				110F3E9FE94380F6FF8C6405 /* EmbeddedMCPServer.swift in Sources */,
 				2FEF89F6240C9A747CABDC2F /* FlowController.swift in Sources */,
 				F54BDF245131E890ABCB5A96 /* FreeWorldMacApp.swift in Sources */,
 				97910ED814756E69EC759C9E /* Fridge.swift in Sources */,
@@ -1167,6 +1212,8 @@
 				FEE410CCD477007933078F31 /* GameViewModel+World.swift in Sources */,
 				D60CB00AFD54E54434508C30 /* GameViewModel.swift in Sources */,
 				6C05FB8DD38182C728024C65 /* GroceryStoreRoom.swift in Sources */,
+				DA6236A51D030FE5203AF783 /* GroceryStoreSugar.swift in Sources */,
+				45512C0443BD6D8009B0B92B /* GroceryStoreTeabag.swift in Sources */,
 				4A953D617011C20D792408D2 /* HallwayRoom.swift in Sources */,
 				D90B0658E3823D89D94B03EE /* KitchenKettle.swift in Sources */,
 				018375D6AE72886760D84505 /* KitchenMug.swift in Sources */,
@@ -1185,6 +1232,9 @@
 				7D552A2B6B3047EB35CF9E5D /* StreetTrafficCoordinator+CourtyardAccess.swift in Sources */,
 				A004A86EF7C685F49A059D76 /* StreetTrafficCoordinator.swift in Sources */,
 				98DB83DA837BE7C7E8CE919A /* Table.swift in Sources */,
+				80D2998E5CDDA2E5D8D3A2BD /* TeaRoom.swift in Sources */,
+				9BE96456FA22AC67F4CBF2E5 /* TeaRoomTable.swift in Sources */,
+				D58536D9C3D0E983BA3485D1 /* TeaShop.swift in Sources */,
 				3AB2FCAFE1B7ADB8FC6AF07B /* VehicleWorldModels.swift in Sources */,
 				6060BA3738E51D7BE72162AA /* WorldBuilder.swift in Sources */,
 				4D0CDDF353C967D6500053E2 /* WorldModels.swift in Sources */,
@@ -1205,6 +1255,7 @@
 				7C81548FCFD1DFB9010F420B /* BedroomRoom.swift in Sources */,
 				2A144FB003B7DFDE003786F9 /* CarLifecycleMachine.swift in Sources */,
 				3434BBD18E6FF569B12AB488 /* CoatRack.swift in Sources */,
+				B83AEFBFFC3F38AF339B32C3 /* EmbeddedMCPServer.swift in Sources */,
 				7F610B8A3616885C6FFD113B /* FlowController.swift in Sources */,
 				7E042BB7C294E31A90F46F68 /* FreeWorldIOSApp.swift in Sources */,
 				A0708EE09457A2611F65D7E3 /* Fridge.swift in Sources */,
@@ -1224,6 +1275,8 @@
 				39188333D2C8A624F1EE9A4F /* GameViewModel+World.swift in Sources */,
 				86C4FC4E3C59431E5CEF5BD7 /* GameViewModel.swift in Sources */,
 				60C6EA6AB696D94CBB43B6E1 /* GroceryStoreRoom.swift in Sources */,
+				1457FDA3ED3A038DAFF358A6 /* GroceryStoreSugar.swift in Sources */,
+				64BCD1EDDAF1D200F453F280 /* GroceryStoreTeabag.swift in Sources */,
 				BEFB3BABFC6CBB23FA5C7A89 /* HallwayRoom.swift in Sources */,
 				5FBE376F294910798332DFF2 /* KitchenKettle.swift in Sources */,
 				F2FFCE168088B481D1C0CEF6 /* KitchenMug.swift in Sources */,
@@ -1241,6 +1294,9 @@
 				C1A33967D700BBB6E70CE00F /* StreetTrafficCoordinator+CourtyardAccess.swift in Sources */,
 				53EC71F04DB1071445E5A63B /* StreetTrafficCoordinator.swift in Sources */,
 				C794AD0B128CED6268342C4D /* Table.swift in Sources */,
+				DD94A62F9CDA477951AE4C77 /* TeaRoom.swift in Sources */,
+				C5A7BF865621D214C0DE7849 /* TeaRoomTable.swift in Sources */,
+				A27E2283125B662844F44C01 /* TeaShop.swift in Sources */,
 				2200AF55E84EE98FA67021EA /* VehicleWorldModels.swift in Sources */,
 				EEAD11DD5ABC011C1F898348 /* WorldBuilder.swift in Sources */,
 				FBF0A20A74B89745C78D2B92 /* WorldModels.swift in Sources */,

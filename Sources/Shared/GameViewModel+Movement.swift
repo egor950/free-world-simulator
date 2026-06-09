@@ -354,6 +354,15 @@ extension GameViewModel {
                 GridPosition(x: 1, y: 1),
                 GridPosition(x: 2, y: 1),
                 GridPosition(x: 3, y: 1),
+                GridPosition(x: 4, y: 1),
+                GridPosition(x: 5, y: 1)
+            ]
+        case .teaRoom:
+            return [
+                GridPosition(x: 0, y: 1),
+                GridPosition(x: 1, y: 1),
+                GridPosition(x: 2, y: 1),
+                GridPosition(x: 3, y: 1),
                 GridPosition(x: 4, y: 1)
             ]
         case .street:

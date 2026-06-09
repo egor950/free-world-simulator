@@ -53,7 +53,7 @@ final class GroceryStoreClerkMachine {
     func listGoods() -> String {
         _ = machine.enter(ListingGoodsState.self)
         defer { enterCooldown() }
-        return "Продавец говорит: здесь есть вода, хлеб, печенье и простая магазинная мелочь. Пустые кружки стоят на полке, можешь взять хоть несколько."
+        return "Продавец говорит: здесь есть вода, хлеб, печенье и простая магазинная мелочь. Пустые кружки стоят на полке, можешь взять хоть несколько. Ещё я продаю пакетики чая за 2 монеты и сахар за 1 монету — если есть чем платить."
     }
 
     func giveMugIfPossible(handsBusy: Bool) -> String {
@@ -111,6 +111,26 @@ extension GameViewModel {
             }
             state.player.heldItem = KitchenMug.makeGeneratedHeldItem(in: &state)
             return "Ты взял с полки пустую кружку."
+        case GroceryStoreRoom.buyTeabagInteractionID:
+            guard state.player.heldItem == nil else {
+                return "Сначала освободи руки, потом бери пакетик чая."
+            }
+            guard state.player.coins >= GroceryStoreTeabag.price else {
+                return "У тебя нет \(GroceryStoreTeabag.price) монет. Продай что-нибудь на стойке в прихожей, чтобы заработать."
+            }
+            state.player.coins -= GroceryStoreTeabag.price
+            state.player.heldItem = HeldItem(itemID: GroceryStoreTeabag.itemID, name: "пакетик чая")
+            return "Продавец протянул тебе пакетик чая. С тебя списано \(GroceryStoreTeabag.price) монеты."
+        case GroceryStoreRoom.buySugarInteractionID:
+            guard state.player.heldItem == nil else {
+                return "Сначала освободи руки, потом бери пакетик сахара."
+            }
+            guard state.player.coins >= GroceryStoreSugar.price else {
+                return "У тебя нет \(GroceryStoreSugar.price) монеты. Продай что-нибудь на стойке в прихожей, чтобы заработать."
+            }
+            state.player.coins -= GroceryStoreSugar.price
+            state.player.heldItem = HeldItem(itemID: GroceryStoreSugar.itemID, name: "пакетик сахара")
+            return "Продавец протянул тебе пакетик сахара. С тебя списано \(GroceryStoreSugar.price) монета."
         default:
             return nil
         }

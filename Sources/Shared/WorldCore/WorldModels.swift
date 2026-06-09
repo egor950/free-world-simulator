@@ -23,6 +23,7 @@ enum RoomID: String, CaseIterable, Identifiable {
     case street
     case mainStreet
     case groceryStore
+    case teaRoom
 
     var id: String { rawValue }
 }
@@ -663,6 +664,7 @@ struct PlayerState {
     var pose: PlayerPose
     var heldItem: HeldItem?
     var hasCompletedTutorial: Bool
+    var coins: Int = 0
 }
 
 struct WorldRuntimeState {

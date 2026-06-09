@@ -8,6 +8,8 @@ enum KitchenMug {
     enum FillState: String {
         case empty
         case filledHotWater
+        case hotTea
+        case sweetTea
     }
 
     static func isMugItemID(_ candidateID: String) -> Bool {
@@ -139,7 +141,7 @@ enum KitchenMug {
             ? "У тебя в руках кружка с горячей водой."
             : "У тебя в руках пустая кружка."
 
-        return [
+        var actions: [ItemAction] = [
             ItemAction(
                 trigger: .describe,
                 title: "Осмотреть кружку",
@@ -179,6 +181,50 @@ enum KitchenMug {
                 )
             }
         ]
+
+        if state.player.roomID == .hallway,
+           state.player.roomPosition == GridPosition(x: 4, y: 1) {
+            let fill = fillState(in: state, itemID: heldItemID)
+            let price: Int
+            let title: String
+            let resultText: String
+            switch fill {
+            case .sweetTea:
+                price = TeaShop.sweetTeaPrice
+                title = "Продать сладкий чай"
+                resultText = "Кто-то купил кружку сладкого чая за \(price) монет!"
+            case .hotTea:
+                price = TeaShop.teaPrice
+                title = "Продать чай"
+                resultText = "Кто-то купил кружку чая за \(price) монет!"
+            case .filledHotWater:
+                price = TeaShop.mugPrice
+                title = "Продать кружку кипятка"
+                resultText = "Кто-то купил кружку кипятка за \(price) монет!"
+            case .empty:
+                price = 0
+                title = ""
+                resultText = ""
+            }
+
+            if price > 0 {
+                actions.append(
+                    ItemAction(
+                        trigger: .primary,
+                        title: title,
+                        resultText: resultText,
+                        sound: .itemPlaceMetal01,
+                        requiresHeldItemID: heldItemID,
+                        producesHeldItem: nil
+                    ) { runtimeState in
+                        runtimeState.player.heldItem = nil
+                        TeaShop.addCoins(price, in: &runtimeState)
+                    }
+                )
+            }
+        }
+
+        return actions
     }
 
     static func makeGeneratedHeldItem(in state: inout WorldRuntimeState) -> HeldItem {
