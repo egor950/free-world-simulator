@@ -36,7 +36,7 @@ enum TeaRoom {
             title: "Чайная",
             entryAnnouncement: "Ты в чайной. Дверь на кухню, впереди столик для заваривания чая, дальше дверь в ванную.",
             ambientSound: .ambientRoom01,
-            width: 8,
+            width: 20,
             height: 4,
             nodes: [
                 FocusNode(
@@ -50,7 +50,7 @@ enum TeaRoom {
                 FocusNode(
                     id: bathroomDoor.focusNodeID,
                     title: bathroomDoor.name,
-                    position: GridPosition(x: 7, y: 1),
+                    position: GridPosition(x: 19, y: 1),
                     target: .door(bathroomDoor.id),
                     shortPrompt: "Дверь в ванную. Если она открыта, нажми вправо, чтобы выйти.",
                     fullDescription: "Дверь ведёт в ванную комнату с краном и зеркалом."
@@ -58,7 +58,7 @@ enum TeaRoom {
                 FocusNode(
                     id: table.id,
                     title: table.name,
-                    position: GridPosition(x: 3, y: 1),
+                    position: GridPosition(x: 9, y: 1),
                     target: .item(table.id)
                 )
             ],
