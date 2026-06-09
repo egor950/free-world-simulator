@@ -365,7 +365,7 @@ final class GameViewModel: ObservableObject {
         self.audioCoordinator.setStreetCarObserver { [weak self] snapshots in
             guard let self else { return }
             self.streetCarSnapshots = snapshots
-            if self.currentRoom.id == .street {
+            if self.currentRoom.id == .street, self.state.controlledCar == nil {
                 self.refreshScreenState()
             }
         }

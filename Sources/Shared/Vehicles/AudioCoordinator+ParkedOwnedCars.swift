@@ -80,7 +80,7 @@ extension AudioCoordinator {
         let dx = car.worldPosition.x - listenerPoint.x
         let dz = car.worldPosition.z - listenerPoint.z
         let distance = sqrt((dx * dx) + (dz * dz))
-        let audibleRadius: Float = listenerRoomID == .street ? 32 : 42
+        let audibleRadius: Float = listenerRoomID == .street ? 32 : 28
         let distanceMix = max(0, 1 - (distance / audibleRadius))
 
         if distanceMix <= 0.01 {
@@ -120,6 +120,16 @@ extension AudioCoordinator {
         default:
             return OutdoorCarWorldPosition(x: 0, z: 0)
         }
+    }
+
+    func debugParkedCarAudioState() -> [String: Any] {
+        let runtime = parkedOwnedCarAudioRuntime
+        return [
+            "volume": runtime.player?.volume ?? -1,
+            "pan": runtime.player?.pan ?? 0,
+            "activeCarID": runtime.activeCarID?.uuidString ?? "",
+            "activeCue": runtime.activeCue?.rawValue ?? ""
+        ]
     }
 
     private func manhattanDistance(from lhs: GridPosition, to rhs: GridPosition) -> Int {

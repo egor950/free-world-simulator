@@ -65,19 +65,24 @@ enum KitchenStove {
                         let resultText: String
                         let shouldTurnOn: Bool
 
-                        switch waterState {
-                        case .empty:
-                            resultText = "Сначала налей воду в чайник."
+                        if KitchenKettle.lidState(in: state) == .open {
+                            resultText = "Сначала закрой крышку чайника."
                             shouldTurnOn = false
-                        case .filled:
-                            resultText = "Ты включил чайник. Он начинает греться на подставке."
-                            shouldTurnOn = true
-                        case .boiling:
-                            resultText = "Чайник уже греется."
-                            shouldTurnOn = false
-                        case .boiled:
-                            resultText = "Вода уже закипела. Можно снять чайник с подставки."
-                            shouldTurnOn = false
+                        } else {
+                            switch waterState {
+                            case .empty:
+                                resultText = "Сначала налей воду в чайник."
+                                shouldTurnOn = false
+                            case .filled:
+                                resultText = "Ты включил чайник. Он начинает греться на подставке."
+                                shouldTurnOn = true
+                            case .boiling:
+                                resultText = "Чайник уже греется."
+                                shouldTurnOn = false
+                            case .boiled:
+                                resultText = "Вода уже закипела. Можно снять чайник с подставки."
+                                shouldTurnOn = false
+                            }
                         }
 
                         actions.append(
@@ -208,7 +213,8 @@ extension GameViewModel {
             return
         }
 
-        let shouldRunTask = kettleOnBase && baseStage == .on && (waterState == .filled || waterState == .boiling)
+        let lidClosed = KitchenKettle.lidState(in: state) == .closed
+        let shouldRunTask = kettleOnBase && baseStage == .on && lidClosed && (waterState == .filled || waterState == .boiling)
 
         if !shouldRunTask {
             cancelKettleBoilingTask()
@@ -239,6 +245,7 @@ extension GameViewModel {
             let stillHeating =
                 KitchenKettle.placement(in: self.state) == .onBase &&
                 KitchenStove.stage(in: self.state) == .on &&
+                KitchenKettle.lidState(in: self.state) == .closed &&
                 KitchenKettle.waterState(in: self.state) == .boiling
 
             guard stillHeating else { return }
@@ -253,6 +260,7 @@ extension GameViewModel {
             let stillFinishing =
                 KitchenKettle.placement(in: self.state) == .onBase &&
                 KitchenStove.stage(in: self.state) == .finishing &&
+                KitchenKettle.lidState(in: self.state) == .closed &&
                 KitchenKettle.waterState(in: self.state) == .boiling
 
             guard stillFinishing else { return }

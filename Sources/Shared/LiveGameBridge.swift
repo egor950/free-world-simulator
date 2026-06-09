@@ -393,6 +393,10 @@ final class LiveGameBridge {
         }
     }
 
+    func performEmbeddedAction(_ action: String, arguments: [String: Any]) throws -> Any {
+        try handleAction(action, arguments: arguments)
+    }
+
     private func send(_ response: [String: Any], through connection: NWConnection) {
         guard let data = try? JSONSerialization.data(withJSONObject: response, options: []) else {
             connection.cancel()

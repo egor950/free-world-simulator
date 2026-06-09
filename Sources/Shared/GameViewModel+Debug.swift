@@ -111,7 +111,8 @@ extension GameViewModel {
             "player": playerState,
             "itemStages": itemStages,
             "itemLocations": itemLocations,
-            "neighbor": neighborState
+            "neighbor": neighborState,
+            "audio": audioCoordinator.debugParkedCarAudioState()
         ]
         return payload
     }

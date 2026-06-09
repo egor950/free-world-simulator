@@ -46,6 +46,7 @@ extension GameViewModel {
             "inventoryTitle": inventoryTitle,
             "inventoryText": inventoryText,
             "character": currentCharacterSummary,
+            "coins": state.player.coins,
             "position": [
                 "x": debugRoomPosition.x,
                 "y": debugRoomPosition.y

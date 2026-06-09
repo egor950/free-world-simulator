@@ -3,6 +3,8 @@ import Foundation
 enum StreetRoom {
     static let apartmentDoorID = "street.door.apartment"
     static let gateDoorID = "street.gate.mainStreet"
+    static let gatePosition = GridPosition(x: 7, y: 0)
+    static let spawnPosition = GridPosition(x: 7, y: 14)
     static let gateTiming = TimedDoorTransitionConfiguration(
         openCue: .gateOpen,
         closeCue: .gateClose,
@@ -64,7 +66,7 @@ enum StreetRoom {
                 FocusNode(
                     id: gateDoor.focusNodeID,
                     title: gateDoor.name,
-                    position: GridPosition(x: 7, y: 0),
+                    position: gatePosition,
                     target: .door(gateDoor.id),
                     shortPrompt: "Впереди калитка. Если она открыта, нажми вперед, чтобы выйти дальше на улицу.",
                     fullDescription: "Перед тобой калитка. За ней идет более широкая улица."
@@ -87,7 +89,7 @@ enum StreetRoom {
                 gateDoor.id: gateDoor
             ],
             items: [:],
-            spawnPosition: GridPosition(x: 7, y: 14)
+            spawnPosition: spawnPosition
         )
     }
 }

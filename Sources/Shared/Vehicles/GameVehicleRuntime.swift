@@ -17,6 +17,10 @@ final class GameVehicleRuntime {
     var drivingInputHeartbeat: [GameCommand: TimeInterval] = [:]
     var lastDrivingHintText: String = ""
     var lastDrivingHintAt: Date = .distantPast
+    var lastDrivingUIRefreshAt: TimeInterval = 0
+    var lastDrivingWorldAudioSyncAt: TimeInterval = 0
+    var lastDrivingRoomID: RoomID?
+    var lastDrivingRoomPosition: GridPosition?
 }
 
 extension GameViewModel {
@@ -92,5 +96,25 @@ extension GameViewModel {
     var lastDrivingHintAt: Date {
         get { vehicleRuntime.lastDrivingHintAt }
         set { vehicleRuntime.lastDrivingHintAt = newValue }
+    }
+
+    var lastDrivingUIRefreshAt: TimeInterval {
+        get { vehicleRuntime.lastDrivingUIRefreshAt }
+        set { vehicleRuntime.lastDrivingUIRefreshAt = newValue }
+    }
+
+    var lastDrivingWorldAudioSyncAt: TimeInterval {
+        get { vehicleRuntime.lastDrivingWorldAudioSyncAt }
+        set { vehicleRuntime.lastDrivingWorldAudioSyncAt = newValue }
+    }
+
+    var lastDrivingRoomID: RoomID? {
+        get { vehicleRuntime.lastDrivingRoomID }
+        set { vehicleRuntime.lastDrivingRoomID = newValue }
+    }
+
+    var lastDrivingRoomPosition: GridPosition? {
+        get { vehicleRuntime.lastDrivingRoomPosition }
+        set { vehicleRuntime.lastDrivingRoomPosition = newValue }
     }
 }

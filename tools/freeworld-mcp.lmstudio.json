@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "freeworld-game": {
+      "command": "/opt/homebrew/bin/python3",
+      "args": [
+        "/Users/egorsitko/Desktop/проэкты/Симулятор свободного мира/tools/freeworld_mcp.py",
+        "--line-json"
+      ],
+      "env": {
+        "FREEWORLD_ROOT_DIR": "/Users/egorsitko/Desktop/проэкты/Симулятор свободного мира",
+        "FREEWORLD_LIVE_APP_PATH": "/Users/egorsitko/Library/Developer/Xcode/DerivedData/Build/Products/Debug/FreeWorldMac.app",
+        "FREEWORLD_LIVE_HOST": "127.0.0.1",
+        "FREEWORLD_LIVE_PORT": "47831"
+      }
+    }
+  }
+}
