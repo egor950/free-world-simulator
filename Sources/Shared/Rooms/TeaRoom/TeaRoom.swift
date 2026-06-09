@@ -1,19 +1,19 @@
 import Foundation
 
 enum TeaRoom {
-    static let hallwayDoorID = "teaRoom.door.hallway"
+    static let kitchenDoorID = "teaRoom.door.kitchen"
     static let bathroomDoorID = "teaRoom.door.bathroom"
 
     static func make() -> RoomDefinition {
-        let hallwayDoor = DoorDefinition(
-            id: hallwayDoorID,
-            name: "дверь в прихожую",
-            targetRoomID: .hallway,
-            targetRoomPosition: GridPosition(x: 5, y: 1),
+        let kitchenDoor = DoorDefinition(
+            id: kitchenDoorID,
+            name: "дверь на кухню",
+            targetRoomID: .kitchen,
+            targetRoomPosition: GridPosition(x: 6, y: 1),
             state: .closed,
-            focusNodeID: "teaRoom.node.hallwayDoor",
-            shortPrompt: "Слева дверь обратно в прихожую.",
-            openResultText: "Ты открыл дверь и вышел в прихожую.",
+            focusNodeID: "teaRoom.node.kitchenDoor",
+            shortPrompt: "Слева дверь обратно на кухню.",
+            openResultText: "Ты открыл дверь и вышел на кухню.",
             lockedText: "Дверь не открывается.",
             sound: nil
         )
@@ -34,18 +34,18 @@ enum TeaRoom {
         return RoomDefinition(
             id: .teaRoom,
             title: "Чайная",
-            entryAnnouncement: "Ты в чайной. Здесь небольшой столик для заваривания чая. Слева дверь в прихожую, справа — в ванную.",
+            entryAnnouncement: "Ты в чайной. Здесь небольшой столик для заваривания чая. Слева дверь на кухню, справа — в ванную.",
             ambientSound: .ambientRoom01,
             width: 5,
             height: 4,
             nodes: [
                 FocusNode(
-                    id: hallwayDoor.focusNodeID,
-                    title: hallwayDoor.name,
+                    id: kitchenDoor.focusNodeID,
+                    title: kitchenDoor.name,
                     position: GridPosition(x: 0, y: 1),
-                    target: .door(hallwayDoor.id),
-                    shortPrompt: "Слева дверь обратно в прихожую. Если она открыта, нажми влево, чтобы выйти.",
-                    fullDescription: "Дверь ведёт обратно в прихожую, где стоит стойка чайного бизнеса."
+                    target: .door(kitchenDoor.id),
+                    shortPrompt: "Слева дверь обратно на кухню. Если она открыта, нажми влево, чтобы выйти.",
+                    fullDescription: "Дверь ведёт обратно на кухню."
                 ),
                 FocusNode(
                     id: bathroomDoor.focusNodeID,
@@ -63,7 +63,7 @@ enum TeaRoom {
                 )
             ],
             doors: [
-                hallwayDoor.id: hallwayDoor,
+                kitchenDoor.id: kitchenDoor,
                 bathroomDoor.id: bathroomDoor
             ],
             items: [
