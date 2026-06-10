@@ -80,7 +80,7 @@ extension AudioCoordinator {
         let dx = car.worldPosition.x - listenerPoint.x
         let dz = car.worldPosition.z - listenerPoint.z
         let distance = sqrt((dx * dx) + (dz * dz))
-        let audibleRadius: Float = listenerRoomID == .street ? 32 : 28
+        let audibleRadius: Float = listenerRoomID == .street ? 32 : 34
         let distanceMix = max(0, 1 - (distance / audibleRadius))
 
         if distanceMix <= 0.01 {
