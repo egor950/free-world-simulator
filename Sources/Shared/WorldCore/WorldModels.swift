@@ -340,6 +340,14 @@ enum AudioCueID: String {
     case playerStartSedan
     case playerStartSport
     case playerStartCoupe
+    case doorCloseBedroom
+    case doorCloseLivingRoom
+    case doorCloseKitchen
+    case doorCloseBathroom
+    case doorCloseTeaRoom
+    case doorCloseHallway
+    case kettleLidOpen
+    case kettleLidClose
 
     var resourceName: String {
         switch self {
@@ -429,6 +437,22 @@ enum AudioCueID: String {
             return "ts3_start_key"
         case .playerStartCoupe:
             return "ts3_start_coupe"
+        case .doorCloseBedroom:
+            return "door_close_bedroom"
+        case .doorCloseLivingRoom:
+            return "door_close_livingroom"
+        case .doorCloseKitchen:
+            return "door_close_kitchen"
+        case .doorCloseBathroom:
+            return "door_close_bathroom"
+        case .doorCloseTeaRoom:
+            return "door_close_tearoom"
+        case .doorCloseHallway:
+            return "door_close_hallway"
+        case .kettleLidOpen:
+            return "kettle_lid_open"
+        case .kettleLidClose:
+            return "kettle_lid_close"
         }
     }
 
@@ -442,6 +466,8 @@ enum AudioCueID: String {
             return "mp3"
         case .glassBreakSmall, .cabinetSmash, .doorbellMain, .doorBangingHard, .doorBreakHeavy, .gateOpen, .gateClose, .punchHit, .heartbeatFast, .kettleHeatStart, .kettleHeatLoop, .kettleHeatFinish, .trafficEngineBase, .trafficBrakeSoft, .trafficEngineLight, .trafficEngineSedan, .trafficEngineSport, .trafficEngineCoupe, .trafficEngineRoadster, .playerCarBrake, .playerEngineLight, .playerEngineSedan, .playerEngineSport, .playerEngineCoupe, .playerStartLight, .playerStartSedan, .playerStartSport, .playerStartCoupe:
             return "wav"
+        case .doorCloseBedroom, .doorCloseLivingRoom, .doorCloseKitchen, .doorCloseBathroom, .doorCloseTeaRoom, .doorCloseHallway, .kettleLidOpen, .kettleLidClose:
+            return "mp3"
         }
     }
 
@@ -523,6 +549,10 @@ enum AudioCueID: String {
             return 0.95
         case .playerStartCoupe:
             return 0.95
+        case .doorCloseBedroom, .doorCloseLivingRoom, .doorCloseKitchen, .doorCloseBathroom, .doorCloseTeaRoom, .doorCloseHallway:
+            return 0.7
+        case .kettleLidOpen, .kettleLidClose:
+            return 0.6
         }
     }
 

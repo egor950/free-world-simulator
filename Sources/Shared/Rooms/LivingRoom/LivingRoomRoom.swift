@@ -65,8 +65,8 @@ enum LivingRoomRoom {
     static func make() -> RoomDefinition {
         let table = LivingRoomTable.make()
         let glassTV = LivingRoomGlassTV.make()
-        let bedroomDoor = DoorDefinition(id: "livingRoom.door.bedroom", name: "дверь в спальню", targetRoomID: .bedroom, targetRoomPosition: GridPosition(x: 5, y: 1), state: .closed, focusNodeID: "livingRoom.node.bedroomDoor", shortPrompt: "Рядом дверь в спальню.", openResultText: "Ты открыл дверь и вернулся в спальню.", lockedText: "Заперто.", sound: nil)
-        let kitchenDoor = DoorDefinition(id: "livingRoom.door.kitchen", name: "дверь на кухню", targetRoomID: .kitchen, targetRoomPosition: GridPosition(x: 1, y: 1), state: .closed, focusNodeID: "livingRoom.node.kitchenDoor", shortPrompt: "Рядом дверь на кухню.", openResultText: "Ты открыл дверь и вошел на кухню.", lockedText: "Заперто.", sound: nil)
+        let bedroomDoor = DoorDefinition(id: "livingRoom.door.bedroom", name: "дверь в спальню", targetRoomID: .bedroom, targetRoomPosition: GridPosition(x: 5, y: 1), state: .closed, focusNodeID: "livingRoom.node.bedroomDoor", shortPrompt: "Рядом дверь в спальню.", openResultText: "Ты открыл дверь и вернулся в спальню.", lockedText: "Заперто.", sound: .doorCloseLivingRoom)
+        let kitchenDoor = DoorDefinition(id: "livingRoom.door.kitchen", name: "дверь на кухню", targetRoomID: .kitchen, targetRoomPosition: GridPosition(x: 1, y: 1), state: .closed, focusNodeID: "livingRoom.node.kitchenDoor", shortPrompt: "Рядом дверь на кухню.", openResultText: "Ты открыл дверь и вошел на кухню.", lockedText: "Заперто.", sound: .doorCloseLivingRoom)
 
         return RoomDefinition(
             id: .livingRoom,

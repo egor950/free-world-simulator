@@ -4,8 +4,8 @@ enum BathroomRoom {
     static func make() -> RoomDefinition {
         let faucet = BathroomFaucet.make()
         let mirror = BathroomMirror.make()
-        let streetDoor = DoorDefinition(id: "bathroom.door.street", name: "дверь на улицу", targetRoomID: .street, targetRoomPosition: nil, state: .closed, focusNodeID: "bathroom.node.streetDoor", shortPrompt: "Рядом дверь на улицу.", openResultText: "Ты открыл дверь и вышел на улицу.", lockedText: "Заперто.", sound: nil)
-        let teaRoomDoor = DoorDefinition(id: "bathroom.door.teaRoom", name: "дверь в чайную", targetRoomID: .teaRoom, targetRoomPosition: GridPosition(x: 4, y: 1), state: .closed, focusNodeID: "bathroom.node.teaRoomDoor", shortPrompt: "Рядом дверь в чайную.", openResultText: "Ты открыл дверь и зашёл в чайную.", lockedText: "Заперто.", sound: nil)
+        let streetDoor = DoorDefinition(id: "bathroom.door.street", name: "дверь на улицу", targetRoomID: .street, targetRoomPosition: nil, state: .closed, focusNodeID: "bathroom.node.streetDoor", shortPrompt: "Рядом дверь на улицу.", openResultText: "Ты открыл дверь и вышел на улицу.", lockedText: "Заперто.", sound: .doorCloseBathroom)
+        let teaRoomDoor = DoorDefinition(id: "bathroom.door.teaRoom", name: "дверь в чайную", targetRoomID: .teaRoom, targetRoomPosition: GridPosition(x: 4, y: 1), state: .closed, focusNodeID: "bathroom.node.teaRoomDoor", shortPrompt: "Рядом дверь в чайную.", openResultText: "Ты открыл дверь и зашёл в чайную.", lockedText: "Заперто.", sound: .doorCloseBathroom)
 
         return RoomDefinition(
             id: .bathroom,

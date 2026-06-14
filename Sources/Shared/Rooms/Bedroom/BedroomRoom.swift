@@ -4,8 +4,8 @@ enum BedroomRoom {
     static func make() -> RoomDefinition {
         let bed = BedroomBed.make()
         let pillow = BedroomPillow.make()
-        let hallwayDoor = DoorDefinition(id: "bedroom.door.hallway", name: "дверь в прихожую", targetRoomID: .hallway, targetRoomPosition: GridPosition(x: 5, y: 1), state: .closed, focusNodeID: "bedroom.node.hallwayDoor", shortPrompt: "Рядом дверь в прихожую.", openResultText: "Ты открыл дверь и вышел в прихожую.", lockedText: "Заперто.", sound: nil)
-        let livingDoor = DoorDefinition(id: "bedroom.door.livingRoom", name: "дверь в гостиную", targetRoomID: .livingRoom, targetRoomPosition: GridPosition(x: 1, y: 1), state: .closed, focusNodeID: "bedroom.node.livingDoor", shortPrompt: "Рядом дверь в гостиную.", openResultText: "Ты открыл дверь и вошел в гостиную.", lockedText: "Заперто.", sound: nil)
+        let hallwayDoor = DoorDefinition(id: "bedroom.door.hallway", name: "дверь в прихожую", targetRoomID: .hallway, targetRoomPosition: GridPosition(x: 5, y: 1), state: .closed, focusNodeID: "bedroom.node.hallwayDoor", shortPrompt: "Рядом дверь в прихожую.", openResultText: "Ты открыл дверь и вышел в прихожую.", lockedText: "Заперто.", sound: .doorCloseBedroom)
+        let livingDoor = DoorDefinition(id: "bedroom.door.livingRoom", name: "дверь в гостиную", targetRoomID: .livingRoom, targetRoomPosition: GridPosition(x: 1, y: 1), state: .closed, focusNodeID: "bedroom.node.livingDoor", shortPrompt: "Рядом дверь в гостиную.", openResultText: "Ты открыл дверь и вошел в гостиную.", lockedText: "Заперто.", sound: .doorCloseBedroom)
 
         return RoomDefinition(
             id: .bedroom,

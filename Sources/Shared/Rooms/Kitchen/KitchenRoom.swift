@@ -6,8 +6,8 @@ enum KitchenRoom {
         let kettle = KitchenKettle.make()
         let mug = KitchenMug.make()
         let stove = KitchenStove.make()
-        let livingDoor = DoorDefinition(id: "kitchen.door.livingRoom", name: "дверь в гостиную", targetRoomID: .livingRoom, targetRoomPosition: GridPosition(x: 5, y: 1), state: .closed, focusNodeID: "kitchen.node.livingDoor", shortPrompt: "Рядом дверь в гостиную.", openResultText: "Ты открыл дверь и вернулся в гостиную.", lockedText: "Заперто.", sound: nil)
-        let teaRoomDoor = DoorDefinition(id: "kitchen.door.teaRoom", name: "дверь в чайную", targetRoomID: .teaRoom, targetRoomPosition: GridPosition(x: 0, y: 1), state: .closed, focusNodeID: "kitchen.node.teaRoomDoor", shortPrompt: "Рядом дверь в чайную.", openResultText: "Ты открыл дверь и вошел в чайную.", lockedText: "Заперто.", sound: nil)
+        let livingDoor = DoorDefinition(id: "kitchen.door.livingRoom", name: "дверь в гостиную", targetRoomID: .livingRoom, targetRoomPosition: GridPosition(x: 5, y: 1), state: .closed, focusNodeID: "kitchen.node.livingDoor", shortPrompt: "Рядом дверь в гостиную.", openResultText: "Ты открыл дверь и вернулся в гостиную.", lockedText: "Заперто.", sound: .doorCloseKitchen)
+        let teaRoomDoor = DoorDefinition(id: "kitchen.door.teaRoom", name: "дверь в чайную", targetRoomID: .teaRoom, targetRoomPosition: GridPosition(x: 0, y: 1), state: .closed, focusNodeID: "kitchen.node.teaRoomDoor", shortPrompt: "Рядом дверь в чайную.", openResultText: "Ты открыл дверь и вошел в чайную.", lockedText: "Заперто.", sound: .doorCloseKitchen)
 
         return RoomDefinition(
             id: .kitchen,

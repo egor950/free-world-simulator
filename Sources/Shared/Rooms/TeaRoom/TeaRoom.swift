@@ -15,7 +15,7 @@ enum TeaRoom {
             shortPrompt: "Дверь обратно на кухню.",
             openResultText: "Ты открыл дверь и вышел на кухню.",
             lockedText: "Дверь не открывается.",
-            sound: nil
+            sound: .doorCloseTeaRoom
         )
         let bathroomDoor = DoorDefinition(
             id: bathroomDoorID,
@@ -27,7 +27,7 @@ enum TeaRoom {
             shortPrompt: "Дверь в ванную.",
             openResultText: "Ты открыл дверь и зашёл в ванную.",
             lockedText: "Дверь не открывается.",
-            sound: nil
+            sound: .doorCloseTeaRoom
         )
         let table = TeaRoomTable.make()
 

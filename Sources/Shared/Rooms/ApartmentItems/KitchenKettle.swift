@@ -158,7 +158,7 @@ enum KitchenKettle {
                 trigger: .primary,
                 title: lidIsClosed ? "Открыть крышку" : "Закрыть крышку",
                 resultText: lidIsClosed ? "Ты открыл крышку чайника." : "Ты закрыл крышку чайника.",
-                sound: nil,
+                sound: lidIsClosed ? .kettleLidOpen : .kettleLidClose,
                 requiresHeldItemID: itemID,
                 producesHeldItem: nil
             ) { runtimeState in
