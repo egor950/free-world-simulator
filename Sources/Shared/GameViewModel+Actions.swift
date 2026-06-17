@@ -58,7 +58,7 @@ extension GameViewModel {
 
         if machine.isOpen {
             _ = machine.close()
-            audioCoordinator.playEffect(door.sound ?? .obstacleThud)
+            audioCoordinator.playEffect(door.closeSound)
             addLog("Закрыл дверь: \(door.name)")
             announce("Закрыл \(door.name).")
             refreshScreenState()
@@ -66,7 +66,7 @@ extension GameViewModel {
         }
 
         _ = machine.open()
-        audioCoordinator.playEffect(door.sound ?? .obstacleThud)
+        audioCoordinator.playEffect(door.openSound)
         addLog("Открыл дверь: \(door.name)")
         announce("Открыл \(door.name). Чтобы пройти, нажми \(passCommandHint(for: door)).")
         refreshScreenState()

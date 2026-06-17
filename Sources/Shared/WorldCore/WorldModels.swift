@@ -346,8 +346,23 @@ enum AudioCueID: String {
     case doorCloseBathroom
     case doorCloseTeaRoom
     case doorCloseHallway
+    case doorOpenBedroom
+    case doorOpenLivingRoom
+    case doorOpenKitchen
+    case doorOpenBathroom
+    case doorOpenTeaRoom
+    case doorOpenHallway
     case kettleLidOpen
     case kettleLidClose
+    case kettlePlaceFloor
+    case waterPour
+    case bedLieDown
+    case bedGetUp
+    case pillowPickup
+    case pillowDrop
+    case pillowPlace
+    case pillowSqueeze
+    case pillowTear
 
     var resourceName: String {
         switch self {
@@ -449,10 +464,40 @@ enum AudioCueID: String {
             return "door_close_tearoom"
         case .doorCloseHallway:
             return "door_close_hallway"
+        case .doorOpenBedroom:
+            return "door_open_bedroom"
+        case .doorOpenLivingRoom:
+            return "door_open_livingroom"
+        case .doorOpenKitchen:
+            return "door_open_kitchen"
+        case .doorOpenBathroom:
+            return "door_open_bathroom"
+        case .doorOpenTeaRoom:
+            return "door_open_tearoom"
+        case .doorOpenHallway:
+            return "door_open_hallway"
         case .kettleLidOpen:
             return "kettle_lid_open"
         case .kettleLidClose:
             return "kettle_lid_close"
+        case .kettlePlaceFloor:
+            return "kettle_place_floor"
+        case .waterPour:
+            return "water_pour"
+        case .bedLieDown:
+            return "bed_lie_down"
+        case .bedGetUp:
+            return "bed_get_up"
+        case .pillowPickup:
+            return "pillow_pickup"
+        case .pillowDrop:
+            return "pillow_drop"
+        case .pillowPlace:
+            return "pillow_place"
+        case .pillowSqueeze:
+            return "pillow_squeeze"
+        case .pillowTear:
+            return "pillow_tear"
         }
     }
 
@@ -466,7 +511,7 @@ enum AudioCueID: String {
             return "mp3"
         case .glassBreakSmall, .cabinetSmash, .doorbellMain, .doorBangingHard, .doorBreakHeavy, .gateOpen, .gateClose, .punchHit, .heartbeatFast, .kettleHeatStart, .kettleHeatLoop, .kettleHeatFinish, .trafficEngineBase, .trafficBrakeSoft, .trafficEngineLight, .trafficEngineSedan, .trafficEngineSport, .trafficEngineCoupe, .trafficEngineRoadster, .playerCarBrake, .playerEngineLight, .playerEngineSedan, .playerEngineSport, .playerEngineCoupe, .playerStartLight, .playerStartSedan, .playerStartSport, .playerStartCoupe:
             return "wav"
-        case .doorCloseBedroom, .doorCloseLivingRoom, .doorCloseKitchen, .doorCloseBathroom, .doorCloseTeaRoom, .doorCloseHallway, .kettleLidOpen, .kettleLidClose:
+        case .doorCloseBedroom, .doorCloseLivingRoom, .doorCloseKitchen, .doorCloseBathroom, .doorCloseTeaRoom, .doorCloseHallway, .doorOpenBedroom, .doorOpenLivingRoom, .doorOpenKitchen, .doorOpenBathroom, .doorOpenTeaRoom, .doorOpenHallway, .kettleLidOpen, .kettleLidClose, .kettlePlaceFloor, .waterPour, .bedLieDown, .bedGetUp, .pillowPickup, .pillowDrop, .pillowPlace, .pillowSqueeze, .pillowTear:
             return "mp3"
         }
     }
@@ -551,8 +596,20 @@ enum AudioCueID: String {
             return 0.95
         case .doorCloseBedroom, .doorCloseLivingRoom, .doorCloseKitchen, .doorCloseBathroom, .doorCloseTeaRoom, .doorCloseHallway:
             return 0.7
+        case .doorOpenBedroom, .doorOpenLivingRoom, .doorOpenKitchen, .doorOpenBathroom, .doorOpenTeaRoom, .doorOpenHallway:
+            return 0.65
         case .kettleLidOpen, .kettleLidClose:
             return 0.6
+        case .kettlePlaceFloor:
+            return 0.7
+        case .waterPour:
+            return 0.7
+        case .bedLieDown, .bedGetUp:
+            return 0.5
+        case .pillowPickup, .pillowDrop, .pillowPlace:
+            return 0.4
+        case .pillowSqueeze, .pillowTear:
+            return 0.35
         }
     }
 
@@ -598,6 +655,29 @@ struct DoorDefinition {
         self.lockedText = lockedText
         self.sound = sound
         self.interactionStyle = interactionStyle
+    }
+
+    var closeSound: AudioCueID {
+        sound ?? .obstacleThud
+    }
+
+    var openSound: AudioCueID {
+        switch id {
+        case "bedroom.door.hallway", "bedroom.door.livingRoom":
+            return .doorOpenBedroom
+        case "livingRoom.door.bedroom", "livingRoom.door.kitchen":
+            return .doorOpenLivingRoom
+        case "kitchen.door.livingRoom", "kitchen.door.teaRoom":
+            return .doorOpenKitchen
+        case "bathroom.door.street", "bathroom.door.teaRoom":
+            return .doorOpenBathroom
+        case "teaRoom.door.kitchen", "teaRoom.door.bathroom":
+            return .doorOpenTeaRoom
+        case "hallway.door.bedroom", "hallway.door.storage", "hallway.door.neighbors":
+            return .doorOpenHallway
+        default:
+            return .doorOpenHallway
+        }
     }
 }
 

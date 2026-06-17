@@ -78,11 +78,11 @@ enum BedroomPillow {
                     : "Ты взял подушку с кровати."
 
                 return [
-                    ItemAction(trigger: .primary, title: "Взять подушку", resultText: takeText, sound: nil, requiresHeldItemID: nil, producesHeldItem: HeldItem(itemID: itemID, name: "подушка")) { runtimeState in
+                    ItemAction(trigger: .primary, title: "Взять подушку", resultText: takeText, sound: .pillowPickup, requiresHeldItemID: nil, producesHeldItem: HeldItem(itemID: itemID, name: "подушка")) { runtimeState in
                         runtimeState.player.heldItem = HeldItem(itemID: itemID, name: "подушка")
                         runtimeState.clearItemLocation(itemID: itemID)
                     },
-                    ItemAction(trigger: .throwItem, title: "Сбросить подушку", resultText: "Ты смахнул подушку на пол рядом с кроватью.", sound: .itemPlaceMetal01, requiresHeldItemID: nil, producesHeldItem: nil) { runtimeState in
+                    ItemAction(trigger: .throwItem, title: "Сбросить подушку", resultText: "Ты смахнул подушку на пол рядом с кроватью.", sound: .pillowDrop, requiresHeldItemID: nil, producesHeldItem: nil) { runtimeState in
                         runtimeState.setItemLocation(itemID: itemID, roomID: .bedroom, position: GridPosition(x: 4, y: 3))
                     }
                 ]
@@ -112,7 +112,7 @@ enum BedroomPillow {
                     ? "Ты потряс порванную подушку. Наполнитель полез наружу еще сильнее."
                     : "Ты сжал подушку в руках. Она мягко промялась и выпустила немного пыли."
                 ,
-                sound: nil,
+                sound: .pillowSqueeze,
                 requiresHeldItemID: itemID,
                 producesHeldItem: nil
             ) { runtimeState in
@@ -124,7 +124,7 @@ enum BedroomPillow {
                 trigger: .throwItem,
                 title: "Бросить подушку под ноги",
                 resultText: "Ты бросил подушку под ноги. Теперь она лежит здесь.",
-                sound: .itemPlaceMetal01,
+                sound: .pillowDrop,
                 requiresHeldItemID: itemID,
                 producesHeldItem: nil
             ) { runtimeState in
@@ -135,7 +135,7 @@ enum BedroomPillow {
                 trigger: .placeHeldItem,
                 title: "Положить подушку рядом",
                 resultText: "Ты положил подушку рядом с собой.",
-                sound: .itemPlaceMetal01,
+                sound: .pillowPlace,
                 requiresHeldItemID: itemID,
                 producesHeldItem: nil
             ) { runtimeState in
@@ -150,7 +150,7 @@ enum BedroomPillow {
                     trigger: .primary,
                     title: "Порвать подушку",
                     resultText: "Ты порвал подушку. Изнутри полез мягкий наполнитель.",
-                    sound: nil,
+                    sound: .pillowTear,
                     requiresHeldItemID: itemID,
                     producesHeldItem: nil
                 ) { runtimeState in

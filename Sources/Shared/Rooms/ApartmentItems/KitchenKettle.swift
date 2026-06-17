@@ -168,7 +168,7 @@ enum KitchenKettle {
                 trigger: .throwItem,
                 title: "Бросить чайник под ноги",
                 resultText: "Ты поставил чайник на пол рядом с собой.",
-                sound: .itemPlaceMetal01,
+                sound: .kettlePlaceFloor,
                 requiresHeldItemID: itemID,
                 producesHeldItem: nil
             ) { runtimeState in
@@ -184,7 +184,7 @@ enum KitchenKettle {
                 trigger: .placeHeldItem,
                 title: "Положить чайник рядом",
                 resultText: "Ты положил чайник рядом с собой.",
-                sound: .itemPlaceMetal01,
+                sound: .kettlePlaceFloor,
                 requiresHeldItemID: itemID,
                 producesHeldItem: nil
             ) { runtimeState in

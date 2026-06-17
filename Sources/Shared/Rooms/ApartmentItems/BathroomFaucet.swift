@@ -45,7 +45,7 @@ enum BathroomFaucet {
                             trigger: .primary,
                             title: "Налить воду в чайник",
                             resultText: "Ты налил воду в чайник.",
-                            sound: nil,
+                            sound: .waterPour,
                             requiresHeldItemID: KitchenKettle.itemID,
                             producesHeldItem: nil
                         ) { runtimeState in

@@ -332,7 +332,29 @@ final class AudioCoordinator {
             .appendingPathComponent("Audio", isDirectory: true)
             .appendingPathComponent("\(cue.resourceName).\(cue.fileExtension)")
 
-        return FileManager.default.fileExists(atPath: fallback.path) ? fallback : nil
+        if FileManager.default.fileExists(atPath: fallback.path) {
+            return fallback
+        }
+
+        // Try relative to the app bundle
+        let appBundleURL = Bundle.main.bundleURL.deletingLastPathComponent()
+        let appRelative = appBundleURL
+            .appendingPathComponent("Resources", isDirectory: true)
+            .appendingPathComponent("Audio", isDirectory: true)
+            .appendingPathComponent("\(cue.resourceName).\(cue.fileExtension)")
+
+        if FileManager.default.fileExists(atPath: appRelative.path) {
+            return appRelative
+        }
+
+        // Try in the project directory
+        let projectURL = URL(fileURLWithPath: #file).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        let projectRelative = projectURL
+            .appendingPathComponent("Resources", isDirectory: true)
+            .appendingPathComponent("Audio", isDirectory: true)
+            .appendingPathComponent("\(cue.resourceName).\(cue.fileExtension)")
+
+        return FileManager.default.fileExists(atPath: projectRelative.path) ? projectRelative : nil
     }
 
     private func configureAudioEngine() {
