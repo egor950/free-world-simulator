@@ -1,13 +1,5 @@
 import Foundation
 
-struct RuntimeError: Error {
-    let message: String
-
-    init(_ message: String) {
-        self.message = message
-    }
-}
-
 @MainActor
 final class GameRuntime {
     private var actionLog: [String] = []
@@ -288,17 +280,6 @@ final class GameRuntime {
     private func trim(_ lines: inout [String]) {
         if lines.count > 2000 {
             lines.removeFirst(lines.count - 2000)
-        }
-    }
-}
-
-private extension GameCommand {
-    var isMovement: Bool {
-        switch self {
-        case .moveForward, .moveBackward, .moveLeft, .moveRight:
-            return true
-        default:
-            return false
         }
     }
 }

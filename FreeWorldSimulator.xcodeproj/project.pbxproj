@@ -513,7 +513,6 @@
 		7E042BB7C294E31A90F46F68 /* FreeWorldIOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 997A77E2FDC306A746781D1D /* FreeWorldIOSApp.swift */; };
 		7E7B5845899A55AD095D37BF /* FocusSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C1B7700D49367E220B4C56 /* FocusSystem.swift */; };
 		7E7C1BAD951C0F04ED323782 /* door_open_hallway.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9ABD75E71CC907CC433A1500 /* door_open_hallway.wav */; };
-		7EA5B27900E8D914626C9EB6 /* GameRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4800C07C00A5EA9A7DF520 /* GameRuntime.swift */; };
 		7EF066CBD586A0D6FC4E4D55 /* kettle_lid_open_raw.wav in Resources */ = {isa = PBXBuildFile; fileRef = EF19068B1247D644A203D4EC /* kettle_lid_open_raw.wav */; };
 		7F3B5516D1C2C56062D98819 /* Bed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77D0566229DA2669BEC252FE /* Bed.swift */; };
 		7F610B8A3616885C6FFD113B /* FlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CC80B06B3F049B82729EDFD /* FlowController.swift */; };
@@ -601,7 +600,6 @@
 		96CC5214CC7607005C2409AF /* step_carpet_02.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DB2B915989252BC9445E62EF /* step_carpet_02.mp3 */; };
 		96F254E51DD4D38935B74B39 /* kettle_lid_open.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6B795A34589060376FF60947 /* kettle_lid_open.wav */; };
 		96F97AEFE30DD4EA2CE16FE0 /* traffic_engine_base.wav in Resources */ = {isa = PBXBuildFile; fileRef = 40816B25521BB3370EA06B48 /* traffic_engine_base.wav */; };
-		976DB674A72D99026E5F2EBB /* MCPToolDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D6F58536EE851ABCE47498 /* MCPToolDefinitions.swift */; };
 		97910ED814756E69EC759C9E /* Fridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0396C37B0938F73C6B4F7A19 /* Fridge.swift */; };
 		97D0E5773E94F2F4519BAD94 /* Pillow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC8A4A3F6568C9EFDDF3E75 /* Pillow.swift */; };
 		9861B2F7FA945EDFEC426C30 /* CarLifecycleMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28E0C018A1A32C891255C54E /* CarLifecycleMachine.swift */; };
@@ -1191,7 +1189,6 @@
 		8A6094F480F99AEE742AEAF3 /* Definitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Definitions.swift; sourceTree = "<group>"; };
 		8A7C4A955FBD5B1997BA364D /* Mirror.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mirror.swift; sourceTree = "<group>"; };
 		8B7DD75B6E9B254B76916603 /* ts3_start_key.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ts3_start_key.wav; sourceTree = "<group>"; };
-		8C4800C07C00A5EA9A7DF520 /* GameRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameRuntime.swift; sourceTree = "<group>"; };
 		8D17CA3E981632F28D3C9D54 /* kettle_place_floor.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = kettle_place_floor.mp3; sourceTree = "<group>"; };
 		8E35E45C4C2B458EC5F629F8 /* door_open_kitchen.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = door_open_kitchen.mp3; sourceTree = "<group>"; };
 		8F2A1EEA92A9058319B37BE2 /* doorbell_main.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = doorbell_main.wav; sourceTree = "<group>"; };
@@ -1257,7 +1254,6 @@
 		C0C3EACF08948110EA08B546 /* Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
 		C1000C22BC0E9BB2FDB7DF55 /* GroceryStoreSugar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryStoreSugar.swift; sourceTree = "<group>"; };
 		C12AF19D309D4AACCAA52513 /* BathroomFaucet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BathroomFaucet.swift; sourceTree = "<group>"; };
-		C1D6F58536EE851ABCE47498 /* MCPToolDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCPToolDefinitions.swift; sourceTree = "<group>"; };
 		C318B3F761830800247C1EBB /* AudioAmbient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioAmbient.swift; sourceTree = "<group>"; };
 		C379116242CECBF736399673 /* door_open_livingroom.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = door_open_livingroom.wav; sourceTree = "<group>"; };
 		C3ADF2268BA312D14E83194D /* kettle_heat_start.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = kettle_heat_start.wav; sourceTree = "<group>"; };
@@ -1462,9 +1458,7 @@
 		3CE499DD208E05059F5B047A /* MCPServer */ = {
 			isa = PBXGroup;
 			children = (
-				8C4800C07C00A5EA9A7DF520 /* GameRuntime.swift */,
 				89390D5364A83D472482F771 /* main.swift */,
-				C1D6F58536EE851ABCE47498 /* MCPToolDefinitions.swift */,
 			);
 			name = MCPServer;
 			path = Sources/MCPServer;
@@ -2823,7 +2817,6 @@
 				F2A7F2E62E7053F709848CE0 /* Fridge.swift in Sources */,
 				ACBB26C88F1D9683C4CFCC97 /* GameCommand+Driving.swift in Sources */,
 				62A46AB42927D034FF9D8A9C /* GameCommandModels.swift in Sources */,
-				7EA5B27900E8D914626C9EB6 /* GameRuntime.swift in Sources */,
 				F568DCED7464F8AC5D95531A /* GameStateMachines.swift in Sources */,
 				23B3B952BE07F959B2194EB1 /* GameVehicleRuntime.swift in Sources */,
 				0BD3B6EF902E4B4EB7E4E5E7 /* GameViewModel+Actions.swift in Sources */,
@@ -2850,7 +2843,6 @@
 				0F99C3348DB47BAA14E1B9F6 /* LiveGameBridgeLogging.swift in Sources */,
 				7BE10BAEE3735672E3CB2D76 /* LiveGameBridgeModels.swift in Sources */,
 				BD90520E1C7A0D3260146262 /* LivingRoomRoom.swift in Sources */,
-				976DB674A72D99026E5F2EBB /* MCPToolDefinitions.swift in Sources */,
 				003B5FE9831E5D0443B40EC2 /* MainStreetRoom.swift in Sources */,
 				64138C849E413BDAE051BB82 /* Mirror.swift in Sources */,
 				17C9A2F257357C4A056B9598 /* MovementBed.swift in Sources */,
