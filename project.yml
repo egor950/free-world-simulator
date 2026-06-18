@@ -13,6 +13,8 @@ targets:
     platform: macOS
     sources:
       - path: Sources/Shared
+        excludes:
+          - "**/AGENTS.md"
       - path: Sources/macOSApp
       - path: Resources
         buildPhase: resources
@@ -37,6 +39,8 @@ targets:
     platform: iOS
     sources:
       - path: Sources/Shared
+        excludes:
+          - "**/AGENTS.md"
       - path: Sources/iOSApp
       - path: Resources
         buildPhase: resources
@@ -69,6 +73,7 @@ targets:
       - path: Sources/Shared
         excludes:
           - RootGameView.swift
+          - "**/AGENTS.md"
       - path: Sources/MCPServer
       - path: Resources
         buildPhase: resources
