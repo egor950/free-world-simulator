@@ -66,33 +66,29 @@ extension GameViewModel {
         if let min = arguments["responsePauseMin"] as? Double,
            let max = arguments["responsePauseMax"] as? Double,
            min > 0, max >= min {
-            debugNeighborResponsePauseRange = min...max
+            neighborDebug.responsePauseRange = min...max
         }
 
         if let min = arguments["breakInPauseMin"] as? Double,
            let max = arguments["breakInPauseMax"] as? Double,
            min > 0, max >= min {
-            debugNeighborBreakInPauseRange = min...max
+            neighborDebug.breakInPauseRange = min...max
         }
 
         if let hits = arguments["hitsTarget"] as? Int {
-            debugNeighborDoorHitsTargetOverride = max(1, hits)
+            neighborDebug.doorHitsTargetOverride = max(1, hits)
         }
 
         if let count = arguments["footstepCount"] as? Int {
-            debugNeighborFootstepCountOverride = max(0, count)
+            neighborDebug.footstepCountOverride = max(0, count)
         }
 
         if let pause = arguments["footstepPause"] as? Double {
-            debugNeighborFootstepPauseOverride = max(0, pause)
+            neighborDebug.footstepPauseOverride = max(0, pause)
         }
 
         if (arguments["reset"] as? Bool) == true {
-            debugNeighborResponsePauseRange = nil
-            debugNeighborBreakInPauseRange = nil
-            debugNeighborDoorHitsTargetOverride = nil
-            debugNeighborFootstepCountOverride = nil
-            debugNeighborFootstepPauseOverride = nil
+            neighborDebug.reset()
         }
 
         return debugRuntimeStatePayload(message: "Отладочная конфигурация соседей обновлена.")

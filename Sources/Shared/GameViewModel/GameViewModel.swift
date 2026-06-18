@@ -38,9 +38,7 @@ final class GameViewModel: ObservableObject {
     var kettleBoilingTask: Task<Void, Never>?
     var neighborResponseTask: Task<Void, Never>?
     var neighborBreakInTask: Task<Void, Never>?
-    var navigationBeaconTask: Task<Void, Never>?
-    var activeNavigationBeaconID: String?
-    var selectedLocationMenuIndex: Int = 0
+    let navigationBeaconState = NavigationBeaconState()
     lazy var neighborEncounterMachine = NeighborEncounterMachine()
     let groceryStoreClerkMachine = GroceryStoreClerkMachine()
     let roomTraversalMachine = RoomTraversalMachine()
@@ -52,12 +50,7 @@ final class GameViewModel: ObservableObject {
     var doorLifecycleMachines: [String: DoorLifecycleMachine] = [:]
     var gateLifecycleMachines: [String: GateLifecycleMachine] = [:]
     var gateTransitionTasks: [String: Task<Void, Never>] = [:]
-    var neighborDoorHitsTarget = 0
-    var debugNeighborResponsePauseRange: ClosedRange<Double>?
-    var debugNeighborBreakInPauseRange: ClosedRange<Double>?
-    var debugNeighborDoorHitsTargetOverride: Int?
-    var debugNeighborFootstepCountOverride: Int?
-    var debugNeighborFootstepPauseOverride: TimeInterval?
+    let neighborDebug = NeighborDebugConfig()
 
     init(
         speechCoordinator: SpeechCoordinator? = nil,

@@ -32,8 +32,8 @@ extension GameViewModel {
         }
 
         isLocationMenuOpen = true
-        if selectedLocationMenuIndex >= availableNavigationLocations.count {
-            selectedLocationMenuIndex = 0
+        if navigationBeaconState.selectedLocationMenuIndex >= availableNavigationLocations.count {
+            navigationBeaconState.selectedLocationMenuIndex = 0
         }
         refreshLocationMenuText()
         announce("\(locationMenuTitle). \(locationMenuText)")
@@ -54,17 +54,17 @@ extension GameViewModel {
             return
         }
 
-        let location = availableNavigationLocations[selectedLocationMenuIndex]
-        activeNavigationBeaconID = location.id
+        let location = availableNavigationLocations[navigationBeaconState.selectedLocationMenuIndex]
+        navigationBeaconState.activeNavigationBeaconID = location.id
         closeLocationMenu(announceClose: false)
         startNavigationBeaconLoop()
         announce("Маяк включен: \(location.title). Он доведет сначала до двери, а потом до прилавка. \(navigationBeaconGuidanceText(for: location))")
     }
 
     func stopNavigationBeacon(announceStop: Bool) {
-        activeNavigationBeaconID = nil
-        navigationBeaconTask?.cancel()
-        navigationBeaconTask = nil
+        navigationBeaconState.activeNavigationBeaconID = nil
+        navigationBeaconState.navigationBeaconTask?.cancel()
+        navigationBeaconState.navigationBeaconTask = nil
         if announceStop {
             announce("Маяк выключен.")
         }
@@ -73,11 +73,11 @@ extension GameViewModel {
     func handleLocationMenuCommand(_ command: GameCommand) {
         switch command {
         case .moveLeft, .moveBackward:
-            selectedLocationMenuIndex = max(0, selectedLocationMenuIndex - 1)
+            navigationBeaconState.selectedLocationMenuIndex = max(0, navigationBeaconState.selectedLocationMenuIndex - 1)
             refreshLocationMenuText()
             announce(locationMenuText)
         case .moveRight, .moveForward:
-            selectedLocationMenuIndex = min(availableNavigationLocations.count - 1, selectedLocationMenuIndex + 1)
+            navigationBeaconState.selectedLocationMenuIndex = min(availableNavigationLocations.count - 1, navigationBeaconState.selectedLocationMenuIndex + 1)
             refreshLocationMenuText()
             announce(locationMenuText)
         case .locationMenuConfirm, .primaryAction:
@@ -91,15 +91,15 @@ extension GameViewModel {
 
     func syncNavigationBeaconState() {
         guard let location = activeNavigationLocation else {
-            navigationBeaconTask?.cancel()
-            navigationBeaconTask = nil
+            navigationBeaconState.navigationBeaconTask?.cancel()
+            navigationBeaconState.navigationBeaconTask = nil
             return
         }
 
         if hasReachedNavigationLocation(location) {
-            activeNavigationBeaconID = nil
-            navigationBeaconTask?.cancel()
-            navigationBeaconTask = nil
+            navigationBeaconState.activeNavigationBeaconID = nil
+            navigationBeaconState.navigationBeaconTask?.cancel()
+            navigationBeaconState.navigationBeaconTask = nil
             announce("Ты дошел до прилавка продуктового. Маяк выключен.")
         }
     }
@@ -115,7 +115,7 @@ extension GameViewModel {
     }
 
     private var activeNavigationLocation: NavigationBeaconLocation? {
-        availableNavigationLocations.first { $0.id == activeNavigationBeaconID }
+        availableNavigationLocations.first { $0.id == navigationBeaconState.activeNavigationBeaconID }
     }
 
     private func refreshLocationMenuText() {
@@ -125,17 +125,17 @@ extension GameViewModel {
             return
         }
 
-        let location = availableNavigationLocations[selectedLocationMenuIndex]
+        let location = availableNavigationLocations[navigationBeaconState.selectedLocationMenuIndex]
         locationMenuTitle = "Выбор точки"
         locationMenuText = "Сейчас выбрано: \(location.title). Нажми Enter, чтобы включить маяк."
     }
 
     private func startNavigationBeaconLoop() {
-        navigationBeaconTask?.cancel()
-        navigationBeaconTask = Task { @MainActor [weak self] in
+        navigationBeaconState.navigationBeaconTask?.cancel()
+        navigationBeaconState.navigationBeaconTask = Task { @MainActor [weak self] in
             while let self, let location = self.activeNavigationLocation {
                 if self.hasReachedNavigationLocation(location) {
-                    self.activeNavigationBeaconID = nil
+                    self.navigationBeaconState.activeNavigationBeaconID = nil
                     break
                 }
 
@@ -144,7 +144,7 @@ extension GameViewModel {
                 try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
                 guard !Task.isCancelled else { return }
             }
-            self?.navigationBeaconTask = nil
+            self?.navigationBeaconState.navigationBeaconTask = nil
         }
     }
 

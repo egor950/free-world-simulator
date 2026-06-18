@@ -4,12 +4,7 @@ import GameplayKit
 extension GameViewModel {
     func resetNeighborEncounterState() {
         cancelNeighborTasks()
-        neighborDoorHitsTarget = 0
-        debugNeighborResponsePauseRange = nil
-        debugNeighborBreakInPauseRange = nil
-        debugNeighborDoorHitsTargetOverride = nil
-        debugNeighborFootstepCountOverride = nil
-        debugNeighborFootstepPauseOverride = nil
+        neighborDebug.reset()
         neighborEncounterMachine.resetToCalm()
     }
 
@@ -64,7 +59,7 @@ extension GameViewModel {
     func scheduleNeighborResponse() {
         neighborResponseTask?.cancel()
         let attempts = Int.random(in: 3...5)
-        let pauseRange = debugNeighborResponsePauseRange ?? (1.8...3.0)
+        let pauseRange = neighborDebug.responsePauseRange ?? (1.8...3.0)
 
         neighborResponseTask = Task { @MainActor [weak self] in
             guard let self else { return }
@@ -108,17 +103,17 @@ extension GameViewModel {
         neighborEncounterMachine.markBreakInStarted()
         neighborResponseTask?.cancel()
         neighborResponseTask = nil
-        neighborDoorHitsTarget = debugNeighborDoorHitsTargetOverride ?? ([3, 5, 8].randomElement() ?? 5)
+        neighborDebug.doorHitsTarget = neighborDebug.doorHitsTargetOverride ?? ([3, 5, 8].randomElement() ?? 5)
         addLog(finalText)
         announce(introText, delay: 0.15)
-        let breakInPauseRange = debugNeighborBreakInPauseRange ?? (0.6...0.9)
-        let footstepCount = debugNeighborFootstepCountOverride ?? 3
-        let footstepPause = debugNeighborFootstepPauseOverride ?? 0.45
+        let breakInPauseRange = neighborDebug.breakInPauseRange ?? (0.6...0.9)
+        let footstepCount = neighborDebug.footstepCountOverride ?? 3
+        let footstepPause = neighborDebug.footstepPauseOverride ?? 0.45
 
         neighborBreakInTask = Task { @MainActor [weak self] in
             guard let self else { return }
 
-            for hit in 1...self.neighborDoorHitsTarget {
+            for hit in 1...self.neighborDebug.doorHitsTarget {
                 await self.sleep(seconds: Double.random(in: breakInPauseRange))
                 guard self.shouldContinueNeighborSequence else { return }
                 self.audioCoordinator.playEffect(.doorBreakHeavy)
@@ -127,7 +122,7 @@ extension GameViewModel {
                     let line = "Снаружи уже не стучат. Дверь начали вышибать тяжелыми ударами."
                     self.addLog(line)
                     self.announce(line, delay: 0.2)
-                } else if hit == self.neighborDoorHitsTarget {
+                } else if hit == self.neighborDebug.doorHitsTarget {
                     let line = "Дверь треснула. Кажется, замок уже не держит."
                     self.addLog(line)
                     self.announce(line, delay: 0.2)
@@ -187,7 +182,7 @@ extension GameViewModel {
         guard shouldContinueNeighborSequence else { return }
         cancelNeighborTasks()
         neighborEncounterMachine.resetToCalm()
-        neighborDoorHitsTarget = 0
+        neighborDebug.doorHitsTarget = 0
         let text = "За дверью еще немного потоптались, кто-то буркнул: Да ну его. Потом шаги стихли. Кажется, ушли."
         addLog(text)
         refreshScreenState()

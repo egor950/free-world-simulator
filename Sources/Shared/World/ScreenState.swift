@@ -97,7 +97,7 @@ extension GameViewModel {
             }
             if isDoorOpened(door) {
                 let base = "\(door.shortPrompt) Дверь открыта. Нажми \(passCommandHint(for: door)), чтобы пройти."
-                if door.id == MainStreetRoom.groceryDoorID, activeNavigationBeaconID == "grocery_store" {
+                if door.id == MainStreetRoom.groceryDoorID, navigationBeaconState.activeNavigationBeaconID == "grocery_store" {
                     return "\(base) Маяк довел тебя до входа."
                 }
                 return base

@@ -68,6 +68,7 @@
 		0F99C3348DB47BAA14E1B9F6 /* LiveGameBridgeLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E019B383FA1BD3F55FAB3C4 /* LiveGameBridgeLogging.swift */; };
 		10733C0A5406DF8188125C15 /* test_trim.wav in Resources */ = {isa = PBXBuildFile; fileRef = A278FAE5265E33F844C654A8 /* test_trim.wav */; };
 		10799D189F62F070F8750AB8 /* BathroomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE17EF1B5947855F9092B857 /* BathroomRoom.swift */; };
+		107DD6324EA689C0157B994A /* NavigationBeaconState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65328520462381007CA531C9 /* NavigationBeaconState.swift */; };
 		10AB8E512E989AEA6F02BEE3 /* latch_button.wav in Resources */ = {isa = PBXBuildFile; fileRef = 097D846373956DD8D72AB9EB /* latch_button.wav */; };
 		10BF2FA5D00667A348E52AE9 /* city_street_bed.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 043450244A81A3749DCE01DF /* city_street_bed.mp3 */; };
 		10C30CF8624D7B33FA2D2BBC /* GameViewModel+VehicleActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC41AF1729B608D87B2B92C /* GameViewModel+VehicleActions.swift */; };
@@ -106,6 +107,7 @@
 		1837C3C2ED6C3248DA3B2604 /* bed_get_up.wav in Resources */ = {isa = PBXBuildFile; fileRef = FFB4323909486CEA3718B460 /* bed_get_up.wav */; };
 		1859BE54500FAF156AE422B0 /* car_door_close.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 173D851D7D0A6295E389ADFD /* car_door_close.mp3 */; };
 		18BDD0D5170F18997B6800FE /* latch_button.wav in Resources */ = {isa = PBXBuildFile; fileRef = 097D846373956DD8D72AB9EB /* latch_button.wav */; };
+		190C72B66DFFD55110DC9FC0 /* NavigationBeaconState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65328520462381007CA531C9 /* NavigationBeaconState.swift */; };
 		19129E436A1DBFD50308B436 /* dial.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9B06030FC73653EEA45E89A5 /* dial.wav */; };
 		192CD1C37DA7CAA8DA5B79CE /* AudioKettle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081EA1527219218E8358743E /* AudioKettle.swift */; };
 		1933B5C8ED6F6F055CC59E3A /* kettle_lid_open_container.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5C743AAE343DCD1E7771ECF0 /* kettle_lid_open_container.wav */; };
@@ -195,6 +197,7 @@
 		2BDD4FD5C8E1E8C3761458D2 /* traffic_engine_sedan.wav in Resources */ = {isa = PBXBuildFile; fileRef = D8A3648B39035FCD7FB63C48 /* traffic_engine_sedan.wav */; };
 		2BF88B1C66FE8D839CA6CFCC /* door_open_hallway.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 82427C195AF99A875677FFF2 /* door_open_hallway.mp3 */; };
 		2C09AB1E1110E7BAAF516148 /* door_break_heavy.wav in Resources */ = {isa = PBXBuildFile; fileRef = BD4D3183B8DA6D995B2B996A /* door_break_heavy.wav */; };
+		2C1F8008137495948DD50AA3 /* NavigationBeaconState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65328520462381007CA531C9 /* NavigationBeaconState.swift */; };
 		2C280E996771CD4C351EC517 /* suitcase_rummage.wav in Resources */ = {isa = PBXBuildFile; fileRef = 09FAEB409E533FDEA915D0F3 /* suitcase_rummage.wav */; };
 		2C2D4630617FDEDBB76BA939 /* water_single.wav in Resources */ = {isa = PBXBuildFile; fileRef = C9CCC532E4ADEFD97670F5D1 /* water_single.wav */; };
 		2C498B2DC62DD0C49C58CAC5 /* bed_get_up.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = ADB5411D9126C9FC9AB2C7F5 /* bed_get_up.mp3 */; };
@@ -389,6 +392,7 @@
 		5B95EC3C794DE15807FA6FDF /* box_open.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 8678D79D9BE3B193FFBE8DE5 /* box_open.mp3 */; };
 		5BE015F067919B8C79E935DD /* MovementFreeGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF2AFB9F2522701128953D1 /* MovementFreeGrid.swift */; };
 		5BEE9B7FBE96EB55B3941EC8 /* item_drop.wav in Resources */ = {isa = PBXBuildFile; fileRef = CF8F6CBBCB65C6C952332E1A /* item_drop.wav */; };
+		5C0F711529351A1E00227807 /* NeighborDebugConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8FB369190E8A2D8B65C88B /* NeighborDebugConfig.swift */; };
 		5C1FA377390A35072370496C /* kettle_lid_close_carabiner.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1B2A2FABBCDBDF4A6A10EB05 /* kettle_lid_close_carabiner.wav */; };
 		5C28280A43EB4E5BC6E9794C /* item_drop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = BDCB620A6708540141BD9D29 /* item_drop.mp3 */; };
 		5C374A1BC797EFD93B0D3EB4 /* mechanism_container.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9AAFC3C2E740DEB622D8B8A9 /* mechanism_container.wav */; };
@@ -673,6 +677,7 @@
 		A7D3796819B33F7F0AEC6320 /* tape_clean.wav in Resources */ = {isa = PBXBuildFile; fileRef = FE27DE109FBC01CDC39FA4F7 /* tape_clean.wav */; };
 		A7D6AFBC5A46633D008FEEA6 /* StreetCarInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AE3CA09CFF5C0B734BF27C4 /* StreetCarInteraction.swift */; };
 		A7F424EE9B6EC4B557C191F7 /* car_door_close.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 173D851D7D0A6295E389ADFD /* car_door_close.mp3 */; };
+		A81DE04F094DC52496F4E20A /* NeighborDebugConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8FB369190E8A2D8B65C88B /* NeighborDebugConfig.swift */; };
 		A8476B278659EE442C5C02D6 /* creaky_seat.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4AF1176CE929C612FDC8669A /* creaky_seat.wav */; };
 		A88761288722C5DB4F5F45E0 /* ts3_coupe_engine.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA18FAD4224FAE1FF4F6ED6C /* ts3_coupe_engine.wav */; };
 		A8B6BE31BF2E45950C9BCD79 /* light_switch_on.wav in Resources */ = {isa = PBXBuildFile; fileRef = 2CDB583A114B1C52813CB6DA /* light_switch_on.wav */; };
@@ -905,6 +910,7 @@
 		E0CD18B9CF6DFA747AF2A6CF /* door_open_livingroom.wav in Resources */ = {isa = PBXBuildFile; fileRef = C379116242CECBF736399673 /* door_open_livingroom.wav */; };
 		E110548F119F1CC830FFA38E /* door_close_bedroom.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A6C71F72121B712A4A45CAA0 /* door_close_bedroom.mp3 */; };
 		E17E78AC18A11029A40CD9B3 /* kettle_place_floor_new.wav in Resources */ = {isa = PBXBuildFile; fileRef = ED677C91A1FEBCB62F034DB2 /* kettle_place_floor_new.wav */; };
+		E1E982F539B9B1BAAA2D0CF0 /* NeighborDebugConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8FB369190E8A2D8B65C88B /* NeighborDebugConfig.swift */; };
 		E2099A158F3C41EE9A0BE384 /* StreetRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6AE704A14296C2ECA292B39 /* StreetRoom.swift */; };
 		E2700F5F68643AE4A8573B97 /* pillow_tear.wav in Resources */ = {isa = PBXBuildFile; fileRef = 2FFF4E99C7036E1564B206E2 /* pillow_tear.wav */; };
 		E27FFFFAAA8CAE62C58FA1A1 /* RoomDescriptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE462E7DEB3F161D76B2D2C /* RoomDescriptions.swift */; };
@@ -1138,9 +1144,11 @@
 		626291E95E8696113B894737 /* carabiner.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = carabiner.wav; sourceTree = "<group>"; };
 		6319C0DD91E9D23767BBEA1C /* player_car_brake.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = player_car_brake.wav; sourceTree = "<group>"; };
 		632F39C2FFE883AB608776E8 /* lid_open_raw.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = lid_open_raw.wav; sourceTree = "<group>"; };
+		65328520462381007CA531C9 /* NavigationBeaconState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBeaconState.swift; sourceTree = "<group>"; };
 		66804F75972C9A0325F9F168 /* MainStreetRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainStreetRoom.swift; sourceTree = "<group>"; };
 		694A94AE4999C919604D9594 /* ts3_start_common_b.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ts3_start_common_b.wav; sourceTree = "<group>"; };
 		6A6BBE3205901541DD01A386 /* box_open.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = box_open.wav; sourceTree = "<group>"; };
+		6A8FB369190E8A2D8B65C88B /* NeighborDebugConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeighborDebugConfig.swift; sourceTree = "<group>"; };
 		6B795A34589060376FF60947 /* kettle_lid_open.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = kettle_lid_open.wav; sourceTree = "<group>"; };
 		6BF516D8752B264E9BF8C0CE /* typewriter.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = typewriter.wav; sourceTree = "<group>"; };
 		6C269411BEEEBC792320D145 /* kettle_place_floor_final.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = kettle_place_floor_final.wav; sourceTree = "<group>"; };
@@ -1400,6 +1408,8 @@
 				095F912469A8E459D6FE1B8A /* GameStateMachines.swift */,
 				23ADF356DA289BC9DE6D8645 /* GameViewModel.swift */,
 				4C64DF77F77A4215221228F9 /* GameViewModel+UI.swift */,
+				65328520462381007CA531C9 /* NavigationBeaconState.swift */,
+				6A8FB369190E8A2D8B65C88B /* NeighborDebugConfig.swift */,
 			);
 			path = GameViewModel;
 			sourceTree = "<group>";
@@ -2848,6 +2858,8 @@
 				01D9BAA3F6FCBAFF08F6CEC6 /* MovementFreeGrid.swift in Sources */,
 				BFF238D9B41365EB62262B76 /* MovementLinear.swift in Sources */,
 				E5365801BBA814F97B8FF871 /* MovementPathUtils.swift in Sources */,
+				190C72B66DFFD55110DC9FC0 /* NavigationBeaconState.swift in Sources */,
+				5C0F711529351A1E00227807 /* NeighborDebugConfig.swift in Sources */,
 				2D054863337B2B1B3F554AEB /* Parking.swift in Sources */,
 				97D0E5773E94F2F4519BAD94 /* Pillow.swift in Sources */,
 				E27FFFFAAA8CAE62C58FA1A1 /* RoomDescriptions.swift in Sources */,
@@ -2949,6 +2961,8 @@
 				37679132310785334F03EB50 /* MovementFreeGrid.swift in Sources */,
 				471F4DD81F0C7A91278FC46F /* MovementLinear.swift in Sources */,
 				543BF5C00AFE6230648D4480 /* MovementPathUtils.swift in Sources */,
+				2C1F8008137495948DD50AA3 /* NavigationBeaconState.swift in Sources */,
+				A81DE04F094DC52496F4E20A /* NeighborDebugConfig.swift in Sources */,
 				033F9BB008F9B5EA939DD595 /* Parking.swift in Sources */,
 				CA8789CC0E96975C709A78EC /* Pillow.swift in Sources */,
 				AE741D161B7C094A445A3D65 /* RoomDescriptions.swift in Sources */,
@@ -3049,6 +3063,8 @@
 				5BE015F067919B8C79E935DD /* MovementFreeGrid.swift in Sources */,
 				35FBD2BB557037F4654F6F81 /* MovementLinear.swift in Sources */,
 				C9594D2327D59E41302ACB68 /* MovementPathUtils.swift in Sources */,
+				107DD6324EA689C0157B994A /* NavigationBeaconState.swift in Sources */,
+				E1E982F539B9B1BAAA2D0CF0 /* NeighborDebugConfig.swift in Sources */,
 				5B3C082F5FD569F6066599D5 /* Parking.swift in Sources */,
 				DA9B79C287116CDF732CCB02 /* Pillow.swift in Sources */,
 				99D0CB00AAB4CCE993D57DD8 /* RoomDescriptions.swift in Sources */,

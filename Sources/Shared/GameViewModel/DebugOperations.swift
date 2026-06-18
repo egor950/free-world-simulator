@@ -96,14 +96,14 @@ extension GameViewModel {
             "state": debugNeighborStateName(),
             "responseTaskActive": neighborResponseTask != nil,
             "breakInTaskActive": neighborBreakInTask != nil,
-            "hitsTarget": neighborDoorHitsTarget,
-            "responsePauseMin": debugNeighborResponsePauseRange?.lowerBound ?? -1,
-            "responsePauseMax": debugNeighborResponsePauseRange?.upperBound ?? -1,
-            "breakInPauseMin": debugNeighborBreakInPauseRange?.lowerBound ?? -1,
-            "breakInPauseMax": debugNeighborBreakInPauseRange?.upperBound ?? -1,
-            "hitsOverride": debugNeighborDoorHitsTargetOverride ?? -1,
-            "footstepCountOverride": debugNeighborFootstepCountOverride ?? -1,
-            "footstepPauseOverride": debugNeighborFootstepPauseOverride ?? -1
+            "hitsTarget": neighborDebug.doorHitsTarget,
+            "responsePauseMin": neighborDebug.responsePauseRange?.lowerBound ?? -1,
+            "responsePauseMax": neighborDebug.responsePauseRange?.upperBound ?? -1,
+            "breakInPauseMin": neighborDebug.breakInPauseRange?.lowerBound ?? -1,
+            "breakInPauseMax": neighborDebug.breakInPauseRange?.upperBound ?? -1,
+            "hitsOverride": neighborDebug.doorHitsTargetOverride ?? -1,
+            "footstepCountOverride": neighborDebug.footstepCountOverride ?? -1,
+            "footstepPauseOverride": neighborDebug.footstepPauseOverride ?? -1
         ]
 
         payload["debugMessage"] = message ?? ""

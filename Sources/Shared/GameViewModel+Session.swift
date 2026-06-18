@@ -115,13 +115,8 @@ extension GameViewModel {
         cancelGateTransitionTasks(resetMachines: true)
         cancelNeighborTasks()
         neighborEncounterMachine.resetToCalm()
-        neighborDoorHitsTarget = 0
+        neighborDebug.reset()
         groceryStoreClerkMachine.reset()
-        debugNeighborResponsePauseRange = nil
-        debugNeighborBreakInPauseRange = nil
-        debugNeighborDoorHitsTargetOverride = nil
-        debugNeighborFootstepCountOverride = nil
-        debugNeighborFootstepPauseOverride = nil
 
         refreshScreenState()
         addLog("Создан персонаж: \(selectedCharacterKind.rawValue), \(safeName)")
@@ -235,13 +230,8 @@ extension GameViewModel {
         gateAutoPassLockedZ = nil
         lastDrivingHintText = ""
         lastDrivingHintAt = .distantPast
-        neighborDoorHitsTarget = 0
+        neighborDebug.reset()
         groceryStoreClerkMachine.reset()
-        debugNeighborResponsePauseRange = nil
-        debugNeighborBreakInPauseRange = nil
-        debugNeighborDoorHitsTargetOverride = nil
-        debugNeighborFootstepCountOverride = nil
-        debugNeighborFootstepPauseOverride = nil
         audioCoordinator.playAmbient(nil)
         audioCoordinator.setStreetPresence(.off, fadeDuration: 0)
         audioCoordinator.setTrafficEnabled(false)
