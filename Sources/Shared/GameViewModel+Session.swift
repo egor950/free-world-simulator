@@ -111,11 +111,11 @@ extension GameViewModel {
         lastDrivingHintAt = .distantPast
         audioCoordinator.stopControlledCarAudio()
         bedAnchorPosition = nil
-        doorLifecycleMachines.removeAll()
-        cancelGateTransitionTasks(resetMachines: true)
-        cancelNeighborTasks()
-        neighborEncounterMachine.resetToCalm()
-        neighborDebug.reset()
+        doors.doorLifecycleMachines.removeAll()
+        doors.cancelGateTransitionTasks(resetMachines: true)
+        neighbor.cancelNeighborTasks()
+        neighbor.neighborEncounterMachine.resetToCalm()
+        neighbor.neighborDebug.reset()
         groceryStoreClerkMachine.reset()
 
         refreshScreenState()
@@ -216,7 +216,7 @@ extension GameViewModel {
     }
 
     func resetForNewSession() {
-        cancelNeighborTasks()
+        neighbor.cancelNeighborTasks()
         cancelKettleBoilingTask(resetWaterState: false)
         carLifecycleTask?.cancel()
         carLifecycleTask = nil
@@ -230,7 +230,7 @@ extension GameViewModel {
         gateAutoPassLockedZ = nil
         lastDrivingHintText = ""
         lastDrivingHintAt = .distantPast
-        neighborDebug.reset()
+        neighbor.neighborDebug.reset()
         groceryStoreClerkMachine.reset()
         audioCoordinator.playAmbient(nil)
         audioCoordinator.setStreetPresence(.off, fadeDuration: 0)
@@ -241,9 +241,9 @@ extension GameViewModel {
         setInventoryOpen(false)
         ui.inventoryTitle = ""
         ui.inventoryText = ""
-        doorLifecycleMachines.removeAll()
-        cancelGateTransitionTasks(resetMachines: true)
-        neighborEncounterMachine.resetToCalm()
+        doors.doorLifecycleMachines.removeAll()
+        doors.cancelGateTransitionTasks(resetMachines: true)
+        neighbor.neighborEncounterMachine.resetToCalm()
         audioCoordinator.stopControlledCarAudio()
     }
 
@@ -274,12 +274,12 @@ extension GameViewModel {
 
     @discardableResult
     func runDebugScenario(named name: String) -> Bool {
-        resetNeighborEncounterState()
+        neighbor.resetNeighborEncounterState()
 
         switch name {
         case "hallway_neighbor_door":
             audioCoordinator.clearStreetDebugScenario()
-            neighborEncounterMachine.markDoorbellRaised()
+            neighbor.neighborEncounterMachine.markDoorbellRaised()
             debugMovePlayer(to: .hallway, position: GridPosition(x: 1, y: 1))
         case "hallway_coat_rack":
             audioCoordinator.clearStreetDebugScenario()

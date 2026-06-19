@@ -74,7 +74,7 @@ extension GameViewModel {
     }
 
     var isNeighborDoorVisible: Bool {
-        (neighborEncounterMachine.isDoorbellRaised || neighborEncounterMachine.isBreakInActive) &&
-        !neighborEncounterMachine.isResolved
+        (neighbor.neighborEncounterMachine.isDoorbellRaised || neighbor.neighborEncounterMachine.isBreakInActive) &&
+        !neighbor.neighborEncounterMachine.isResolved
     }
 }

@@ -21,6 +21,8 @@ final class GameVehicleRuntime {
     var lastDrivingWorldAudioSyncAt: TimeInterval = 0
     var lastDrivingRoomID: RoomID?
     var lastDrivingRoomPosition: GridPosition?
+    var kettleBoilingTask: Task<Void, Never>?
+    var pendingStreetCarDepartureTask: Task<Void, Never>?
 }
 
 extension GameViewModel {
@@ -116,5 +118,15 @@ extension GameViewModel {
     var lastDrivingRoomPosition: GridPosition? {
         get { vehicleRuntime.lastDrivingRoomPosition }
         set { vehicleRuntime.lastDrivingRoomPosition = newValue }
+    }
+
+    var kettleBoilingTask: Task<Void, Never>? {
+        get { vehicleRuntime.kettleBoilingTask }
+        set { vehicleRuntime.kettleBoilingTask = newValue }
+    }
+
+    var pendingStreetCarDepartureTask: Task<Void, Never>? {
+        get { vehicleRuntime.pendingStreetCarDepartureTask }
+        set { vehicleRuntime.pendingStreetCarDepartureTask = newValue }
     }
 }

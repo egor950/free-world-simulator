@@ -39,7 +39,7 @@ extension GameViewModel {
 
     func handleDoorAction(_ door: DoorDefinition) {
         if door.id == HallwayRoom.neighborDoorID {
-            handleNeighborDoor()
+            neighbor.handleNeighborDoor()
             return
         }
 
@@ -332,7 +332,7 @@ extension GameViewModel {
         syncBedAnchorAfterAction()
         syncKettleBoilingTask()
         audioCoordinator.playEffect(action.sound)
-        let extraReaction = reactToLoudActionIfNeeded(for: action)
+        let extraReaction = neighbor.reactToLoudActionIfNeeded(for: action)
         refreshScreenState()
         addLog(action.resultText)
         if let extraReaction {
@@ -341,24 +341,6 @@ extension GameViewModel {
         } else {
             announce(action.resultText)
         }
-    }
-
-    func doorLinkID(for door: DoorDefinition) -> String {
-        let ids = [state.player.roomID.rawValue, door.targetRoomID.rawValue].sorted()
-        return ids.joined(separator: "|")
-    }
-
-    func doorMachine(for door: DoorDefinition) -> DoorLifecycleMachine {
-        let linkID = doorLinkID(for: door)
-
-        if let machine = doorLifecycleMachines[linkID] {
-            machine.sync(staticState: door.state)
-            return machine
-        }
-
-        let machine = DoorLifecycleMachine(staticState: door.state)
-        doorLifecycleMachines[linkID] = machine
-        return machine
     }
 
     func doorAtCurrentPosition() -> DoorDefinition? {
@@ -392,8 +374,8 @@ extension GameViewModel {
         ambientCue: AudioCueID? = nil,
         announcementDelay: TimeInterval = 0
     ) {
-        cancelNeighborTasks()
-        cancelGateTransitionTasks(resetMachines: true)
+        neighbor.cancelNeighborTasks()
+        doors.cancelGateTransitionTasks(resetMachines: true)
         cancelKettleBoilingTask(resetWaterState: false)
         carLifecycleTask?.cancel()
         carLifecycleTask = nil

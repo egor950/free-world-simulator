@@ -17,12 +17,9 @@ final class GameViewModel: ObservableObject {
 
     var state: WorldRuntimeState
     var pendingAnnouncementTask: Task<Void, Never>?
-    var pendingStreetCarDepartureTask: Task<Void, Never>?
-    var kettleBoilingTask: Task<Void, Never>?
-    var neighborResponseTask: Task<Void, Never>?
-    var neighborBreakInTask: Task<Void, Never>?
     let navigationBeaconState = NavigationBeaconState()
-    lazy var neighborEncounterMachine = NeighborEncounterMachine()
+    let neighbor = NeighborSystem()
+    let doors = DoorSystem()
     let groceryStoreClerkMachine = GroceryStoreClerkMachine()
     let roomTraversalMachine = RoomTraversalMachine()
     let poseMachine = PoseMachine()
@@ -30,10 +27,6 @@ final class GameViewModel: ObservableObject {
     let vehicleRuntime = GameVehicleRuntime()
     var lastMovementAt: Date = .distantPast
     var bedAnchorPosition: GridPosition?
-    var doorLifecycleMachines: [String: DoorLifecycleMachine] = [:]
-    var gateLifecycleMachines: [String: GateLifecycleMachine] = [:]
-    var gateTransitionTasks: [String: Task<Void, Never>] = [:]
-    let neighborDebug = NeighborDebugConfig()
 
     init(
         speechCoordinator: SpeechCoordinator? = nil,
@@ -87,6 +80,44 @@ final class GameViewModel: ObservableObject {
             self.announce(text)
         }
 
+        self.neighbor.delegate = self
+        self.doors.delegate = self
+
         refreshScreenState()
+    }
+}
+
+// MARK: - NeighborDelegate
+
+extension GameViewModel: NeighborDelegate {
+    var currentStage: GameStage { ui.stage }
+}
+
+// MARK: - DoorDelegate
+
+@MainActor
+extension GameViewModel: DoorDelegate {
+    func announce(_ text: String) {
+        announce(text, delay: 0)
+    }
+
+    func refreshScreenState() {
+        refreshScreenState(syncAudio: true)
+    }
+
+    func doorLinkID(for door: DoorDefinition) -> String {
+        let ids = [state.player.roomID.rawValue, door.targetRoomID.rawValue].sorted()
+        return ids.joined(separator: "|")
+    }
+
+    func doorMachine(for door: DoorDefinition) -> DoorLifecycleMachine {
+        let linkID = doorLinkID(for: door)
+        if let machine = doors.doorLifecycleMachines[linkID] {
+            machine.sync(staticState: door.state)
+            return machine
+        }
+        let machine = DoorLifecycleMachine(staticState: door.state)
+        doors.doorLifecycleMachines[linkID] = machine
+        return machine
     }
 }

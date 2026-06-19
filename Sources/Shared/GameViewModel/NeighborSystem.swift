@@ -1,221 +1,30 @@
 import Foundation
 import GameplayKit
 
-extension GameViewModel {
-    func resetNeighborEncounterState() {
-        cancelNeighborTasks()
-        neighborDebug.reset()
-        neighborEncounterMachine.resetToCalm()
-    }
+// MARK: - NeighborDelegate
 
-    func reactToLoudActionIfNeeded(for action: ItemAction) -> String? {
-        guard isNeighborNoiseAction(action) else {
-            return nil
-        }
+/// Протокол для связи NeighborSystem с GameViewModel.
+/// Все вызовы к игре идут через этот делегат.
+@MainActor
+protocol NeighborDelegate: AnyObject {
+    var audioCoordinator: AudioCoordinator { get }
+    var currentStage: GameStage { get }
 
-        switch neighborEncounterMachine.resolveLoudAction() {
-        case .warn:
-            return "Где-то за стеной сразу рявкнули: Эй, ты там что творишь вообще?"
-        case .ringDoorbell:
-            audioCoordinator.playEffect(.doorbellMain)
-            scheduleNeighborResponse()
-            return "Снаружи раздался злой звонок в дверь. Похоже, кто-то пришел разбираться. Иди в прихожую к самому началу."
-        case .startBreakIn:
-            startNeighborBreakIn(
-                introText: "Снаружи сразу взбесились: А, он еще и дальше крушит. Ломай дверь.",
-                finalText: "Они уже не ждут. Дверь начали высаживать всерьез."
-            )
-            return "Снаружи сразу взбесились: А, он еще и дальше крушит. Ломай дверь."
-        case .intensifyBreakIn:
-            audioCoordinator.playEffect(.doorBreakHeavy)
-            return "Ты снова устроил грохот, и за дверью сразу начали бить еще ожесточеннее."
-        case .ignore:
-            return nil
-        }
-    }
-
-    func isNeighborNoiseAction(_ action: ItemAction) -> Bool {
-        guard !neighborEncounterMachine.isResolved else {
-            return false
-        }
-
-        if action.sound == .glassBreakSmall || action.sound == .cabinetSmash {
-            return true
-        }
-
-        return false
-    }
-
-    func handleNeighborDoor() {
-        let text: String
-        if neighborBreakInTask != nil {
-            text = "Ты дернул дверь как раз в тот момент, когда ее уже почти вынесли. Снаружи только и успели рявкнуть: Поздно. Сразу прилетел тяжелый удар, в ушах загудело, а мир провалился в темноту."
-        } else {
-            text = "Ты открыл входную дверь. Снаружи только и успели бросить: Ну что, попался? Сразу прилетел тяжелый удар, в ушах загудело, а мир провалился в темноту."
-        }
-        resolveNeighborAttack(text: text, logLine: "Соседи вырубили тебя у двери")
-    }
-
-    func scheduleNeighborResponse() {
-        neighborResponseTask?.cancel()
-        let attempts = Int.random(in: 3...5)
-        let pauseRange = neighborDebug.responsePauseRange ?? (1.8...3.0)
-
-        neighborResponseTask = Task { @MainActor [weak self] in
-            guard let self else { return }
-
-            for attempt in 1...attempts {
-                let pause = Double.random(in: pauseRange)
-                await self.sleep(seconds: pause)
-                guard self.shouldContinueNeighborSequence else { return }
-                guard !self.neighborEncounterMachine.isBreakInActive else { return }
-
-                let shouldRing = Bool.random()
-                if shouldRing {
-                    self.audioCoordinator.playEffect(.doorbellMain)
-                } else {
-                    self.audioCoordinator.playEffect(.doorBangingHard)
-                }
-
-                let line = self.neighborPressureLine(isDoorbell: shouldRing, attempt: attempt, totalAttempts: attempts)
-                self.addLog(line)
-                self.announce(line, delay: 0.2)
-            }
-
-            guard self.shouldContinueNeighborSequence else { return }
-            guard !self.neighborEncounterMachine.isBreakInActive else { return }
-
-            if Bool.random() {
-                self.neighborsGiveUpAndLeave()
-            } else {
-                self.startNeighborBreakIn(
-                    introText: "За дверью зло процедили: Всё, хорош ждать. Сейчас вынесем.",
-                    finalText: "Похоже, они решили больше не церемониться."
-                )
-            }
-        }
-    }
-
-    func startNeighborBreakIn(introText: String, finalText: String) {
-        guard shouldContinueNeighborSequence else { return }
-        guard neighborBreakInTask == nil else { return }
-
-        neighborEncounterMachine.markBreakInStarted()
-        neighborResponseTask?.cancel()
-        neighborResponseTask = nil
-        neighborDebug.doorHitsTarget = neighborDebug.doorHitsTargetOverride ?? ([3, 5, 8].randomElement() ?? 5)
-        addLog(finalText)
-        announce(introText, delay: 0.15)
-        let breakInPauseRange = neighborDebug.breakInPauseRange ?? (0.6...0.9)
-        let footstepCount = neighborDebug.footstepCountOverride ?? 3
-        let footstepPause = neighborDebug.footstepPauseOverride ?? 0.45
-
-        neighborBreakInTask = Task { @MainActor [weak self] in
-            guard let self else { return }
-
-            for hit in 1...self.neighborDebug.doorHitsTarget {
-                await self.sleep(seconds: Double.random(in: breakInPauseRange))
-                guard self.shouldContinueNeighborSequence else { return }
-                self.audioCoordinator.playEffect(.doorBreakHeavy)
-
-                if hit == 1 {
-                    let line = "Снаружи уже не стучат. Дверь начали вышибать тяжелыми ударами."
-                    self.addLog(line)
-                    self.announce(line, delay: 0.2)
-                } else if hit == self.neighborDebug.doorHitsTarget {
-                    let line = "Дверь треснула. Кажется, замок уже не держит."
-                    self.addLog(line)
-                    self.announce(line, delay: 0.2)
-                } else {
-                    self.addLog("Входная дверь снова тяжело дрогнула от удара.")
-                }
-            }
-
-            guard self.shouldContinueNeighborSequence else { return }
-            let breachLine = "Замок не выдержал. Слышно, как один сосед уже влетел в квартиру и тяжело идет прямо к тебе."
-            self.addLog(breachLine)
-            self.announce(breachLine, delay: 0.25)
-
-            for _ in 0..<footstepCount {
-                await self.sleep(seconds: footstepPause)
-                guard self.shouldContinueNeighborSequence else { return }
-                self.audioCoordinator.playStep(surfaceOverride: .carpet)
-            }
-
-            await self.sleep(seconds: 0.35)
-            guard self.shouldContinueNeighborSequence else { return }
-            self.resolveNeighborAttack(
-                text: "Дверь с треском вынесли. Один сосед тяжело ворвался внутрь, быстро нашел тебя по звукам и без разговоров вырубил.",
-                logLine: "Соседи ворвались в квартиру и вырубили тебя"
-            )
-        }
-    }
-
-    var shouldContinueNeighborSequence: Bool {
-        ui.stage == .exploration &&
-        !neighborEncounterMachine.isResolved
-    }
-
-    func neighborPressureLine(isDoorbell: Bool, attempt: Int, totalAttempts: Int) -> String {
-        if attempt == totalAttempts {
-            return isDoorbell
-                ? "Звонок снова взвыл уже совсем зло, будто снаружи теряют терпение."
-                : "В дверь опять врезали так, что по квартире пошел гул."
-        }
-
-        if isDoorbell {
-            return [
-                "Снаружи снова настойчиво жмут на звонок.",
-                "Звонок опять коротко и зло резанул по тишине.",
-                "У двери опять звонят, уже заметно нервнее."
-            ].randomElement() ?? "Снаружи снова звонят в дверь."
-        }
-
-        return [
-            "В дверь снова резко постучали.",
-            "Снаружи опять ударили в дверь кулаком.",
-            "Кто-то у входа опять со злостью долбанул в дверь."
-        ].randomElement() ?? "Снаружи снова лупят в дверь."
-    }
-
-    func neighborsGiveUpAndLeave() {
-        guard shouldContinueNeighborSequence else { return }
-        cancelNeighborTasks()
-        neighborEncounterMachine.resetToCalm()
-        neighborDebug.doorHitsTarget = 0
-        let text = "За дверью еще немного потоптались, кто-то буркнул: Да ну его. Потом шаги стихли. Кажется, ушли."
-        addLog(text)
-        refreshScreenState()
-        announce(text, delay: 0.25)
-    }
-
-    func resolveNeighborAttack(text: String, logLine: String) {
-        cancelNeighborTasks()
-        neighborEncounterMachine.markResolved()
-        setInventoryOpen(false)
-        audioCoordinator.playEffect(.punchHit)
-        finishGame(
-            roomTitle: "Прихожая",
-            focusTitle: "Тебя вырубили",
-            text: text,
-            logLine: logLine,
-            ambientCue: .heartbeatFast,
-            announcementDelay: 0.6
-        )
-    }
-
-    func cancelNeighborTasks() {
-        neighborResponseTask?.cancel()
-        neighborResponseTask = nil
-        neighborBreakInTask?.cancel()
-        neighborBreakInTask = nil
-    }
-
-    func sleep(seconds: TimeInterval) async {
-        let nanoseconds = UInt64(seconds * 1_000_000_000)
-        try? await Task.sleep(nanoseconds: nanoseconds)
-    }
+    func addLog(_ line: String)
+    func announce(_ text: String, delay: TimeInterval)
+    func refreshScreenState()
+    func setInventoryOpen(_ isOpen: Bool)
+    func finishGame(
+        roomTitle: String,
+        focusTitle: String,
+        text: String,
+        logLine: String,
+        ambientCue: AudioCueID?,
+        announcementDelay: TimeInterval
+    )
 }
+
+// MARK: - NeighborLoudReactionStep
 
 enum NeighborLoudReactionStep {
     case warn
@@ -224,6 +33,8 @@ enum NeighborLoudReactionStep {
     case intensifyBreakIn
     case ignore
 }
+
+// MARK: - NeighborEncounterMachine
 
 final class NeighborEncounterMachine {
     private final class CalmState: GKState {
@@ -335,5 +146,239 @@ final class NeighborEncounterMachine {
             _ = stateMachine.enter(WarnedState.self)
         }
         _ = stateMachine.enter(DoorbellState.self)
+    }
+}
+
+// MARK: - NeighborSystem
+
+@MainActor
+final class NeighborSystem {
+    weak var delegate: NeighborDelegate?
+
+    let neighborDebug = NeighborDebugConfig()
+    let neighborEncounterMachine = NeighborEncounterMachine()
+
+    var machine: NeighborEncounterMachine { neighborEncounterMachine }
+    var debug: NeighborDebugConfig { neighborDebug }
+
+    var responseTask: Task<Void, Never>? { neighborResponseTask }
+    var breakInTask: Task<Void, Never>? { neighborBreakInTask }
+    private var neighborResponseTask: Task<Void, Never>?
+    private var neighborBreakInTask: Task<Void, Never>?
+
+    // MARK: - Public API
+
+    func resetNeighborEncounterState() {
+        cancelNeighborTasks()
+        neighborDebug.reset()
+        neighborEncounterMachine.resetToCalm()
+    }
+
+    func reactToLoudActionIfNeeded(for action: ItemAction) -> String? {
+        guard isNeighborNoiseAction(action) else {
+            return nil
+        }
+
+        switch neighborEncounterMachine.resolveLoudAction() {
+        case .warn:
+            return "Где-то за стеной сразу рявкнули: Эй, ты там что творишь вообще?"
+        case .ringDoorbell:
+            delegate?.audioCoordinator.playEffect(.doorbellMain)
+            scheduleNeighborResponse()
+            return "Снаружи раздался злой звонок в дверь. Похоже, кто-то пришел разбираться. Иди в прихожую к самому началу."
+        case .startBreakIn:
+            startNeighborBreakIn(
+                introText: "Снаружи сразу взбесились: А, он еще и дальше крушит. Ломай дверь.",
+                finalText: "Они уже не ждут. Дверь начали высаживать всерьез."
+            )
+            return "Снаружи сразу взбесились: А, он еще и дальше крушит. Ломай дверь."
+        case .intensifyBreakIn:
+            delegate?.audioCoordinator.playEffect(.doorBreakHeavy)
+            return "Ты снова устроил грохот, и за дверью сразу начали бить еще ожесточеннее."
+        case .ignore:
+            return nil
+        }
+    }
+
+    func isNeighborNoiseAction(_ action: ItemAction) -> Bool {
+        guard !neighborEncounterMachine.isResolved else {
+            return false
+        }
+
+        if action.sound == .glassBreakSmall || action.sound == .cabinetSmash {
+            return true
+        }
+
+        return false
+    }
+
+    func handleNeighborDoor() {
+        let text: String
+        if neighborBreakInTask != nil {
+            text = "Ты дернул дверь как раз в тот момент, когда ее уже почти вынесли. Снаружи только и успели рявкнуть: Поздно. Сразу прилетел тяжелый удар, в ушах загудело, а мир провалился в темноту."
+        } else {
+            text = "Ты открыл входную дверь. Снаружи только и успели бросить: Ну что, попался? Сразу прилетел тяжелый удар, в ушах загудело, а мир провалился в темноту."
+        }
+        resolveNeighborAttack(text: text, logLine: "Соседи вырубили тебя у двери")
+    }
+
+    func scheduleNeighborResponse() {
+        neighborResponseTask?.cancel()
+        let attempts = Int.random(in: 3...5)
+        let pauseRange = neighborDebug.responsePauseRange ?? (1.8...3.0)
+
+        neighborResponseTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+
+            for attempt in 1...attempts {
+                let pause = Double.random(in: pauseRange)
+                await self.sleep(seconds: pause)
+                guard self.shouldContinueNeighborSequence else { return }
+                guard !self.neighborEncounterMachine.isBreakInActive else { return }
+
+                let shouldRing = Bool.random()
+                if shouldRing {
+                    self.delegate?.audioCoordinator.playEffect(.doorbellMain)
+                } else {
+                    self.delegate?.audioCoordinator.playEffect(.doorBangingHard)
+                }
+
+                let line = self.neighborPressureLine(isDoorbell: shouldRing, attempt: attempt, totalAttempts: attempts)
+                self.delegate?.addLog(line)
+                self.delegate?.announce(line, delay: 0.2)
+            }
+
+            guard self.shouldContinueNeighborSequence else { return }
+            guard !self.neighborEncounterMachine.isBreakInActive else { return }
+
+            if Bool.random() {
+                self.neighborsGiveUpAndLeave()
+            } else {
+                self.startNeighborBreakIn(
+                    introText: "За дверью зло процедили: Всё, хорош ждать. Сейчас вынесем.",
+                    finalText: "Похоже, они решили больше не церемониться."
+                )
+            }
+        }
+    }
+
+    func startNeighborBreakIn(introText: String, finalText: String) {
+        guard shouldContinueNeighborSequence else { return }
+        guard neighborBreakInTask == nil else { return }
+
+        neighborEncounterMachine.markBreakInStarted()
+        neighborResponseTask?.cancel()
+        neighborResponseTask = nil
+        neighborDebug.doorHitsTarget = neighborDebug.doorHitsTargetOverride ?? ([3, 5, 8].randomElement() ?? 5)
+        delegate?.addLog(finalText)
+        delegate?.announce(introText, delay: 0.15)
+        let breakInPauseRange = neighborDebug.breakInPauseRange ?? (0.6...0.9)
+        let footstepCount = neighborDebug.footstepCountOverride ?? 3
+        let footstepPause = neighborDebug.footstepPauseOverride ?? 0.45
+
+        neighborBreakInTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+
+            for hit in 1...self.neighborDebug.doorHitsTarget {
+                await self.sleep(seconds: Double.random(in: breakInPauseRange))
+                guard self.shouldContinueNeighborSequence else { return }
+                self.delegate?.audioCoordinator.playEffect(.doorBreakHeavy)
+
+                if hit == 1 {
+                    let line = "Снаружи уже не стучат. Дверь начали вышибать тяжелыми ударами."
+                    self.delegate?.addLog(line)
+                    self.delegate?.announce(line, delay: 0.2)
+                } else if hit == self.neighborDebug.doorHitsTarget {
+                    let line = "Дверь треснула. Кажется, замок уже не держит."
+                    self.delegate?.addLog(line)
+                    self.delegate?.announce(line, delay: 0.2)
+                } else {
+                    self.delegate?.addLog("Входная дверь снова тяжело дрогнула от удара.")
+                }
+            }
+
+            guard self.shouldContinueNeighborSequence else { return }
+            let breachLine = "Замок не выдержал. Слышно, как один сосед уже влетел в квартиру и тяжело идет прямо к тебе."
+            self.delegate?.addLog(breachLine)
+            self.delegate?.announce(breachLine, delay: 0.25)
+
+            for _ in 0..<footstepCount {
+                await self.sleep(seconds: footstepPause)
+                guard self.shouldContinueNeighborSequence else { return }
+                self.delegate?.audioCoordinator.playStep(surfaceOverride: .carpet)
+            }
+
+            await self.sleep(seconds: 0.35)
+            guard self.shouldContinueNeighborSequence else { return }
+            self.resolveNeighborAttack(
+                text: "Дверь с треском вынесли. Один сосед тяжело ворвался внутрь, быстро нашел тебя по звукам и без разговоров вырубил.",
+                logLine: "Соседи ворвались в квартиру и вырубили тебя"
+            )
+        }
+    }
+
+    var shouldContinueNeighborSequence: Bool {
+        delegate?.currentStage == .exploration &&
+        !neighborEncounterMachine.isResolved
+    }
+
+    func neighborPressureLine(isDoorbell: Bool, attempt: Int, totalAttempts: Int) -> String {
+        if attempt == totalAttempts {
+            return isDoorbell
+                ? "Звонок снова взвыл уже совсем зло, будто снаружи теряют терпение."
+                : "В дверь опять врезали так, что по квартире пошел гул."
+        }
+
+        if isDoorbell {
+            return [
+                "Снаружи снова настойчиво жмут на звонок.",
+                "Звонок опять коротко и зло резанул по тишине.",
+                "У двери опять звонят, уже заметно нервнее."
+            ].randomElement() ?? "Снаружи снова звонят в дверь."
+        }
+
+        return [
+            "В дверь снова резко постучали.",
+            "Снаружи опять ударили в дверь кулаком.",
+            "Кто-то у входа опять со злостью долбанул в дверь."
+        ].randomElement() ?? "Снаружи снова лупят в дверь."
+    }
+
+    func neighborsGiveUpAndLeave() {
+        guard shouldContinueNeighborSequence else { return }
+        cancelNeighborTasks()
+        neighborEncounterMachine.resetToCalm()
+        neighborDebug.doorHitsTarget = 0
+        let text = "За дверью еще немного потоптались, кто-то буркнул: Да ну его. Потом шаги стихли. Кажется, ушли."
+        delegate?.addLog(text)
+        delegate?.refreshScreenState()
+        delegate?.announce(text, delay: 0.25)
+    }
+
+    func resolveNeighborAttack(text: String, logLine: String) {
+        cancelNeighborTasks()
+        neighborEncounterMachine.markResolved()
+        delegate?.setInventoryOpen(false)
+        delegate?.audioCoordinator.playEffect(.punchHit)
+        delegate?.finishGame(
+            roomTitle: "Прихожая",
+            focusTitle: "Тебя вырубили",
+            text: text,
+            logLine: logLine,
+            ambientCue: .heartbeatFast,
+            announcementDelay: 0.6
+        )
+    }
+
+    func cancelNeighborTasks() {
+        neighborResponseTask?.cancel()
+        neighborResponseTask = nil
+        neighborBreakInTask?.cancel()
+        neighborBreakInTask = nil
+    }
+
+    func sleep(seconds: TimeInterval) async {
+        let nanoseconds = UInt64(seconds * 1_000_000_000)
+        try? await Task.sleep(nanoseconds: nanoseconds)
     }
 }

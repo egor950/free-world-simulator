@@ -46,13 +46,13 @@ extension GameViewModel {
         case "neighbor_start_break_in":
             let introText = arguments["introText"] as? String ?? "Снаружи сорвались: Всё, ломаем дверь."
             let finalText = arguments["finalText"] as? String ?? "Отладка: соседский штурм запущен."
-            startNeighborBreakIn(introText: introText, finalText: finalText)
+            neighbor.startNeighborBreakIn(introText: introText, finalText: finalText)
             return debugRuntimeStatePayload(message: "Штурм соседей запущен.")
 
         case "neighbor_attack":
             let text = arguments["text"] as? String ?? "Отладка. Сосед подлетел и вырубил игрока."
             let logLine = arguments["logLine"] as? String ?? "Отладка: сосед вырубил игрока"
-            resolveNeighborAttack(text: text, logLine: logLine)
+            neighbor.resolveNeighborAttack(text: text, logLine: logLine)
             return debugRuntimeStatePayload(message: "Соседская атака выполнена.")
 
         case "neighbor_set_config":
@@ -94,16 +94,16 @@ extension GameViewModel {
         ]
         let neighborState: [String: Any] = [
             "state": debugNeighborStateName(),
-            "responseTaskActive": neighborResponseTask != nil,
-            "breakInTaskActive": neighborBreakInTask != nil,
-            "hitsTarget": neighborDebug.doorHitsTarget,
-            "responsePauseMin": neighborDebug.responsePauseRange?.lowerBound ?? -1,
-            "responsePauseMax": neighborDebug.responsePauseRange?.upperBound ?? -1,
-            "breakInPauseMin": neighborDebug.breakInPauseRange?.lowerBound ?? -1,
-            "breakInPauseMax": neighborDebug.breakInPauseRange?.upperBound ?? -1,
-            "hitsOverride": neighborDebug.doorHitsTargetOverride ?? -1,
-            "footstepCountOverride": neighborDebug.footstepCountOverride ?? -1,
-            "footstepPauseOverride": neighborDebug.footstepPauseOverride ?? -1
+            "responseTaskActive": neighbor.responseTask != nil,
+            "breakInTaskActive": neighbor.breakInTask != nil,
+            "hitsTarget": neighbor.debug.doorHitsTarget,
+            "responsePauseMin": neighbor.debug.responsePauseRange?.lowerBound ?? -1,
+            "responsePauseMax": neighbor.debug.responsePauseRange?.upperBound ?? -1,
+            "breakInPauseMin": neighbor.debug.breakInPauseRange?.lowerBound ?? -1,
+            "breakInPauseMax": neighbor.debug.breakInPauseRange?.upperBound ?? -1,
+            "hitsOverride": neighbor.debug.doorHitsTargetOverride ?? -1,
+            "footstepCountOverride": neighbor.debug.footstepCountOverride ?? -1,
+            "footstepPauseOverride": neighbor.debug.footstepPauseOverride ?? -1
         ]
 
         payload["debugMessage"] = message ?? ""

@@ -2,10 +2,10 @@ import Foundation
 
 extension GameViewModel {
     func debugNeighborStateName() -> String {
-        if neighborEncounterMachine.isResolved { return "resolved" }
-        if neighborEncounterMachine.isBreakInActive { return "breakin" }
-        if neighborEncounterMachine.isDoorbellRaised { return "doorbell" }
-        if neighborEncounterMachine.isWarned { return "warned" }
+        if neighbor.machine.isResolved { return "resolved" }
+        if neighbor.machine.isBreakInActive { return "breakin" }
+        if neighbor.machine.isDoorbellRaised { return "doorbell" }
+        if neighbor.machine.isWarned { return "warned" }
         return "calm"
     }
 
@@ -14,18 +14,18 @@ extension GameViewModel {
             throw LiveGameBridgeError("Для neighbor_set_state нужен state.")
         }
 
-        cancelNeighborTasks()
+        neighbor.cancelNeighborTasks()
         switch rawState.lowercased() {
         case "calm":
-            neighborEncounterMachine.resetToCalm()
+            neighbor.machine.resetToCalm()
         case "warn", "warned":
-            neighborEncounterMachine.markWarned()
+            neighbor.machine.markWarned()
         case "doorbell":
-            neighborEncounterMachine.markDoorbellRaised()
+            neighbor.machine.markDoorbellRaised()
         case "breakin", "break_in":
-            neighborEncounterMachine.markBreakInStarted()
+            neighbor.machine.markBreakInStarted()
         case "resolved":
-            neighborEncounterMachine.markResolved()
+            neighbor.machine.markResolved()
         default:
             throw LiveGameBridgeError("Неизвестное состояние соседа: \(rawState)")
         }
@@ -35,7 +35,7 @@ extension GameViewModel {
     }
 
     func debugTriggerNeighborLoudStep() -> [String: Any] {
-        let step = neighborEncounterMachine.resolveLoudAction()
+        let step = neighbor.machine.resolveLoudAction()
         let result: String
 
         switch step {
@@ -43,10 +43,10 @@ extension GameViewModel {
             result = "Сосед перешел в предупреждение."
         case .ringDoorbell:
             audioCoordinator.playEffect(.doorbellMain)
-            scheduleNeighborResponse()
+            neighbor.scheduleNeighborResponse()
             result = "Сосед поднял дверной звонок."
         case .startBreakIn:
-            startNeighborBreakIn(
+            neighbor.startNeighborBreakIn(
                 introText: "Отладка. Сосед начинает ломать дверь.",
                 finalText: "Отладка. Штурм уже запущен."
             )
@@ -66,29 +66,29 @@ extension GameViewModel {
         if let min = arguments["responsePauseMin"] as? Double,
            let max = arguments["responsePauseMax"] as? Double,
            min > 0, max >= min {
-            neighborDebug.responsePauseRange = min...max
+            neighbor.debug.responsePauseRange = min...max
         }
 
         if let min = arguments["breakInPauseMin"] as? Double,
            let max = arguments["breakInPauseMax"] as? Double,
            min > 0, max >= min {
-            neighborDebug.breakInPauseRange = min...max
+            neighbor.debug.breakInPauseRange = min...max
         }
 
         if let hits = arguments["hitsTarget"] as? Int {
-            neighborDebug.doorHitsTargetOverride = max(1, hits)
+            neighbor.debug.doorHitsTargetOverride = max(1, hits)
         }
 
         if let count = arguments["footstepCount"] as? Int {
-            neighborDebug.footstepCountOverride = max(0, count)
+            neighbor.debug.footstepCountOverride = max(0, count)
         }
 
         if let pause = arguments["footstepPause"] as? Double {
-            neighborDebug.footstepPauseOverride = max(0, pause)
+            neighbor.debug.footstepPauseOverride = max(0, pause)
         }
 
         if (arguments["reset"] as? Bool) == true {
-            neighborDebug.reset()
+            neighbor.debug.reset()
         }
 
         return debugRuntimeStatePayload(message: "Отладочная конфигурация соседей обновлена.")
