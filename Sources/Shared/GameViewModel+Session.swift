@@ -22,7 +22,7 @@ extension GameViewModel {
 
     func statePayload(recentPhrases: [String]) -> [String: Any] {
         let stageTitle: String
-        switch stage {
+        switch ui.stage {
         case .welcome:
             stageTitle = "welcome"
         case .characterCreation:
@@ -34,17 +34,17 @@ extension GameViewModel {
         }
 
         return [
-            "running": stage != .finished,
+            "running": ui.stage != .finished,
             "stage": stageTitle,
             "roomID": currentRoom.id.rawValue,
-            "roomTitle": roomTitle,
-            "focusTitle": focusTitle,
-            "focusShortText": focusShortText,
-            "statusText": statusText,
-            "holdText": holdText,
-            "inventoryOpen": isInventoryOpen,
-            "inventoryTitle": inventoryTitle,
-            "inventoryText": inventoryText,
+            "roomTitle": ui.roomTitle,
+            "focusTitle": ui.focusTitle,
+            "focusShortText": ui.focusShortText,
+            "statusText": ui.statusText,
+            "holdText": ui.holdText,
+            "inventoryOpen": ui.isInventoryOpen,
+            "inventoryTitle": ui.inventoryTitle,
+            "inventoryText": ui.inventoryText,
             "character": currentCharacterSummary,
             "coins": state.player.coins,
             "position": [
@@ -64,28 +64,28 @@ extension GameViewModel {
                 ]
             } ?? NSNull(),
             "streetCars": audioCoordinator.streetDebugSnapshotPayload(),
-            "recentEvents": Array(eventLog.prefix(12)),
+            "recentEvents": Array(ui.eventLog.prefix(12)),
             "recentPhrases": recentPhrases
         ]
     }
 
     func continueFromWelcome() {
         flowController.enter(.characterCreation)
-        stage = flowController.currentStage
+        ui.stage = flowController.currentStage
         let text = "Открыта форма создания персонажа. Выбери тип персонажа, введи имя и нажми завершить."
         announce(text)
     }
 
     func finishCharacterCreation() {
-        let safeName = characterName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let safeName = ui.characterName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !safeName.isEmpty else {
             announce("Сначала введи имя персонажа.")
             return
         }
 
-        characterName = safeName
+        ui.characterName = safeName
         flowController.enter(.exploration)
-        stage = flowController.currentStage
+        ui.stage = flowController.currentStage
 
         let room = rooms[.hallway]!
         cancelKettleBoilingTask(resetWaterState: false)
@@ -119,7 +119,7 @@ extension GameViewModel {
         groceryStoreClerkMachine.reset()
 
         refreshScreenState()
-        addLog("Создан персонаж: \(selectedCharacterKind.rawValue), \(safeName)")
+        addLog("Создан персонаж: \(ui.selectedCharacterKind.rawValue), \(safeName)")
         let prompt = currentShortPrompt()
         let introText = prompt.isEmpty
             ? "Персонаж \(safeName) появился в квартире. \(room.entryAnnouncement)"
@@ -129,7 +129,7 @@ extension GameViewModel {
     }
 
     func handle(_ command: GameCommand) {
-        guard stage == .exploration else { return }
+        guard ui.stage == .exploration else { return }
 
         if state.controlledCar != nil || carLifecycleMachine.isBusyWithDoorOrEngine {
             switch command {
@@ -158,7 +158,7 @@ extension GameViewModel {
             return
         }
 
-        if isLocationMenuOpen {
+        if ui.isLocationMenuOpen {
             handleLocationMenuCommand(command)
             return
         }
@@ -212,7 +212,7 @@ extension GameViewModel {
     }
 
     func dismissTutorial() {
-        isTutorialVisible = false
+        ui.isTutorialVisible = false
     }
 
     func resetForNewSession() {
@@ -235,12 +235,12 @@ extension GameViewModel {
         audioCoordinator.playAmbient(nil)
         audioCoordinator.setStreetPresence(.off, fadeDuration: 0)
         audioCoordinator.setTrafficEnabled(false)
-        eventLog.removeAll()
-        tutorialText = ""
-        isTutorialVisible = false
+        ui.eventLog.removeAll()
+        ui.tutorialText = ""
+        ui.isTutorialVisible = false
         setInventoryOpen(false)
-        inventoryTitle = ""
-        inventoryText = ""
+        ui.inventoryTitle = ""
+        ui.inventoryText = ""
         doorLifecycleMachines.removeAll()
         cancelGateTransitionTasks(resetMachines: true)
         neighborEncounterMachine.resetToCalm()
@@ -365,6 +365,6 @@ extension GameViewModel {
         bedAnchorPosition = nil
         refreshScreenState()
         addLog("Отладка: \(roomID.rawValue) \(position.x),\(position.y)")
-        announce("Отладка. \(roomTitle). \(currentShortPrompt().isEmpty ? roomEmptyDescription() : currentShortPrompt())")
+        announce("Отладка. \(ui.roomTitle). \(currentShortPrompt().isEmpty ? roomEmptyDescription() : currentShortPrompt())")
     }
 }

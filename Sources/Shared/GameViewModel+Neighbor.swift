@@ -152,7 +152,7 @@ extension GameViewModel {
     }
 
     var shouldContinueNeighborSequence: Bool {
-        stage == .exploration &&
+        ui.stage == .exploration &&
         !neighborEncounterMachine.isResolved
     }
 

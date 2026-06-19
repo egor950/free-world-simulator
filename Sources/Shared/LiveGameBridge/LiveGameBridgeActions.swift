@@ -157,8 +157,8 @@ final class LiveGameBridge {
             appendBridgeLog("start_game: \(name), \(kind)")
             game.resetForNewSession()
             game.continueFromWelcome()
-            game.selectedCharacterKind = kind.lowercased() == "woman" ? .woman : .man
-            game.characterName = name
+            game.ui.selectedCharacterKind = kind.lowercased() == "woman" ? .woman : .man
+            game.ui.characterName = name
             game.finishCharacterCreation()
             return game.statePayload(recentPhrases: Array(spokenPhrases.suffix(12)))
 

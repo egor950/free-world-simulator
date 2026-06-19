@@ -2,6 +2,12 @@ import SwiftUI
 
 struct RootGameView: View {
     @ObservedObject var viewModel: GameViewModel
+    @ObservedObject var ui: GameUIState
+
+    init(viewModel: GameViewModel) {
+        self.viewModel = viewModel
+        self.ui = viewModel.ui
+    }
 
     var body: some View {
         ZStack {
@@ -9,7 +15,7 @@ struct RootGameView: View {
                 VStack(alignment: .leading, spacing: 18) {
                     titleBlock
 
-                    switch viewModel.stage {
+                    switch ui.stage {
                     case .welcome:
                         welcomeBlock
                     case .characterCreation:
@@ -25,7 +31,7 @@ struct RootGameView: View {
             }
 
             #if os(macOS)
-            if viewModel.stage == .exploration {
+            if ui.stage == .exploration {
                 MacKeyboardCapture { input in
                     viewModel.handleKeyboardInput(input)
                 }
@@ -49,7 +55,7 @@ struct RootGameView: View {
 
     private var welcomeBlock: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(viewModel.statusText)
+            Text(ui.statusText)
                 .font(.title3)
 
             Text("Что уже есть")
@@ -70,7 +76,7 @@ struct RootGameView: View {
             Text("Создание персонажа")
                 .font(.title2.bold())
 
-            Picker("Тип персонажа", selection: $viewModel.selectedCharacterKind) {
+            Picker("Тип персонажа", selection: $ui.selectedCharacterKind) {
                 ForEach(CharacterKind.allCases) { kind in
                     Text(kind.rawValue).tag(kind)
                 }
@@ -80,7 +86,7 @@ struct RootGameView: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Имя персонажа")
                     .font(.headline)
-                TextField("Например, Егор", text: $viewModel.characterName)
+                TextField("Например, Егор", text: $ui.characterName)
                     .textFieldStyle(.roundedBorder)
             }
 
@@ -98,19 +104,19 @@ struct RootGameView: View {
 
     private var explorationBlock: some View {
             VStack(alignment: .leading, spacing: 18) {
-                if viewModel.isInventoryOpen {
+                if ui.isInventoryOpen {
                     inventoryBlock
                 }
 
-                if viewModel.isLocationMenuOpen {
+                if ui.isLocationMenuOpen {
                     locationMenuBlock
                 }
 
-                if viewModel.isTutorialVisible {
+                if ui.isTutorialVisible {
                     VStack(alignment: .leading, spacing: 12) {
                     Text("Обучение")
                         .font(.title3.bold())
-                    Text(viewModel.tutorialText)
+                    Text(ui.tutorialText)
                     Button("Понял") {
                         viewModel.dismissTutorial()
                     }
@@ -120,20 +126,20 @@ struct RootGameView: View {
             }
 
             VStack(alignment: .leading, spacing: 10) {
-                Text(viewModel.statusText)
+                Text(ui.statusText)
                     .font(.title3)
                 Text("Персонаж: \(viewModel.currentCharacterSummary)")
                     .font(.headline)
-                Text(viewModel.holdText)
+                Text(ui.holdText)
                     .foregroundStyle(.secondary)
             }
             .cardStyle()
 
             VStack(alignment: .leading, spacing: 10) {
-                Text(viewModel.roomTitle)
+                Text(ui.roomTitle)
                     .font(.title2.bold())
-                Text("Сейчас рядом: \(viewModel.focusTitle)")
-                Text(viewModel.focusShortText)
+                Text("Сейчас рядом: \(ui.focusTitle)")
+                Text(ui.focusShortText)
             }
             .cardStyle()
 
@@ -143,12 +149,12 @@ struct RootGameView: View {
             iphoneControlsBlock
             #endif
 
-            if !viewModel.eventLog.isEmpty {
+            if !ui.eventLog.isEmpty {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Последние события")
                         .font(.title3.bold())
 
-                    ForEach(Array(viewModel.eventLog.enumerated()), id: \.offset) { _, line in
+                    ForEach(Array(ui.eventLog.enumerated()), id: \.offset) { _, line in
                         Text(line)
                     }
                 }
@@ -159,7 +165,7 @@ struct RootGameView: View {
 
     private var finishedBlock: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(viewModel.statusText)
+            Text(ui.statusText)
                 .font(.title2.bold())
             Text("Ты дошел до конца игры.")
                 .foregroundStyle(.secondary)
@@ -171,7 +177,7 @@ struct RootGameView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Управление на Mac")
                 .font(.title3.bold())
-            if viewModel.isInventoryOpen {
+            if ui.isInventoryOpen {
                 Text("Инвентарь открыт. E делает главное действие предмета. F делает силовое действие. C кладет предмет рядом. R читает описание предмета. Escape или I закрывают инвентарь.")
             } else {
                 Text("Стрелки ведут тебя по комнате шагами. Q читает полное описание. E делает главное действие. F бьет или ломает. Пробел сбрасывает. Удержание E кладет предмет обратно. I открывает инвентарь. X открывает меню маяка, Enter подтверждает точку.")
@@ -195,9 +201,9 @@ struct RootGameView: View {
 
     private var inventoryBlock: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(viewModel.inventoryTitle)
+            Text(ui.inventoryTitle)
                 .font(.title3.bold())
-            Text(viewModel.inventoryText)
+            Text(ui.inventoryText)
             commandRow(viewModel.inventoryButtons, usesMacKeyTitle: true)
         }
         .cardStyle()
@@ -205,9 +211,9 @@ struct RootGameView: View {
 
     private var locationMenuBlock: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(viewModel.locationMenuTitle)
+            Text(ui.locationMenuTitle)
                 .font(.title3.bold())
-            Text(viewModel.locationMenuText)
+            Text(ui.locationMenuText)
             Text("X закрывает меню. Enter включает маяк.")
                 .foregroundStyle(.secondary)
         }

@@ -61,7 +61,7 @@ extension GameViewModel {
         refreshScreenState()
 
         if let hint = currentNavigationBeaconHint() {
-            setSilentStatus("\(statusText) Маяк: \(hint)")
+            setSilentStatus("\(ui.statusText) Маяк: \(hint)")
         }
     }
 

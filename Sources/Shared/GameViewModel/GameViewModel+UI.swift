@@ -2,15 +2,15 @@ import Foundation
 
 extension GameViewModel {
     var canFinishCharacterCreation: Bool {
-        !characterName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        !ui.characterName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     var currentCharacterSummary: String {
-        let safeName = characterName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let safeName = ui.characterName.trimmingCharacters(in: .whitespacesAndNewlines)
         if safeName.isEmpty {
             return "Имя пока не введено"
         }
-        return "\(selectedCharacterKind.rawValue), \(safeName)"
+        return "\(ui.selectedCharacterKind.rawValue), \(safeName)"
     }
 
     var movementButtons: [PlatformButtonDefinition] {
@@ -23,7 +23,7 @@ extension GameViewModel {
     }
 
     var actionButtons: [PlatformButtonDefinition] {
-        if isInventoryOpen {
+        if ui.isInventoryOpen {
             return inventoryButtons
         }
 

@@ -174,7 +174,7 @@ extension GameViewModel {
             }
         }
 
-        addLog("Описание: \(focusTitle)")
+        addLog("Описание: \(ui.focusTitle)")
         announce(text)
         if let streetCarDepartureID {
             scheduleStreetCarDeparture(afterDescribing: text, carID: streetCarDepartureID)
@@ -286,7 +286,7 @@ extension GameViewModel {
             } else if state.player.heldItem == nil {
                 announce("Инвентарь пуст.")
             } else {
-                announce(inventoryText)
+                announce(ui.inventoryText)
             }
         default:
             announce("Инвентарь открыт. Нажми Escape, чтобы закрыть.")
@@ -404,22 +404,22 @@ extension GameViewModel {
         carLifecycleMachine.reset()
         audioCoordinator.stopControlledCarAudio()
         flowController.enter(.finished)
-        stage = flowController.currentStage
+        ui.stage = flowController.currentStage
         state.player.focusedTarget = .none
         setPlayerPose(.standing)
         bedAnchorPosition = nil
         audioCoordinator.setTrafficEnabled(false)
         audioCoordinator.setStreetPresence(.off, fadeDuration: 0)
         audioCoordinator.playAmbient(ambientCue)
-        self.roomTitle = roomTitle
-        self.focusTitle = focusTitle
-        focusShortText = ""
+        self.ui.roomTitle = roomTitle
+        self.ui.focusTitle = focusTitle
+        ui.focusShortText = ""
         if let heldItem = state.player.heldItem {
-            holdText = "В руках: \(heldItem.name)."
+            ui.holdText = "В руках: \(heldItem.name)."
         } else {
-            holdText = "Стоишь"
+            ui.holdText = "Стоишь"
         }
-        statusText = text
+        ui.statusText = text
         addLog(logLine)
         announce(text, delay: announcementDelay)
         onGameFinished?()

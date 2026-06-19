@@ -612,6 +612,7 @@
 		98CD514337D6CD3870A72BB1 /* StreetTrafficCoordinator+Lifecycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A942BD9FDB551D458A5A8E /* StreetTrafficCoordinator+Lifecycle.swift */; };
 		98DB83DA837BE7C7E8CE919A /* Table.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943828DE7B0D9D3B024F5285 /* Table.swift */; };
 		98DEE7889155CB63D5BE8EA9 /* AudioCueID.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE760D6B785BC8325CAB9EEB /* AudioCueID.swift */; };
+		9917851399BD323FC036D4E5 /* GameUIState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE15D6D60B205569913E3112 /* GameUIState.swift */; };
 		9959A3DD85E52611B8DC0F06 /* ts3_light_engine.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4B1D8FA0446449F6FE1FB470 /* ts3_light_engine.wav */; };
 		9959E735680C7EE9276CFB31 /* StreetCarInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AE3CA09CFF5C0B734BF27C4 /* StreetCarInteraction.swift */; };
 		9965B3EB182543682F845D61 /* lid_open_raw.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AB243AD7F9D79A823FD58C13 /* lid_open_raw.mp3 */; };
@@ -915,6 +916,7 @@
 		E31C07A089A29F0353CC6AA6 /* GameViewModel+GroceryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C74B674EC1DA1BCF70956E5B /* GameViewModel+GroceryStore.swift */; };
 		E38AD3463D517DAD90327D6D /* AudioCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B16A4FFBC96C320FB04801 /* AudioCoordinator.swift */; };
 		E3D0944D135BC4C48F745FB3 /* EmbeddedGameRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FC22896070B5EAB23608088 /* EmbeddedGameRuntime.swift */; };
+		E3F117CCA9273EF769EBF2DF /* GameUIState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE15D6D60B205569913E3112 /* GameUIState.swift */; };
 		E41AD75F181A99B0E62A0C9C /* kettle_lid_open_new.wav in Resources */ = {isa = PBXBuildFile; fileRef = B481A1327379D1F8CE9572E1 /* kettle_lid_open_new.wav */; };
 		E457CA3FA5D03E72C2C0392A /* light_switch.wav in Resources */ = {isa = PBXBuildFile; fileRef = E569833BC4BD1F8547DB4951 /* light_switch.wav */; };
 		E4CF476BDDE9C07D02533DA4 /* BedroomRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02F4D3EB9FAF56BB2133D62 /* BedroomRoom.swift */; };
@@ -1030,6 +1032,7 @@
 		FDF0A3C5C7735008DE028200 /* kettle_lid_close_new.wav in Resources */ = {isa = PBXBuildFile; fileRef = DC3EA2D8409DBC3BF46A6305 /* kettle_lid_close_new.wav */; };
 		FE057CC6A2CEA575E92DBFBF /* door_open_hallway.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 82427C195AF99A875677FFF2 /* door_open_hallway.mp3 */; };
 		FF26939A15BDB10A98BC7323 /* MovementBed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2BC9A607A42C448F3E59FC /* MovementBed.swift */; };
+		FF419A9642C9C3B37A71B4BD /* GameUIState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE15D6D60B205569913E3112 /* GameUIState.swift */; };
 		FF7F580B5DE774F5FFA0FE0D /* dial.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9B06030FC73653EEA45E89A5 /* dial.wav */; };
 /* End PBXBuildFile section */
 
@@ -1287,6 +1290,7 @@
 		DB2B915989252BC9445E62EF /* step_carpet_02.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = step_carpet_02.mp3; sourceTree = "<group>"; };
 		DC3EA2D8409DBC3BF46A6305 /* kettle_lid_close_new.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = kettle_lid_close_new.wav; sourceTree = "<group>"; };
 		DDFA6195B8B223971D2C6732 /* cup_holder_trimmed.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = cup_holder_trimmed.wav; sourceTree = "<group>"; };
+		DE15D6D60B205569913E3112 /* GameUIState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameUIState.swift; sourceTree = "<group>"; };
 		DE17EF1B5947855F9092B857 /* BathroomRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BathroomRoom.swift; sourceTree = "<group>"; };
 		DE8D88B581D99C270F315A43 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		DFDED4D339DC7BBA57906D68 /* lid_open_tape.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = lid_open_tape.mp3; sourceTree = "<group>"; };
@@ -1402,6 +1406,7 @@
 				83EA9CA679045030FD206A40 /* DebugOperations.swift */,
 				7639303706CF2ECA5946050A /* DebugPlayer.swift */,
 				095F912469A8E459D6FE1B8A /* GameStateMachines.swift */,
+				DE15D6D60B205569913E3112 /* GameUIState.swift */,
 				23ADF356DA289BC9DE6D8645 /* GameViewModel.swift */,
 				4C64DF77F77A4215221228F9 /* GameViewModel+UI.swift */,
 				65328520462381007CA531C9 /* NavigationBeaconState.swift */,
@@ -2818,6 +2823,7 @@
 				ACBB26C88F1D9683C4CFCC97 /* GameCommand+Driving.swift in Sources */,
 				62A46AB42927D034FF9D8A9C /* GameCommandModels.swift in Sources */,
 				F568DCED7464F8AC5D95531A /* GameStateMachines.swift in Sources */,
+				E3F117CCA9273EF769EBF2DF /* GameUIState.swift in Sources */,
 				23B3B952BE07F959B2194EB1 /* GameVehicleRuntime.swift in Sources */,
 				0BD3B6EF902E4B4EB7E4E5E7 /* GameViewModel+Actions.swift in Sources */,
 				422677F6AF90D5EE102D92B7 /* GameViewModel+Audio.swift in Sources */,
@@ -2920,6 +2926,7 @@
 				EA93980DF11ABA0F3F003ADD /* GameCommand+Driving.swift in Sources */,
 				303DF6B1AFBA6E349D47C906 /* GameCommandModels.swift in Sources */,
 				34F914E7A67A3F91D8D7B6F6 /* GameStateMachines.swift in Sources */,
+				FF419A9642C9C3B37A71B4BD /* GameUIState.swift in Sources */,
 				31FF79C687430D5C537240A8 /* GameVehicleRuntime.swift in Sources */,
 				33279D70467089D510183875 /* GameViewModel+Actions.swift in Sources */,
 				9311C5F4B05045CED30EFCA5 /* GameViewModel+Audio.swift in Sources */,
@@ -3023,6 +3030,7 @@
 				1AC6CC8C5736798EAB76D86A /* GameCommand+Driving.swift in Sources */,
 				764306AAAB1F964C38CFA371 /* GameCommandModels.swift in Sources */,
 				A4458D9094DA0760E7F671C4 /* GameStateMachines.swift in Sources */,
+				9917851399BD323FC036D4E5 /* GameUIState.swift in Sources */,
 				C69A133643677369C60FCD27 /* GameVehicleRuntime.swift in Sources */,
 				776FE8A50104F9CC09F88486 /* GameViewModel+Actions.swift in Sources */,
 				85C33F916FD714A58CAC3779 /* GameViewModel+Audio.swift in Sources */,

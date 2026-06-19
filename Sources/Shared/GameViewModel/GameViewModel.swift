@@ -3,24 +3,7 @@ import SwiftUI
 
 @MainActor
 final class GameViewModel: ObservableObject {
-    @Published var stage: GameStage
-    @Published var selectedCharacterKind: CharacterKind = .man
-    @Published var characterName: String = ""
-
-    @Published var statusText: String
-    @Published var roomTitle: String = ""
-    @Published var focusTitle: String = ""
-    @Published var focusShortText: String = ""
-    @Published var holdText: String = ""
-    @Published var eventLog: [String] = []
-    @Published var tutorialText: String = ""
-    @Published var isTutorialVisible: Bool = false
-    @Published var isInventoryOpen: Bool = false
-    @Published var inventoryTitle: String = ""
-    @Published var inventoryText: String = ""
-    @Published var isLocationMenuOpen: Bool = false
-    @Published var locationMenuTitle: String = ""
-    @Published var locationMenuText: String = ""
+    let ui = GameUIState()
 
     let platformControls = PlatformControls.current
     let speechCoordinator: SpeechCoordinator
@@ -67,7 +50,7 @@ final class GameViewModel: ObservableObject {
         self.movementStepInterval = movementStepInterval
         self.onLogLine = onLogLine
         self.onGameFinished = onGameFinished
-        self.stage = flowController.currentStage
+        self.ui.stage = flowController.currentStage
         self.tutorialDefaultsKey = platformControls.shouldSpeakControlNames
             ? "freeworld.tutorial.mac"
             : "freeworld.tutorial.iphone"
@@ -84,7 +67,7 @@ final class GameViewModel: ObservableObject {
             )
         )
 
-        self.statusText = """
+        self.ui.statusText = """
         Добро пожаловать в игру «Симулятор свободного мира».
         Здесь мы исследуем квартиру, подходим к дверям и предметам, а длинные описания слушаем отдельно.
         """
@@ -98,7 +81,7 @@ final class GameViewModel: ObservableObject {
         }
         self.audioCoordinator.setStreetParkingObserver { [weak self] snapshot in
             guard let self else { return }
-            guard self.stage == .exploration, self.currentRoom.id == .street else { return }
+            guard self.ui.stage == .exploration, self.currentRoom.id == .street else { return }
             let text = "Во дворе припарковалась \(snapshot.title)."
             self.addLog(text)
             self.announce(text)

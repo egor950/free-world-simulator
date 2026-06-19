@@ -9,7 +9,7 @@ extension GameViewModel {
     func syncGameplayStateMachines() {
         roomTraversalMachine.sync(mode: currentRoom.movementMode)
         poseMachine.sync(pose: state.player.pose)
-        inventoryMachine.sync(isOpen: isInventoryOpen)
+        inventoryMachine.sync(isOpen: ui.isInventoryOpen)
     }
 
     func setPlayerPose(_ pose: PlayerPose) {
@@ -18,7 +18,7 @@ extension GameViewModel {
     }
 
     func setInventoryOpen(_ isOpen: Bool) {
-        self.isInventoryOpen = isOpen
+        ui.isInventoryOpen = isOpen
         inventoryMachine.sync(isOpen: isOpen)
     }
 
@@ -66,9 +66,9 @@ extension GameViewModel {
     }
 
     func addLog(_ line: String) {
-        eventLog.insert(line, at: 0)
-        if eventLog.count > 12 {
-            eventLog.removeLast()
+        ui.eventLog.insert(line, at: 0)
+        if ui.eventLog.count > 12 {
+            ui.eventLog.removeLast()
         }
         onLogLine?(line)
     }

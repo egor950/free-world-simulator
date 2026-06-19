@@ -26,30 +26,30 @@ extension GameViewModel {
     }
 
     func toggleLocationMenu() {
-        if isLocationMenuOpen {
+        if ui.isLocationMenuOpen {
             closeLocationMenu(announceClose: true)
             return
         }
 
-        isLocationMenuOpen = true
+        ui.isLocationMenuOpen = true
         if navigationBeaconState.selectedLocationMenuIndex >= availableNavigationLocations.count {
             navigationBeaconState.selectedLocationMenuIndex = 0
         }
         refreshLocationMenuText()
-        announce("\(locationMenuTitle). \(locationMenuText)")
+        announce("\(ui.locationMenuTitle). \(ui.locationMenuText)")
     }
 
     func closeLocationMenu(announceClose: Bool = false) {
-        isLocationMenuOpen = false
-        locationMenuTitle = ""
-        locationMenuText = ""
+        ui.isLocationMenuOpen = false
+        ui.locationMenuTitle = ""
+        ui.locationMenuText = ""
         if announceClose {
             announce("Меню маяка закрыто.")
         }
     }
 
     func confirmLocationMenuSelection() {
-        guard isLocationMenuOpen else {
+        guard ui.isLocationMenuOpen else {
             announce("Меню маяка сейчас закрыто.")
             return
         }
@@ -75,11 +75,11 @@ extension GameViewModel {
         case .moveLeft, .moveBackward:
             navigationBeaconState.selectedLocationMenuIndex = max(0, navigationBeaconState.selectedLocationMenuIndex - 1)
             refreshLocationMenuText()
-            announce(locationMenuText)
+            announce(ui.locationMenuText)
         case .moveRight, .moveForward:
             navigationBeaconState.selectedLocationMenuIndex = min(availableNavigationLocations.count - 1, navigationBeaconState.selectedLocationMenuIndex + 1)
             refreshLocationMenuText()
-            announce(locationMenuText)
+            announce(ui.locationMenuText)
         case .locationMenuConfirm, .primaryAction:
             confirmLocationMenuSelection()
         case .locationMenuToggle, .inventoryToggle:
@@ -120,14 +120,14 @@ extension GameViewModel {
 
     private func refreshLocationMenuText() {
         guard !availableNavigationLocations.isEmpty else {
-            locationMenuTitle = "Маяк"
-            locationMenuText = "Пока нет доступных точек."
+            ui.locationMenuTitle = "Маяк"
+            ui.locationMenuText = "Пока нет доступных точек."
             return
         }
 
         let location = availableNavigationLocations[navigationBeaconState.selectedLocationMenuIndex]
-        locationMenuTitle = "Выбор точки"
-        locationMenuText = "Сейчас выбрано: \(location.title). Нажми Enter, чтобы включить маяк."
+        ui.locationMenuTitle = "Выбор точки"
+        ui.locationMenuText = "Сейчас выбрано: \(location.title). Нажми Enter, чтобы включить маяк."
     }
 
     private func startNavigationBeaconLoop() {

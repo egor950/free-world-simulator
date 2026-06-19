@@ -5,24 +5,24 @@ extension GameViewModel {
         syncNavigationBeaconState()
         syncGameplayStateMachines()
         let nextRoomTitle = currentRoom.title
-        if roomTitle != nextRoomTitle {
-            roomTitle = nextRoomTitle
+        if ui.roomTitle != nextRoomTitle {
+            ui.roomTitle = nextRoomTitle
         }
 
         let nextFocusTitle = currentFocusNode?.title ?? "Свободное место"
-        if focusTitle != nextFocusTitle {
-            focusTitle = nextFocusTitle
+        if ui.focusTitle != nextFocusTitle {
+            ui.focusTitle = nextFocusTitle
         }
 
         let nextFocusShortText = currentShortPrompt()
-        if focusShortText != nextFocusShortText {
-            focusShortText = nextFocusShortText
+        if ui.focusShortText != nextFocusShortText {
+            ui.focusShortText = nextFocusShortText
         }
 
         if let controlledCar = state.controlledCar {
             let nextStatusText = controlledCarStatusText(controlledCar)
-            if statusText != nextStatusText {
-                statusText = nextStatusText
+            if ui.statusText != nextStatusText {
+                ui.statusText = nextStatusText
             }
         }
         updateInventoryState()
@@ -33,8 +33,8 @@ extension GameViewModel {
         } else {
             nextHoldText = state.player.pose.title
         }
-        if holdText != nextHoldText {
-            holdText = nextHoldText
+        if ui.holdText != nextHoldText {
+            ui.holdText = nextHoldText
         }
 
         if syncAudio {
@@ -51,20 +51,20 @@ extension GameViewModel {
             lines.append("R: Осмотреть предмет")
             lines.append("Escape: закрыть инвентарь")
             let nextInventoryText = lines.joined(separator: "\n")
-            if inventoryTitle != "Инвентарь: \(heldItem.name)" {
-                inventoryTitle = "Инвентарь: \(heldItem.name)"
+            if ui.inventoryTitle != "Инвентарь: \(heldItem.name)" {
+                ui.inventoryTitle = "Инвентарь: \(heldItem.name)"
             }
-            if inventoryText != nextInventoryText {
-                inventoryText = nextInventoryText
+            if ui.inventoryText != nextInventoryText {
+                ui.inventoryText = nextInventoryText
             }
             return
         }
 
-        if inventoryTitle != "Инвентарь пуст" {
-            inventoryTitle = "Инвентарь пуст"
+        if ui.inventoryTitle != "Инвентарь пуст" {
+            ui.inventoryTitle = "Инвентарь пуст"
         }
-        if inventoryText != "Сейчас у тебя ничего нет в руках." {
-            inventoryText = "Сейчас у тебя ничего нет в руках."
+        if ui.inventoryText != "Сейчас у тебя ничего нет в руках." {
+            ui.inventoryText = "Сейчас у тебя ничего нет в руках."
         }
     }
 

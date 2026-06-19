@@ -9,23 +9,23 @@ extension GameViewModel {
 
         state.player.hasCompletedTutorial = true
         UserDefaults.standard.set(true, forKey: tutorialDefaultsKey)
-        isTutorialVisible = true
+        ui.isTutorialVisible = true
 
         if platformControls.shouldSpeakControlNames {
-            tutorialText = """
+            ui.tutorialText = """
             Обучение. В квартире стрелки ведут тебя по дорожке комнаты, а на улице дают ходить во все четыре стороны. Q читает полное описание. E делает главное действие. F бьет или ломает. Пробел сбрасывает. Удержание E кладет предмет обратно.
             """
         } else {
-            tutorialText = """
+            ui.tutorialText = """
             Обучение. Внизу экрана есть крупные кнопки для движения, описания и действий. Игра будет говорить только важные события, а не названия кнопок.
             """
         }
 
-        announce(tutorialText)
+        announce(ui.tutorialText)
     }
 
     func announce(_ text: String, delay: TimeInterval = 0) {
-        statusText = text
+        ui.statusText = text
         pendingAnnouncementTask?.cancel()
 
         guard delay > 0 else {
@@ -42,11 +42,11 @@ extension GameViewModel {
     }
 
     func setSilentStatus(_ text: String) {
-        statusText = text
+        ui.statusText = text
     }
 
     func announceDrivingHintIfNeeded(_ text: String, minimumGap: TimeInterval = 1.25) {
-        statusText = text
+        ui.statusText = text
         let now = Date()
         let shouldSpeak = text != lastDrivingHintText || now.timeIntervalSince(lastDrivingHintAt) >= minimumGap
         guard shouldSpeak else { return }
@@ -56,7 +56,7 @@ extension GameViewModel {
     }
 
     func syncAudioWorldState() {
-        guard stage == .exploration else { return }
+        guard ui.stage == .exploration else { return }
 
         audioCoordinator.playAmbient(currentRoom.ambientSound)
         audioCoordinator.setStepSurface(currentRoom.stepSurface)
