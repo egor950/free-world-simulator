@@ -14,6 +14,7 @@ enum GameCommand: String, Identifiable {
     case inventoryQuickAction
     case locationMenuToggle
     case locationMenuConfirm
+    case hide
 
     var id: String { rawValue }
 
@@ -45,6 +46,8 @@ enum GameCommand: String, Identifiable {
             return "Маяк"
         case .locationMenuConfirm:
             return "Подтвердить маяк"
+        case .hide:
+            return "Спрятаться"
         }
     }
 
@@ -76,6 +79,8 @@ enum GameCommand: String, Identifiable {
             return "X"
         case .locationMenuConfirm:
             return "Enter"
+        case .hide:
+            return "H"
         }
     }
 
@@ -107,6 +112,8 @@ enum GameCommand: String, Identifiable {
             return .locationMenuToggle
         case "location_confirm", "enter", "return":
             return .locationMenuConfirm
+        case "hide", "h", "спрятаться":
+            return .hide
         default:
             return nil
         }

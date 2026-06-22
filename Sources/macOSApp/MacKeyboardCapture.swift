@@ -120,6 +120,8 @@ final class KeyCatcherView: NSView {
             return .locationMenuConfirm
         case 34, 53:
             return .inventoryToggle
+        case 4:
+            return .hide
         default:
             return nil
         }

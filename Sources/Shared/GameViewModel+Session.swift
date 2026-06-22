@@ -113,9 +113,7 @@ extension GameViewModel {
         bedAnchorPosition = nil
         doors.doorLifecycleMachines.removeAll()
         doors.cancelGateTransitionTasks(resetMachines: true)
-        neighbor.cancelNeighborTasks()
-        neighbor.neighborEncounterMachine.resetToCalm()
-        neighbor.neighborDebug.reset()
+        neighbor.resetNeighborEncounterState()
         groceryStoreClerkMachine.reset()
 
         refreshScreenState()
@@ -130,6 +128,22 @@ extension GameViewModel {
 
     func handle(_ command: GameCommand) {
         guard ui.stage == .exploration else { return }
+
+        // During stun, allow slow movement and actions (to lie on bed)
+        if audioCoordinator.isStunned {
+            switch command {
+            case .moveForward, .moveBackward, .moveLeft, .moveRight:
+                guard canMoveNow() else { return }
+                movePlayer(command)
+            case .primaryAction:
+                performPrimaryAction()
+            case .describeFocus:
+                describeCurrentFocus()
+            default:
+                announce("Ты слишком ошеломлен, чтобы это сделать.")
+            }
+            return
+        }
 
         if state.controlledCar != nil || carLifecycleMachine.isBusyWithDoorOrEngine {
             switch command {
@@ -206,6 +220,8 @@ extension GameViewModel {
             confirmLocationMenuSelection()
         case .locationMenuToggle:
             break
+        case .hide:
+            performHideAction()
         case .inventoryToggle:
             break
         }
@@ -230,7 +246,7 @@ extension GameViewModel {
         gateAutoPassLockedZ = nil
         lastDrivingHintText = ""
         lastDrivingHintAt = .distantPast
-        neighbor.neighborDebug.reset()
+        neighbor.resetNeighborEncounterState()
         groceryStoreClerkMachine.reset()
         audioCoordinator.playAmbient(nil)
         audioCoordinator.setStreetPresence(.off, fadeDuration: 0)
@@ -243,7 +259,6 @@ extension GameViewModel {
         ui.inventoryText = ""
         doors.doorLifecycleMachines.removeAll()
         doors.cancelGateTransitionTasks(resetMachines: true)
-        neighbor.neighborEncounterMachine.resetToCalm()
         audioCoordinator.stopControlledCarAudio()
     }
 
@@ -268,7 +283,8 @@ extension GameViewModel {
             ["id": "street_departing_car", "name": "street_departing_car", "title": "Машина уезжает"],
             ["id": "main_street_car_entry_left", "name": "main_street_car_entry_left", "title": "Машина заезжает слева"],
             ["id": "main_street_car_entry_right", "name": "main_street_car_entry_right", "title": "Машина заезжает справа"],
-            ["id": "main_street_car_exit", "name": "main_street_car_exit", "title": "Машина выезжает на улицу"]
+            ["id": "main_street_car_exit", "name": "main_street_car_exit", "title": "Машина выезжает на улицу"],
+            ["id": "neighbor_full_cycle", "name": "neighbor_full_cycle", "title": "Полный цикл соседа"]
         ]
     }
 
@@ -279,7 +295,7 @@ extension GameViewModel {
         switch name {
         case "hallway_neighbor_door":
             audioCoordinator.clearStreetDebugScenario()
-            neighbor.neighborEncounterMachine.markDoorbellRaised()
+            neighbor.simulateDoorbell()
             debugMovePlayer(to: .hallway, position: GridPosition(x: 1, y: 1))
         case "hallway_coat_rack":
             audioCoordinator.clearStreetDebugScenario()
@@ -335,6 +351,15 @@ extension GameViewModel {
         case "main_street_car_exit":
             debugMovePlayer(to: .mainStreet, position: GridPosition(x: MainStreetRoom.width - 28, y: min(MainStreetRoom.height - 1, 138)))
             return audioCoordinator.runStreetDebugScenario(name)
+        case "neighbor_full_cycle":
+            // Полный цикл соседа: телепорт в кухню → шум → дверь → поиск → погоня → разрешение
+            audioCoordinator.clearStreetDebugScenario()
+            debugMovePlayer(to: .kitchen, position: GridPosition(x: 2, y: 2))
+            // Запускаем полную последовательность соседа
+            neighbor.triggerBreakInFromDebug(
+                introText: "Снаружи кто-то ворчит и стучит в дверь.",
+                finalText: "Сосед вломился и ищет тебя."
+            )
         default:
             return false
         }

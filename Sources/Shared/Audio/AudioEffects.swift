@@ -24,6 +24,47 @@ extension AudioCoordinator {
         }
     }
 
+    /// Plays a sound with echo/reverb effect. When hallwayReverbEnabled is true,
+    /// plays the sound twice with a short delay to simulate hallway echo.
+    func playEffectWithReverb(_ cue: AudioCueID?) {
+        guard !isMuted else { return }
+        guard let cue, let url = resourceURL(for: cue) else { return }
+        activeEffects.removeAll { !$0.isPlaying }
+
+        if let style = spatialStyle(for: cue) {
+            playSpatialEffect(cue, url: url, style: style)
+            return
+        }
+
+        // Primary sound
+        do {
+            let player = try AVAudioPlayer(contentsOf: url)
+            player.volume = cue.defaultVolume
+            player.prepareToPlay()
+            player.play()
+            activeEffects.append(player)
+        } catch {
+        }
+
+        // Echo/reverb repeat when in hallway
+        if hallwayReverbEnabled {
+            let echoDelay: TimeInterval = 0.12
+            let echoVolume: Float = cue.defaultVolume * 0.45
+            DispatchQueue.main.asyncAfter(deadline: .now() + echoDelay) { [weak self] in
+                guard let self, !self.isMuted else { return }
+                guard let echoUrl = self.resourceURL(for: cue) else { return }
+                do {
+                    let echoPlayer = try AVAudioPlayer(contentsOf: echoUrl)
+                    echoPlayer.volume = echoVolume
+                    echoPlayer.prepareToPlay()
+                    echoPlayer.play()
+                    self.activeEffects.append(echoPlayer)
+                } catch {
+                }
+            }
+        }
+    }
+
     func playStep(surfaceOverride: StepSurface? = nil) {
         guard !isMuted else { return }
         let surface = surfaceOverride ?? currentStepSurface
@@ -31,13 +72,13 @@ extension AudioCoordinator {
         switch surface {
         case .carpet:
             let cue: AudioCueID = Bool.random() ? .stepCarpet01 : .stepCarpet02
-            playEffect(cue)
+            playEffectWithReverb(cue)
         case .asphalt:
             let cues: [AudioCueID] = [.stepAsphalt01, .stepAsphalt02, .stepAsphalt03, .stepAsphalt04, .stepAsphalt05]
             let available = cues.filter { $0 != lastAsphaltStep }
             let cue = available.randomElement() ?? .stepAsphalt01
             lastAsphaltStep = cue
-            playEffect(cue)
+            playEffectWithReverb(cue)
         }
     }
 

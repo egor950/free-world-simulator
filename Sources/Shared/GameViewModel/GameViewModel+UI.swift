@@ -95,6 +95,16 @@ extension GameViewModel {
             )
         }
 
+        if neighbor.hidingSystem.canHide(playerPosition: state.player.roomPosition, roomDef: currentRoom) {
+            buttons.append(
+                PlatformButtonDefinition(
+                    command: .hide,
+                    title: "Спрятаться",
+                    hint: "H"
+                )
+            )
+        }
+
         if state.player.heldItem != nil {
             buttons.append(
                 PlatformButtonDefinition(

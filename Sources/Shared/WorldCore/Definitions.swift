@@ -69,6 +69,7 @@ struct ItemAction {
     let resultText: String
     let sound: AudioCueID?
     let requiresHeldItemID: String?
+    let requiresEmptyHandsMessage: String?
     let producesHeldItem: HeldItem?
     let interactionID: String?
     let stateMutation: (inout WorldRuntimeState) -> Void
@@ -79,6 +80,7 @@ struct ItemAction {
         resultText: String,
         sound: AudioCueID?,
         requiresHeldItemID: String?,
+        requiresEmptyHandsMessage: String? = nil,
         producesHeldItem: HeldItem?,
         interactionID: String? = nil,
         stateMutation: @escaping (inout WorldRuntimeState) -> Void
@@ -88,6 +90,7 @@ struct ItemAction {
         self.resultText = resultText
         self.sound = sound
         self.requiresHeldItemID = requiresHeldItemID
+        self.requiresEmptyHandsMessage = requiresEmptyHandsMessage
         self.producesHeldItem = producesHeldItem
         self.interactionID = interactionID
         self.stateMutation = stateMutation

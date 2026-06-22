@@ -303,8 +303,18 @@ extension GameViewModel {
     }
 
     func apply(_ action: ItemAction) {
+        if audioCoordinator.isStunned {
+            announce("Ты слишком ошеломлен, чтобы что-то сделать.")
+            return
+        }
+
         if let required = action.requiresHeldItemID, state.player.heldItem?.itemID != required {
             announce("Сейчас у тебя нет нужного предмета.")
+            return
+        }
+
+        if let emptyHandsMessage = action.requiresEmptyHandsMessage, state.player.heldItem != nil {
+            announce(emptyHandsMessage)
             return
         }
 
@@ -333,6 +343,11 @@ extension GameViewModel {
         syncKettleBoilingTask()
         audioCoordinator.playEffect(action.sound)
         let extraReaction = neighbor.reactToLoudActionIfNeeded(for: action)
+
+        if action.trigger == .throwItem {
+            neighbor.performThrowDistraction()
+        }
+
         refreshScreenState()
         addLog(action.resultText)
         if let extraReaction {
@@ -351,12 +366,29 @@ extension GameViewModel {
 
     func passThroughDoor(_ door: DoorDefinition) {
         let targetRoom = rooms[door.targetRoomID] ?? currentRoom
+
+        // Смена комнаты сбрасывает укрытие
+        if neighbor.hidingSystem.isHiding {
+            neighbor.hidingSystem.exitHiding()
+            addLog("Ты вышел из укрытия.")
+        }
+
         state.player.roomID = door.targetRoomID
         state.player.roomPosition = door.targetRoomPosition ?? targetRoom.spawnPosition
         state.player.focusedTarget = .none
         setPlayerPose(.standing)
         bedAnchorPosition = nil
-        audioCoordinator.playEffect(door.sound)
+
+        // Use reverb for door sound when entering hallway
+        if door.targetRoomID == .hallway {
+            audioCoordinator.playEffectWithReverb(door.sound)
+        } else {
+            audioCoordinator.playEffect(door.sound)
+        }
+
+        // Update hallway reverb flag
+        audioCoordinator.hallwayReverbEnabled = (state.player.roomID == .hallway)
+
         refreshScreenState()
         addLog("Переход: \(targetRoom.title)")
         let prompt = currentShortPrompt()
@@ -405,6 +437,24 @@ extension GameViewModel {
         addLog(logLine)
         announce(text, delay: announcementDelay)
         onGameFinished?()
+    }
+
+    func performHideAction() {
+        guard neighbor.hidingSystem.canHide(playerPosition: state.player.roomPosition, roomDef: currentRoom) else {
+            announce("Здесь нет места, чтобы спрятаться.")
+            return
+        }
+
+        if neighbor.hidingSystem.isHiding {
+            announce("Ты уже спрячешься.")
+            return
+        }
+
+        let spot = neighbor.hidingSystem.availableHidingSpots(playerPosition: state.player.roomPosition, roomDef: currentRoom).first!
+        neighbor.hidingSystem.hide(in: spot)
+        addLog("Спрячешься за \(spot.type == .inBed ? "кроватью" : "мебелью").")
+        announce("Спрячешься. Нажми H или двинься, чтобы выйти из укрытия.")
+        refreshScreenState()
     }
 
 }

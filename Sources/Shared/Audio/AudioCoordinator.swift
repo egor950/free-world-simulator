@@ -7,7 +7,7 @@ import AppKit
 @MainActor
 final class AudioCoordinator {
     static let defaultGlobalReverbPreset: AVAudioUnitReverbPreset = .largeHall
-    static let defaultGlobalReverbWetDryMix: Float = 46
+    static let defaultGlobalReverbWetDryMix: Float = 0
 
     enum StreetPresence: Equatable {
         case off
@@ -19,6 +19,7 @@ final class AudioCoordinator {
     }
 
     let isMuted: Bool
+    var isMuffled: Bool = false
     let effectEngine = AVAudioEngine()
     let environmentNode = AVAudioEnvironmentNode()
     let effectReverb = AVAudioUnitReverb()
@@ -28,6 +29,7 @@ final class AudioCoordinator {
     var ambientPlayer: AVAudioPlayer?
     var activeEffects: [AVAudioPlayer] = []
     var activeSpatialPlayers: [AVAudioPlayerNode] = []
+
     var ambientCue: AudioCueID?
     var currentStepSurface: StepSurface = .carpet
     var lastAsphaltStep: AudioCueID?
@@ -44,6 +46,14 @@ final class AudioCoordinator {
     var kettleHeatFinishPlayer: AVAudioPlayer?
     var kettleHeatLoopStartTask: Task<Void, Never>?
     var navigationMarkerPlayers: [AVAudioPlayer] = []
+    var hallwayReverbEnabled: Bool = false
+
+    // MARK: - Stun Effect
+    var isStunned: Bool = false
+    var stunRecoveryTask: Task<Void, Never>?
+    let stunEQ = AVAudioUnitEQ(numberOfBands: 1)
+    var stunHeartbeatPlayer: AVAudioPlayer?
+    var savedAmbientVolume: Float = 0
 
     init(isMuted: Bool = false) {
         self.isMuted = isMuted

@@ -139,9 +139,10 @@ enum TeaRoomTable {
                             resultText: "Ты взял кружку со столика.",
                             sound: .itemPlaceMetal01,
                             requiresHeldItemID: nil,
+                            requiresEmptyHandsMessage: "Сначала освободи руки, чтобы взять кружку.",
                             producesHeldItem: nil
                         ) { runtimeState in
-                            findAndTakeMug(from: &runtimeState)
+                            _ = findAndTakeMug(from: &runtimeState)
                         }
                     ]
 
@@ -175,9 +176,10 @@ enum TeaRoomTable {
                             resultText: "Ты взял кружку со столика.",
                             sound: .itemPlaceMetal01,
                             requiresHeldItemID: nil,
+                            requiresEmptyHandsMessage: "Сначала освободи руки, чтобы взять кружку.",
                             producesHeldItem: nil
                         ) { runtimeState in
-                            findAndTakeMug(from: &runtimeState)
+                            _ = findAndTakeMug(from: &runtimeState)
                         }
                     )
 
@@ -191,11 +193,12 @@ enum TeaRoomTable {
                             resultText: "Ты забрал кружку раньше времени. Чай не заварился до конца.",
                             sound: .itemPlaceMetal01,
                             requiresHeldItemID: nil,
+                            requiresEmptyHandsMessage: "Сначала освободи руки, чтобы взять кружку.",
                             producesHeldItem: nil
                         ) { runtimeState in
                             let mugID = mugItemIDOnTable(in: runtimeState)
                             KitchenMug.setFillState(.filledHotWater, in: &runtimeState, itemID: mugID)
-                            findAndTakeMug(from: &runtimeState)
+                            _ = findAndTakeMug(from: &runtimeState)
                         }
                     ]
                 }
@@ -215,11 +218,14 @@ enum TeaRoomTable {
         state.setRawItemStage(itemID: itemID + ".mugID", rawValue: nil)
     }
 
-    static func findAndTakeMug(from state: inout WorldRuntimeState) {
+    @discardableResult
+    static func findAndTakeMug(from state: inout WorldRuntimeState) -> Bool {
+        guard state.player.heldItem == nil else { return false }
         let mugID = mugItemIDOnTable(in: state)
         state.player.heldItem = HeldItem(itemID: mugID, name: "кружка")
         clearMugIDOnTable(in: &state)
         setStage(.empty, in: &state)
+        return true
     }
 }
 

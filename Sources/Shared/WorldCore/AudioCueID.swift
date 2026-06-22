@@ -67,6 +67,18 @@ enum AudioCueID: String {
     case pillowPlace
     case pillowSqueeze
     case pillowTear
+    case doorBanging
+    case fallSnow
+    case humanFall1
+    case humanFall2
+    case neighborPunch
+    case neighborStepClose
+    case neighborStepHallway1
+    case neighborStepHallway2
+    case punchLight
+    case neighborEntersBuilding
+    case neighborExitsBuilding
+    case neighborFootstepsBuilding
 
     var resourceName: String {
         switch self {
@@ -202,6 +214,30 @@ enum AudioCueID: String {
             return "pillow_squeeze"
         case .pillowTear:
             return "pillow_tear"
+        case .doorBanging:
+            return "door_banging"
+        case .fallSnow:
+            return "fall_snow"
+        case .humanFall1:
+            return "humanFall1"
+        case .humanFall2:
+            return "humanFall2"
+        case .neighborPunch:
+            return "neighbor_punch"
+        case .neighborStepClose:
+            return "neighbor_step_close"
+        case .neighborStepHallway1:
+            return "neighbor_step_hallway1"
+        case .neighborStepHallway2:
+            return "neighbor_step_hallway2"
+        case .punchLight:
+            return "punch_light"
+        case .neighborEntersBuilding:
+            return "neighbor_enters_building"
+        case .neighborExitsBuilding:
+            return "neighbor_exits_building"
+        case .neighborFootstepsBuilding:
+            return "neighbor_footsteps_building"
         }
     }
 
@@ -216,6 +252,12 @@ enum AudioCueID: String {
         case .glassBreakSmall, .cabinetSmash, .doorbellMain, .doorBangingHard, .doorBreakHeavy, .gateOpen, .gateClose, .punchHit, .heartbeatFast, .kettleHeatStart, .kettleHeatLoop, .kettleHeatFinish, .trafficEngineBase, .trafficBrakeSoft, .trafficEngineLight, .trafficEngineSedan, .trafficEngineSport, .trafficEngineCoupe, .trafficEngineRoadster, .playerCarBrake, .playerEngineLight, .playerEngineSedan, .playerEngineSport, .playerEngineCoupe, .playerStartLight, .playerStartSedan, .playerStartSport, .playerStartCoupe:
             return "wav"
         case .doorCloseBedroom, .doorCloseLivingRoom, .doorCloseKitchen, .doorCloseBathroom, .doorCloseTeaRoom, .doorCloseHallway, .doorOpenBedroom, .doorOpenLivingRoom, .doorOpenKitchen, .doorOpenBathroom, .doorOpenTeaRoom, .doorOpenHallway, .kettleLidOpen, .kettleLidClose, .kettlePlaceFloor, .waterPour, .bedLieDown, .bedGetUp, .pillowPickup, .pillowDrop, .pillowPlace, .pillowSqueeze, .pillowTear:
+            return "mp3"
+        case .neighborStepHallway1, .neighborStepHallway2, .neighborStepClose, .neighborPunch, .punchLight, .doorBanging, .fallSnow:
+            return "wav"
+        case .neighborEntersBuilding, .neighborExitsBuilding, .neighborFootstepsBuilding:
+            return "wav"
+        case .humanFall1, .humanFall2:
             return "mp3"
         }
     }
@@ -314,6 +356,24 @@ enum AudioCueID: String {
             return 0.4
         case .pillowSqueeze, .pillowTear:
             return 0.35
+        case .neighborStepHallway1, .neighborStepHallway2:
+            return 0.7
+        case .neighborStepClose:
+            return 0.75
+        case .neighborPunch:
+            return 0.85
+        case .punchLight:
+            return 0.65
+        case .doorBanging:
+            return 0.8
+        case .fallSnow:
+            return 0.7
+        case .humanFall1, .humanFall2:
+            return 0.7
+        case .neighborEntersBuilding, .neighborExitsBuilding:
+            return 0.7
+        case .neighborFootstepsBuilding:
+            return 0.65
         }
     }
 

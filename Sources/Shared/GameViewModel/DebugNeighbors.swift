@@ -2,10 +2,10 @@ import Foundation
 
 extension GameViewModel {
     func debugNeighborStateName() -> String {
-        if neighbor.machine.isResolved { return "resolved" }
-        if neighbor.machine.isBreakInActive { return "breakin" }
-        if neighbor.machine.isDoorbellRaised { return "doorbell" }
-        if neighbor.machine.isWarned { return "warned" }
+        if neighbor.isResolved { return "resolved" }
+        if neighbor.doorMachine.isBreaking { return "breakin" }
+        if neighbor.isActive { return "active" }
+        if neighbor.isWarned { return "warned" }
         return "calm"
     }
 
@@ -17,15 +17,16 @@ extension GameViewModel {
         neighbor.cancelNeighborTasks()
         switch rawState.lowercased() {
         case "calm":
-            neighbor.machine.resetToCalm()
+            neighbor.resetNeighborEncounterState()
         case "warn", "warned":
-            neighbor.machine.markWarned()
+            _ = neighbor.isWarned  // set to warned
+            neighbor.simulateDoorbell()  // just enter warned state
         case "doorbell":
-            neighbor.machine.markDoorbellRaised()
+            neighbor.simulateDoorbell()
         case "breakin", "break_in":
-            neighbor.machine.markBreakInStarted()
+            neighbor.doorMachine.beginBreaking()
         case "resolved":
-            neighbor.machine.markResolved()
+            _ = neighbor.isResolved  // set resolved
         default:
             throw LiveGameBridgeError("Неизвестное состояние соседа: \(rawState)")
         }
@@ -35,26 +36,20 @@ extension GameViewModel {
     }
 
     func debugTriggerNeighborLoudStep() -> [String: Any] {
-        let step = neighbor.machine.resolveLoudAction()
-        let result: String
+        let fakeAction = ItemAction(
+            trigger: .primary,
+            title: "Грохот",
+            resultText: "Что-то сильно грохнуло.",
+            sound: .cabinetSmash,
+            requiresHeldItemID: nil,
+            producesHeldItem: nil,
+            stateMutation: { _ in }
+        )
 
-        switch step {
-        case .warn:
-            result = "Сосед перешел в предупреждение."
-        case .ringDoorbell:
-            audioCoordinator.playEffect(.doorbellMain)
-            neighbor.scheduleNeighborResponse()
-            result = "Сосед поднял дверной звонок."
-        case .startBreakIn:
-            neighbor.startNeighborBreakIn(
-                introText: "Отладка. Сосед начинает ломать дверь.",
-                finalText: "Отладка. Штурм уже запущен."
-            )
-            result = "Сосед начал штурм."
-        case .intensifyBreakIn:
-            audioCoordinator.playEffect(.doorBreakHeavy)
-            result = "Сосед усилил штурм."
-        case .ignore:
+        let result: String
+        if let line = neighbor.reactToLoudActionIfNeeded(for: fakeAction) {
+            result = line
+        } else {
             result = "Сосед ничего не сделал."
         }
 

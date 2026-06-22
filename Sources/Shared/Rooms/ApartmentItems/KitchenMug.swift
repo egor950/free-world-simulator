@@ -39,15 +39,32 @@ enum KitchenMug {
             id: definitionItemID,
             name: name,
             shortPromptProvider: { state in
-                if state.player.heldItem?.itemID == definitionItemID {
-                    return fillState(in: state, itemID: definitionItemID) == .filledHotWater ? "В руках кружка с горячей водой." : "В руках пустая кружка."
+                let fill = fillState(in: state, itemID: definitionItemID)
+                let isHeld = state.player.heldItem?.itemID == definitionItemID
+                switch fill {
+                case .filledHotWater:
+                    return isHeld ? "В руках кружка с горячей водой." : "Кружка с горячей водой."
+                case .hotTea:
+                    return isHeld ? "В руках кружка с чаем." : "Кружка с чаем."
+                case .sweetTea:
+                    return isHeld ? "В руках кружка со сладким чаем." : "Кружка со сладким чаем."
+                case .empty:
+                    return isHeld ? "В руках пустая кружка." : "Пустая кружка."
                 }
-                return fillState(in: state, itemID: definitionItemID) == .filledHotWater ? "Кружка с горячей водой." : "Пустая кружка."
             },
             fullDescriptionProvider: { state in
-                let contentText = fillState(in: state, itemID: definitionItemID) == .filledHotWater
-                    ? "Внутри горячая вода."
-                    : "Пока она пустая."
+                let fill = fillState(in: state, itemID: definitionItemID)
+                let contentText: String
+                switch fill {
+                case .filledHotWater:
+                    contentText = "Внутри горячая вода."
+                case .hotTea:
+                    contentText = "Внутри заваренный чай."
+                case .sweetTea:
+                    contentText = "Внутри сладкий чай."
+                case .empty:
+                    contentText = "Пока она пустая."
+                }
 
                 if state.player.heldItem?.itemID == definitionItemID {
                     return "У тебя в руках кружка. \(contentText)"
@@ -150,9 +167,17 @@ enum KitchenMug {
     static func heldActions(for state: WorldRuntimeState, itemID heldItemID: String) -> [ItemAction] {
         guard state.player.heldItem?.itemID == heldItemID else { return [] }
 
-        let description = fillState(in: state, itemID: heldItemID) == .filledHotWater
-            ? "У тебя в руках кружка с горячей водой."
-            : "У тебя в руках пустая кружка."
+        let description: String
+        switch fillState(in: state, itemID: heldItemID) {
+        case .filledHotWater:
+            description = "У тебя в руках кружка с горячей водой."
+        case .hotTea:
+            description = "У тебя в руках кружка с чаем."
+        case .sweetTea:
+            description = "У тебя в руках кружка со сладким чаем."
+        case .empty:
+            description = "У тебя в руках пустая кружка."
+        }
 
         var actions: [ItemAction] = [
             ItemAction(

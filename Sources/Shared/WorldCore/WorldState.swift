@@ -64,6 +64,21 @@ struct WorldRuntimeState {
         itemPositions[itemID] = nil
     }
 
+    // MARK: - Broken Doors
+
+    /// Хранилище сломанных дверей (навсегда)
+    private(set) var brokenDoors: Set<String> = []
+
+    /// Отметить дверь как сломанную
+    mutating func mutateDoorBroken(_ doorID: String) {
+        brokenDoors.insert(doorID)
+    }
+
+    /// Проверить, сломана ли дверь
+    func isDoorBroken(_ doorID: String) -> Bool {
+        brokenDoors.contains(doorID)
+    }
+
     mutating func setParkedOwnedCar(_ car: ParkedOwnedCarState) {
         parkedOwnedCars[car.id] = car
     }

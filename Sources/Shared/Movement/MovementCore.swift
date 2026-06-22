@@ -47,7 +47,7 @@ extension GameViewModel {
     }
 
     func canMoveNow() -> Bool {
-        Date().timeIntervalSince(lastMovementAt) >= movementStepInterval
+        Date().timeIntervalSince(lastMovementAt) >= movementStepInterval * movementSpeedMultiplier
     }
 
     func completeMovement(to position: GridPosition, focusTarget: FocusTarget) {
@@ -55,8 +55,15 @@ extension GameViewModel {
             setPlayerPose(.crawling)
         }
 
+        // Движение сбрасывает укрытие
+        if neighbor.hidingSystem.isHiding {
+            neighbor.hidingSystem.exitHiding()
+            addLog("Ты вышел из укрытия.")
+        }
+
         state.player.roomPosition = position
         state.player.focusedTarget = normalizedFocusTarget(focusTarget)
+        audioCoordinator.hallwayReverbEnabled = (state.player.roomID == .hallway)
         audioCoordinator.playStep()
         refreshScreenState()
 

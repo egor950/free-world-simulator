@@ -46,7 +46,7 @@ extension GameViewModel {
         case "neighbor_start_break_in":
             let introText = arguments["introText"] as? String ?? "Снаружи сорвались: Всё, ломаем дверь."
             let finalText = arguments["finalText"] as? String ?? "Отладка: соседский штурм запущен."
-            neighbor.startNeighborBreakIn(introText: introText, finalText: finalText)
+            neighbor.triggerBreakInFromDebug(introText: introText, finalText: finalText)
             return debugRuntimeStatePayload(message: "Штурм соседей запущен.")
 
         case "neighbor_attack":
@@ -57,6 +57,18 @@ extension GameViewModel {
 
         case "neighbor_set_config":
             return debugSetNeighborConfig(arguments: arguments)
+
+        case "neighbor_start_search":
+            return debugStartNeighborSearch(arguments: arguments)
+
+        case "neighbor_set_hiding":
+            return debugSetNeighborHiding(arguments: arguments)
+
+        case "neighbor_distract":
+            return debugNeighborDistract(arguments: arguments)
+
+        case "neighbor_start_chase":
+            return debugStartNeighborChase()
 
         case "spawn_car":
             return try debugSpawnCar()
@@ -94,8 +106,8 @@ extension GameViewModel {
         ]
         let neighborState: [String: Any] = [
             "state": debugNeighborStateName(),
-            "responseTaskActive": neighbor.responseTask != nil,
-            "breakInTaskActive": neighbor.breakInTask != nil,
+            "responseTaskActive": neighbor.isNeighborSequenceActive,
+            "breakInTaskActive": neighbor.doorMachine.isBreaking,
             "hitsTarget": neighbor.debug.doorHitsTarget,
             "responsePauseMin": neighbor.debug.responsePauseRange?.lowerBound ?? -1,
             "responsePauseMax": neighbor.debug.responsePauseRange?.upperBound ?? -1,
@@ -115,5 +127,46 @@ extension GameViewModel {
             "audio": audioCoordinator.debugParkedCarAudioState()
         ]
         return payload
+    }
+
+    func debugStartNeighborSearch(arguments: [String: Any]) -> [String: Any] {
+        let roomID: RoomID
+        if let roomStr = arguments["roomID"] as? String, let parsed = RoomID(rawValue: roomStr) {
+            roomID = parsed
+        } else {
+            roomID = state.player.roomID
+        }
+        neighbor.searchMachine.beginSearch(from: roomID, availableRooms: RoomID.allCases.map { $0 })
+        addLog("Отладка: запущен поиск соседа из комнаты \(roomID.rawValue)")
+        return debugRuntimeStatePayload(message: "Поиск соседа начат из \(roomID.rawValue).")
+    }
+
+    func debugSetNeighborHiding(arguments: [String: Any]) -> [String: Any] {
+        let shouldHide = arguments["hide"] as? Bool ?? true
+        if shouldHide {
+            let spot = HidingSpot(roomID: state.player.roomID, position: state.player.roomPosition, type: .behindFurniture)
+            neighbor.hidingSystem.hide(in: spot)
+            addLog("Отладка: игрок спрятан")
+            return debugRuntimeStatePayload(message: "Игрок спрятан.")
+        } else {
+            neighbor.hidingSystem.exitHiding()
+            addLog("Отладка: игрок вышел из укрытия")
+            return debugRuntimeStatePayload(message: "Игрок вышел из укрытия.")
+        }
+    }
+
+    func debugNeighborDistract(arguments: [String: Any]) -> [String: Any] {
+        let x = arguments["x"] as? Int ?? 0
+        let y = arguments["y"] as? Int ?? 0
+        let duration = arguments["duration"] as? TimeInterval ?? 5.0
+        neighbor.distractionSystem.distract(to: GridPosition(x: x, y: y), duration: duration)
+        addLog("Отладка: сосед отвлечён на позицию (\(x), \(y))")
+        return debugRuntimeStatePayload(message: "Сосед отвлечён на \(duration) секунд.")
+    }
+
+    func debugStartNeighborChase() -> [String: Any] {
+        neighbor.chaseMachine.beginChase()
+        addLog("Отладка: запущена погоня соседа")
+        return debugRuntimeStatePayload(message: "Погоня соседа начата.")
     }
 }

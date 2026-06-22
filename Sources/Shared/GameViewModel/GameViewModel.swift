@@ -11,14 +11,15 @@ final class GameViewModel: ObservableObject {
     let flowController: GameFlowController
     let rooms: [RoomID: RoomDefinition]
     let tutorialDefaultsKey: String
-    let movementStepInterval: TimeInterval
+    var movementStepInterval: TimeInterval
+    var movementSpeedMultiplier: TimeInterval = 1.0
     let onLogLine: ((String) -> Void)?
     let onGameFinished: (() -> Void)?
 
     var state: WorldRuntimeState
     var pendingAnnouncementTask: Task<Void, Never>?
     let navigationBeaconState = NavigationBeaconState()
-    let neighbor = NeighborSystem()
+    let neighbor = NeighborAIDirector()
     let doors = DoorSystem()
     let groceryStoreClerkMachine = GroceryStoreClerkMachine()
     let roomTraversalMachine = RoomTraversalMachine()
@@ -87,10 +88,50 @@ final class GameViewModel: ObservableObject {
     }
 }
 
-// MARK: - NeighborDelegate
+// MARK: - NeighborAIDelegate
 
-extension GameViewModel: NeighborDelegate {
+extension GameViewModel: NeighborAIDelegate {
     var currentStage: GameStage { ui.stage }
+    var playerRoomID: RoomID { state.player.roomID }
+    var availableRoomIDs: [RoomID] { RoomID.allCases.map { $0 } }
+    var playerPosition: GridPosition { state.player.roomPosition }
+    var isPlayerOnStreet: Bool {
+        state.player.roomID == .street || state.player.roomID == .mainStreet
+    }
+    var canPlayerEscapeToCar: Bool {
+        guard state.player.roomID == .street || state.player.roomID == .mainStreet else { return false }
+        guard state.controlledCar == nil else { return false }
+        let carsInStreet = state.parkedOwnedCars.values.filter {
+            $0.roomID == .street || $0.roomID == .mainStreet
+        }
+        return !carsInStreet.isEmpty
+    }
+    var isPlayerOnBed: Bool {
+        guard let room = rooms[state.player.roomID] else { return false }
+        for node in room.nodes {
+            if node.id.lowercased().contains("bed") && node.position == state.player.roomPosition {
+                return true
+            }
+        }
+        return false
+    }
+
+    func throwHeldItemToPosition(_ position: GridPosition) {
+        if let held = state.player.heldItem {
+            state.player.heldItem = nil
+            addLog("Ты бросил \(held.name).")
+        }
+    }
+
+    func performCarEscape() -> Bool {
+        let escapeSystem = NeighborEscapeSystem()
+        return escapeSystem.attemptEscape(state: &state)
+    }
+
+    func movePlayerTo(roomID: RoomID, position: GridPosition) {
+        state.player.roomID = roomID
+        state.player.roomPosition = position
+    }
 }
 
 // MARK: - DoorDelegate

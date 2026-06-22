@@ -4,11 +4,13 @@ extension AudioCoordinator {
     func configureAudioEngine() {
         effectEngine.attach(environmentNode)
         effectEngine.attach(effectReverb)
+        effectEngine.attach(stunEQ)
         effectEngine.attach(streetBedPlayer)
         effectEngine.attach(streetBedEQ)
 
         effectEngine.connect(environmentNode, to: effectReverb, format: nil)
-        effectEngine.connect(effectReverb, to: effectEngine.mainMixerNode, format: nil)
+        effectEngine.connect(effectReverb, to: stunEQ, format: nil)
+        effectEngine.connect(stunEQ, to: effectEngine.mainMixerNode, format: nil)
         effectEngine.connect(streetBedPlayer, to: streetBedEQ, format: nil)
         effectEngine.connect(streetBedEQ, to: effectEngine.mainMixerNode, format: nil)
 
@@ -28,6 +30,13 @@ extension AudioCoordinator {
         band.frequency = 650
         streetBedPlayer.volume = 0
 
+        let stunBand = stunEQ.bands[0]
+        stunBand.filterType = .lowPass
+        stunBand.bypass = true
+        stunBand.bandwidth = 0.5
+        stunBand.gain = 0
+        stunBand.frequency = 20000
+
         do {
             try effectEngine.start()
         } catch {
@@ -46,6 +55,7 @@ extension AudioCoordinator {
     }
 
     func applyDefaultGlobalReverb() {
+        guard !isStunned else { return }
         effectReverb.loadFactoryPreset(Self.defaultGlobalReverbPreset)
         effectReverb.wetDryMix = Self.defaultGlobalReverbWetDryMix
     }
