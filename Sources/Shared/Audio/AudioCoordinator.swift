@@ -28,6 +28,7 @@ final class AudioCoordinator {
 
     var ambientPlayer: AVAudioPlayer?
     var activeEffects: [AVAudioPlayer] = []
+    var activeEngineEffects: [AVAudioPlayerNode] = []
     var activeSpatialPlayers: [AVAudioPlayerNode] = []
 
     var ambientCue: AudioCueID?

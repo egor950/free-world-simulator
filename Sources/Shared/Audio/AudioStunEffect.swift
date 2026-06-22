@@ -3,8 +3,9 @@ import AVFoundation
 extension AudioCoordinator {
     // MARK: - Stun Effect
 
-    /// Applies stun effect: volume reduction, heartbeat, ambient fade.
-    /// Low-pass + reverb apply only to spatial sounds (through effectEngine).
+    /// Applies stun effect: heartbeat, ambient fade, low-pass filter + reverb on ALL sounds.
+    /// All non-spatial effects now route through effectEngine → effectReverb → stunEQ → mainMixer,
+    /// so the low-pass filter and reverb automatically affect every sound during stun.
     /// Called when the neighbor hits the player.
     func applyStunEffect() {
         guard !isMuted, !isStunned else { return }
@@ -27,17 +28,12 @@ extension AudioCoordinator {
             ap.setVolume(savedAmbientVolume * 0.15, fadeDuration: 2.0)
         }
 
-        // Reduce all active effects to 15%
-        for effect in activeEffects where effect.isPlaying {
-            effect.setVolume(effect.volume * 0.15, fadeDuration: 1.5)
-        }
-
-        // Activate low-pass on spatial sounds only
+        // Activate low-pass filter on ALL engine-routed sounds
         let band = stunEQ.bands[0]
         band.bypass = false
         band.frequency = 200
 
-        // Activate reverb on spatial sounds only
+        // Activate reverb on ALL engine-routed sounds
         effectReverb.wetDryMix = 85
     }
 
@@ -77,13 +73,6 @@ extension AudioCoordinator {
             if let ap = ambientPlayer {
                 let targetAmbient = savedAmbientVolume * 0.15 + (savedAmbientVolume * 0.85 * progress)
                 ap.volume = targetAmbient
-            }
-
-            // Restore active effects volumes
-            for effect in activeEffects where effect.isPlaying {
-                let currentVol = effect.volume
-                let restoredVol = min(currentVol / 0.15, 1.0)
-                effect.volume = min(restoredVol, effect.volume * (1.0 + progress * 0.1))
             }
         }
 

@@ -671,7 +671,7 @@ final class NeighborAIDirector {
                 let volume = Float(1.0 - Double(i) * 0.15)
                 self.delegate?.audioCoordinator.playEffect(.neighborFootstepsBuilding)
                 // Fade out each subsequent footstep
-                if let lastEffect = self.delegate?.audioCoordinator.activeEffects.last {
+                if let lastEffect = self.delegate?.audioCoordinator.activeEngineEffects.last {
                     lastEffect.volume = max(0.1, volume * lastEffect.volume)
                 }
             }

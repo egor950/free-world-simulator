@@ -7,44 +7,67 @@ extension AudioCoordinator {
     func playEffect(_ cue: AudioCueID?) {
         guard !isMuted else { return }
         guard let cue, let url = resourceURL(for: cue) else { return }
-        activeEffects.removeAll { !$0.isPlaying }
+        activeEngineEffects.removeAll { !$0.isPlaying }
 
         if let style = spatialStyle(for: cue) {
             playSpatialEffect(cue, url: url, style: style)
             return
         }
 
-        do {
-            let player = try AVAudioPlayer(contentsOf: url)
-            player.volume = cue.defaultVolume
-            player.prepareToPlay()
-            player.play()
-            activeEffects.append(player)
-        } catch {
+        guard let file = try? AVAudioFile(forReading: url) else { return }
+
+        let player = AVAudioPlayerNode()
+        player.volume = cue.defaultVolume
+
+        effectEngine.attach(player)
+        effectEngine.connect(player, to: effectReverb, format: file.processingFormat)
+
+        player.scheduleFile(file, at: nil) { [weak self, weak player] in
+            Task { @MainActor in
+                guard let self, let player else { return }
+                player.stop()
+                self.effectEngine.detach(player)
+                self.activeEngineEffects.removeAll { $0 === player }
+            }
         }
+
+        player.play()
+        activeEngineEffects.append(player)
     }
 
     /// Plays a sound with echo/reverb effect. When hallwayReverbEnabled is true,
     /// plays the sound twice with a short delay to simulate hallway echo.
+    /// Routes through effectEngine so stunEQ + effectReverb affect the sound.
     func playEffectWithReverb(_ cue: AudioCueID?) {
         guard !isMuted else { return }
         guard let cue, let url = resourceURL(for: cue) else { return }
-        activeEffects.removeAll { !$0.isPlaying }
+        activeEngineEffects.removeAll { !$0.isPlaying }
 
         if let style = spatialStyle(for: cue) {
             playSpatialEffect(cue, url: url, style: style)
             return
         }
 
-        // Primary sound
-        do {
-            let player = try AVAudioPlayer(contentsOf: url)
-            player.volume = cue.defaultVolume
-            player.prepareToPlay()
-            player.play()
-            activeEffects.append(player)
-        } catch {
+        // Primary sound via engine
+        guard let file = try? AVAudioFile(forReading: url) else { return }
+
+        let player = AVAudioPlayerNode()
+        player.volume = cue.defaultVolume
+
+        effectEngine.attach(player)
+        effectEngine.connect(player, to: effectReverb, format: file.processingFormat)
+
+        player.scheduleFile(file, at: nil) { [weak self, weak player] in
+            Task { @MainActor in
+                guard let self, let player else { return }
+                player.stop()
+                self.effectEngine.detach(player)
+                self.activeEngineEffects.removeAll { $0 === player }
+            }
         }
+
+        player.play()
+        activeEngineEffects.append(player)
 
         // Echo/reverb repeat when in hallway
         if hallwayReverbEnabled {
@@ -52,15 +75,26 @@ extension AudioCoordinator {
             let echoVolume: Float = cue.defaultVolume * 0.45
             DispatchQueue.main.asyncAfter(deadline: .now() + echoDelay) { [weak self] in
                 guard let self, !self.isMuted else { return }
-                guard let echoUrl = self.resourceURL(for: cue) else { return }
-                do {
-                    let echoPlayer = try AVAudioPlayer(contentsOf: echoUrl)
-                    echoPlayer.volume = echoVolume
-                    echoPlayer.prepareToPlay()
-                    echoPlayer.play()
-                    self.activeEffects.append(echoPlayer)
-                } catch {
+                guard let echoUrl = self.resourceURL(for: cue),
+                      let echoFile = try? AVAudioFile(forReading: echoUrl) else { return }
+
+                let echoPlayer = AVAudioPlayerNode()
+                echoPlayer.volume = echoVolume
+
+                self.effectEngine.attach(echoPlayer)
+                self.effectEngine.connect(echoPlayer, to: self.effectReverb, format: echoFile.processingFormat)
+
+                echoPlayer.scheduleFile(echoFile, at: nil) { [weak self, weak echoPlayer] in
+                    Task { @MainActor in
+                        guard let self, let echoPlayer else { return }
+                        echoPlayer.stop()
+                        self.effectEngine.detach(echoPlayer)
+                        self.activeEngineEffects.removeAll { $0 === echoPlayer }
+                    }
                 }
+
+                echoPlayer.play()
+                self.activeEngineEffects.append(echoPlayer)
             }
         }
     }
