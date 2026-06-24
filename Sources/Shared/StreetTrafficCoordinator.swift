@@ -345,6 +345,7 @@ final class StreetTrafficCoordinator {
     }
 
     let effectEngine: AVAudioEngine
+    let stunInputMixer: AVAudioMixerNode
     let resourceURLProvider: (AudioCueID) -> URL?
 
     var onStreetCarsChanged: (([StreetCarSnapshot]) -> Void)?
@@ -381,9 +382,11 @@ final class StreetTrafficCoordinator {
 
     init(
         effectEngine: AVAudioEngine,
+        stunInputMixer: AVAudioMixerNode,
         resourceURLProvider: @escaping (AudioCueID) -> URL?
     ) {
         self.effectEngine = effectEngine
+        self.stunInputMixer = stunInputMixer
         self.resourceURLProvider = resourceURLProvider
     }
 

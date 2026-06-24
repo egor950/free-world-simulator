@@ -13,6 +13,7 @@ final class GameViewModel: ObservableObject {
     let tutorialDefaultsKey: String
     var movementStepInterval: TimeInterval
     var movementSpeedMultiplier: TimeInterval = 1.0
+    var isPlayerMovementLocked = false
     let onLogLine: ((String) -> Void)?
     let onGameFinished: (() -> Void)?
 

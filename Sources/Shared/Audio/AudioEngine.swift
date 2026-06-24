@@ -4,15 +4,37 @@ extension AudioCoordinator {
     func configureAudioEngine() {
         effectEngine.attach(environmentNode)
         effectEngine.attach(effectReverb)
+        effectEngine.attach(preStunMixer)
+        effectEngine.attach(effectOnlyMixer)
+        effectEngine.attach(stunReverb)
         effectEngine.attach(stunEQ)
         effectEngine.attach(streetBedPlayer)
         effectEngine.attach(streetBedEQ)
 
+        // Get the engine's working format from environmentNode output.
+        // CRITICAL: must use explicit format for all connections involving
+        // effectOnlyMixer (no inputs yet → output format is nil with format: nil).
+        let graphFormat = environmentNode.outputFormat(forBus: 0)
+
+        // Spatial chain: environmentNode → effectReverb → preStunMixer (bus 0)
+        // effectReverb only processes spatial sounds (doorbell, doorbanging, etc.)
+        // and does NOT affect non-spatial sounds during normal play.
         effectEngine.connect(environmentNode, to: effectReverb, format: nil)
-        effectEngine.connect(effectReverb, to: stunEQ, format: nil)
-        effectEngine.connect(stunEQ, to: effectEngine.mainMixerNode, format: nil)
+        effectEngine.connect(effectReverb, to: preStunMixer, fromBus: 0, toBus: 0, format: graphFormat)
+
+        // Non-spatial chain: effectOnlyMixer → preStunMixer (bus 1)
+        effectEngine.connect(effectOnlyMixer, to: preStunMixer, fromBus: 0, toBus: 1, format: graphFormat)
+
+        // Combined: preStunMixer → stunReverb → stunEQ → mainMixer
+        // stunReverb applies reverb to ALL sounds ONLY during stun effect.
+        // During normal play, stunReverb.wetDryMix = 0 → no reverb on non-spatial sounds.
+        effectEngine.connect(preStunMixer, to: stunReverb, format: graphFormat)
+        effectEngine.connect(stunReverb, to: stunEQ, format: graphFormat)
+        effectEngine.connect(stunEQ, to: effectEngine.mainMixerNode, format: graphFormat)
+
+        // Street bed joins the stun chain so outdoor ambience is muffled too.
         effectEngine.connect(streetBedPlayer, to: streetBedEQ, format: nil)
-        effectEngine.connect(streetBedEQ, to: effectEngine.mainMixerNode, format: nil)
+        effectEngine.connect(streetBedEQ, to: preStunMixer, fromBus: 0, toBus: 2, format: nil)
 
         environmentNode.listenerPosition = AVAudio3DPoint(x: 0, y: 0, z: 0)
         environmentNode.reverbParameters.enable = false
@@ -37,9 +59,14 @@ extension AudioCoordinator {
         stunBand.gain = 0
         stunBand.frequency = 20000
 
+        // stunReverb: no reverb during normal play, only activated during stun
+        stunReverb.loadFactoryPreset(.largeHall)
+        stunReverb.wetDryMix = 0
+
         do {
             try effectEngine.start()
         } catch {
+            print("[AudioEngine] FAILED to start: \(error.localizedDescription)")
         }
     }
 

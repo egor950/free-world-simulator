@@ -17,6 +17,12 @@ extension GameViewModel {
     }
 
     func movePlayer(_ command: GameCommand) {
+        if isPlayerMovementLocked {
+            audioCoordinator.playBlockedMovement()
+            announce("Ты оглушён. Тело пока не слушается.")
+            return
+        }
+
         lastMovementAt = Date()
 
         if poseMachine.isStanding,
@@ -47,7 +53,9 @@ extension GameViewModel {
     }
 
     func canMoveNow() -> Bool {
-        Date().timeIntervalSince(lastMovementAt) >= movementStepInterval * movementSpeedMultiplier
+        let safeMultiplier = max(1.0, movementSpeedMultiplier)
+        let effectiveMultiplier = audioCoordinator.isStunned ? max(safeMultiplier, 2.0) : safeMultiplier
+        return Date().timeIntervalSince(lastMovementAt) >= movementStepInterval * effectiveMultiplier
     }
 
     func completeMovement(to position: GridPosition, focusTarget: FocusTarget) {

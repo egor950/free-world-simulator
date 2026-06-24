@@ -303,10 +303,8 @@ extension GameViewModel {
     }
 
     func apply(_ action: ItemAction) {
-        if audioCoordinator.isStunned {
-            announce("Ты слишком ошеломлен, чтобы что-то сделать.")
-            return
-        }
+        // During stun: allow primary actions (bed, etc.) but block force/throw/place
+        // Command-level blocking in handle() already restricts which commands work during stun.
 
         if let required = action.requiresHeldItemID, state.player.heldItem?.itemID != required {
             announce("Сейчас у тебя нет нужного предмета.")

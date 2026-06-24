@@ -5,6 +5,10 @@ import AppKit
 
 extension AudioCoordinator {
     func playEffect(_ cue: AudioCueID?) {
+        playEffect(cue, volumeMultiplier: 1.0)
+    }
+
+    func playEffect(_ cue: AudioCueID?, volumeMultiplier: Float) {
         guard !isMuted else { return }
         guard let cue, let url = resourceURL(for: cue) else { return }
         activeEngineEffects.removeAll { !$0.isPlaying }
@@ -17,15 +21,15 @@ extension AudioCoordinator {
         guard let file = try? AVAudioFile(forReading: url) else { return }
 
         let player = AVAudioPlayerNode()
-        player.volume = cue.defaultVolume
+        player.volume = cue.defaultVolume * max(0.0, min(1.0, volumeMultiplier))
 
         effectEngine.attach(player)
-        effectEngine.connect(player, to: effectReverb, format: file.processingFormat)
+        // Connect to effectOnlyMixer → preStunMixer → stunEQ → mainMixer
+        effectEngine.connect(player, to: effectOnlyMixer, format: file.processingFormat)
 
-        player.scheduleFile(file, at: nil) { [weak self, weak player] in
+        player.scheduleFile(file, at: nil, completionCallbackType: .dataPlayedBack) { [weak self, weak player] _ in
             Task { @MainActor in
                 guard let self, let player else { return }
-                player.stop()
                 self.effectEngine.detach(player)
                 self.activeEngineEffects.removeAll { $0 === player }
             }
@@ -37,7 +41,6 @@ extension AudioCoordinator {
 
     /// Plays a sound with echo/reverb effect. When hallwayReverbEnabled is true,
     /// plays the sound twice with a short delay to simulate hallway echo.
-    /// Routes through effectEngine so stunEQ + effectReverb affect the sound.
     func playEffectWithReverb(_ cue: AudioCueID?) {
         guard !isMuted else { return }
         guard let cue, let url = resourceURL(for: cue) else { return }
@@ -48,19 +51,18 @@ extension AudioCoordinator {
             return
         }
 
-        // Primary sound via engine
+        // Primary sound via effectOnlyMixer
         guard let file = try? AVAudioFile(forReading: url) else { return }
 
         let player = AVAudioPlayerNode()
         player.volume = cue.defaultVolume
 
         effectEngine.attach(player)
-        effectEngine.connect(player, to: effectReverb, format: file.processingFormat)
+        effectEngine.connect(player, to: effectOnlyMixer, format: file.processingFormat)
 
-        player.scheduleFile(file, at: nil) { [weak self, weak player] in
+        player.scheduleFile(file, at: nil, completionCallbackType: .dataPlayedBack) { [weak self, weak player] _ in
             Task { @MainActor in
                 guard let self, let player else { return }
-                player.stop()
                 self.effectEngine.detach(player)
                 self.activeEngineEffects.removeAll { $0 === player }
             }
@@ -82,12 +84,11 @@ extension AudioCoordinator {
                 echoPlayer.volume = echoVolume
 
                 self.effectEngine.attach(echoPlayer)
-                self.effectEngine.connect(echoPlayer, to: self.effectReverb, format: echoFile.processingFormat)
+                self.effectEngine.connect(echoPlayer, to: self.effectOnlyMixer, format: echoFile.processingFormat)
 
-                echoPlayer.scheduleFile(echoFile, at: nil) { [weak self, weak echoPlayer] in
+                echoPlayer.scheduleFile(echoFile, at: nil, completionCallbackType: .dataPlayedBack) { [weak self, weak echoPlayer] _ in
                     Task { @MainActor in
                         guard let self, let echoPlayer else { return }
-                        echoPlayer.stop()
                         self.effectEngine.detach(echoPlayer)
                         self.activeEngineEffects.removeAll { $0 === echoPlayer }
                     }

@@ -106,7 +106,7 @@ extension AudioCoordinator {
             effectEngine.connect(player, to: varispeed, format: buffer.format)
             effectEngine.connect(varispeed, to: eq, format: buffer.format)
             effectEngine.connect(eq, to: panner, format: buffer.format)
-            effectEngine.connect(panner, to: effectEngine.mainMixerNode, format: nil)
+            effectEngine.connect(panner, to: preStunMixer, format: nil)
 
             player.scheduleBuffer(buffer, at: nil, options: [.loops], completionHandler: nil)
             panner.pan = 0

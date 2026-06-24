@@ -23,6 +23,7 @@
 		02A45EBA0CF17F673C14AC29 /* kettle_lid_close.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9C07E8C68146710CEE061BD4 /* kettle_lid_close.mp3 */; };
 		02B73E37E5AF9482542AA97A /* step_asphalt_01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A1B571977C738DA838527836 /* step_asphalt_01.mp3 */; };
 		02E5FC92A3D9416155DA4043 /* NeighborAIDirector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C2293F979FAC901677F6936 /* NeighborAIDirector.swift */; };
+		02F4A3C42E9D4F1A9A0C5001 /* NeighborStreetChaseRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F4A3C12E9D4F1A9A0C5001 /* NeighborStreetChaseRuntime.swift */; };
 		030E71D8BA96E8C7FDBE053F /* MacKeyboardCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D09413D01B5CA78E4D48500 /* MacKeyboardCapture.swift */; };
 		033F9BB008F9B5EA939DD595 /* Parking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907ECF76E3CC9760129ADB4D /* Parking.swift */; };
 		0378B9FCE9E1762FC3C9314A /* traffic_engine_sedan.wav in Resources */ = {isa = PBXBuildFile; fileRef = D8A3648B39035FCD7FB63C48 /* traffic_engine_sedan.wav */; };
@@ -137,6 +138,7 @@
 		1B746F1C1B969CB6ED71EF8C /* AudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45112D3520CDDB7A424F24FA /* AudioEngine.swift */; };
 		1CCED1BAB0B28D7E5B1C1AB7 /* neighbor_footsteps_building.wav in Resources */ = {isa = PBXBuildFile; fileRef = 02448D6F798EC3D59EB82123 /* neighbor_footsteps_building.wav */; };
 		1CD625834035671DED3EC2B8 /* NeighborChaseMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477F992B80E02248B523DED0 /* NeighborChaseMachine.swift */; };
+		1CE986B28B5A4DF9B01F5001 /* NeighborStreetChaseRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F4A3C12E9D4F1A9A0C5001 /* NeighborStreetChaseRuntime.swift */; };
 		1D0B6296B5BF9C14A23B2031 /* bed_lie_down_part2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8101CDB5ED23F945C503052D /* bed_lie_down_part2.wav */; };
 		1D2C390C176EB069C1B8440C /* kettle_heat_start.wav in Resources */ = {isa = PBXBuildFile; fileRef = C3ADF2268BA312D14E83194D /* kettle_heat_start.wav */; };
 		1D48BA58D5D40519055550FA /* door_open_livingroom.wav in Resources */ = {isa = PBXBuildFile; fileRef = C379116242CECBF736399673 /* door_open_livingroom.wav */; };
@@ -357,6 +359,7 @@
 		493AD5EC35250A19629D77C1 /* kettle_place_floor.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 8D17CA3E981632F28D3C9D54 /* kettle_place_floor.mp3 */; };
 		494CA208E55C57082FBBA4CD /* box_close.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3EB989F55CCA4E24FB632822 /* box_close.mp3 */; };
 		496CA0FDF06C33CCEBCF59E2 /* NeighborChaseMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477F992B80E02248B523DED0 /* NeighborChaseMachine.swift */; };
+		49E4C07E4D7E4B0A9D115001 /* NeighborStreetChaseRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F4A3C12E9D4F1A9A0C5001 /* NeighborStreetChaseRuntime.swift */; };
 		49D7C5382B3B11494882D4C6 /* lid_close_tape.wav in Resources */ = {isa = PBXBuildFile; fileRef = 12B9532E892C953657B9956D /* lid_close_tape.wav */; };
 		49EE30095ECC857CC8BDB4CF /* sleigh.wav in Resources */ = {isa = PBXBuildFile; fileRef = 87B4AE5299215E3221D260CB /* sleigh.wav */; };
 		4A953D617011C20D792408D2 /* HallwayRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7369C9785D4D3F5F19763804 /* HallwayRoom.swift */; };
@@ -1206,6 +1209,7 @@
 		45112D3520CDDB7A424F24FA /* AudioEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEngine.swift; sourceTree = "<group>"; };
 		45A806FB972EF77BDDD2C7BD /* step_asphalt_05.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = step_asphalt_05.mp3; sourceTree = "<group>"; };
 		477F992B80E02248B523DED0 /* NeighborChaseMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeighborChaseMachine.swift; sourceTree = "<group>"; };
+		02F4A3C12E9D4F1A9A0C5001 /* NeighborStreetChaseRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeighborStreetChaseRuntime.swift; sourceTree = "<group>"; };
 		4840ED4830C2D0CFE7C6B5D3 /* NeighborAttackMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeighborAttackMachine.swift; sourceTree = "<group>"; };
 		484E1D540D6C2F19083E2C62 /* deny_muted.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = deny_muted.wav; sourceTree = "<group>"; };
 		48EB970880670E5A91EDED30 /* door_open_bedroom.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = door_open_bedroom.mp3; sourceTree = "<group>"; };
@@ -1975,6 +1979,7 @@
 				8C2293F979FAC901677F6936 /* NeighborAIDirector.swift */,
 				4840ED4830C2D0CFE7C6B5D3 /* NeighborAttackMachine.swift */,
 				477F992B80E02248B523DED0 /* NeighborChaseMachine.swift */,
+				02F4A3C12E9D4F1A9A0C5001 /* NeighborStreetChaseRuntime.swift */,
 				B66EFA8E3642BD71EF806077 /* NeighborDistractionSystem.swift */,
 				85301AC57BA5D5D811F5D958 /* NeighborDoorMachine.swift */,
 				71FE52B5F18EA94FAD6D5856 /* NeighborEscapeSystem.swift */,
@@ -3064,6 +3069,7 @@
 				39E7F8A40613E0C9AACEB897 /* NeighborAIDirector.swift in Sources */,
 				990615DA5CB8AE887D8D285F /* NeighborAttackMachine.swift in Sources */,
 				496CA0FDF06C33CCEBCF59E2 /* NeighborChaseMachine.swift in Sources */,
+				49E4C07E4D7E4B0A9D115001 /* NeighborStreetChaseRuntime.swift in Sources */,
 				5C0F711529351A1E00227807 /* NeighborDebugConfig.swift in Sources */,
 				A1CB8405B4D66779EF65C601 /* NeighborDistractionSystem.swift in Sources */,
 				5CD42E8E61E454B693E5A382 /* NeighborDoorMachine.swift in Sources */,
@@ -3177,6 +3183,7 @@
 				02E5FC92A3D9416155DA4043 /* NeighborAIDirector.swift in Sources */,
 				C1B942E0FA2C972F9BEAB357 /* NeighborAttackMachine.swift in Sources */,
 				FB969DBFB4EB45055C42A3BC /* NeighborChaseMachine.swift in Sources */,
+				02F4A3C42E9D4F1A9A0C5001 /* NeighborStreetChaseRuntime.swift in Sources */,
 				A81DE04F094DC52496F4E20A /* NeighborDebugConfig.swift in Sources */,
 				7226BE02C92A58E07496B7EA /* NeighborDistractionSystem.swift in Sources */,
 				22C3753641DA14B5174EBFDA /* NeighborDoorMachine.swift in Sources */,
@@ -3289,6 +3296,7 @@
 				39C103472CC098409D9FEF20 /* NeighborAIDirector.swift in Sources */,
 				4B2E1ADDA8CC2A970B671D88 /* NeighborAttackMachine.swift in Sources */,
 				1CD625834035671DED3EC2B8 /* NeighborChaseMachine.swift in Sources */,
+				1CE986B28B5A4DF9B01F5001 /* NeighborStreetChaseRuntime.swift in Sources */,
 				E1E982F539B9B1BAAA2D0CF0 /* NeighborDebugConfig.swift in Sources */,
 				7D09291D799F3EFE77E831ED /* NeighborDistractionSystem.swift in Sources */,
 				CD0140405E077FCAF348AEE6 /* NeighborDoorMachine.swift in Sources */,

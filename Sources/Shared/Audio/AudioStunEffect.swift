@@ -3,90 +3,114 @@ import AVFoundation
 extension AudioCoordinator {
     // MARK: - Stun Effect
 
-    /// Applies stun effect: heartbeat, ambient fade, low-pass filter + reverb on ALL sounds.
-    /// All non-spatial effects now route through effectEngine → effectReverb → stunEQ → mainMixer,
-    /// so the low-pass filter and reverb automatically affect every sound during stun.
-    /// Called when the neighbor hits the player.
-    func applyStunEffect() {
+    /// Applies stun effect with cinematic fade-in over 4.5 seconds.
+    /// Low-pass, reverb, heartbeat, and ambient all sync to the same fade-in timeline.
+    /// Player should be frozen during this fade-in.
+    func applyStunEffect() async {
         guard !isMuted, !isStunned else { return }
         isStunned = true
 
-        // Start heartbeat
+        // Start heartbeat at zero volume — will fade in with everything else
         if let url = resourceURL(for: .heartbeatFast) {
             let player = try? AVAudioPlayer(contentsOf: url)
             player?.numberOfLoops = -1
             player?.volume = 0
             player?.prepareToPlay()
             player?.play()
-            player?.setVolume(AudioCueID.heartbeatFast.defaultVolume, fadeDuration: 1.5)
             stunHeartbeatPlayer = player
         }
 
-        // Save ambient volume and fade to 15%
+        // Save ambient volume
         savedAmbientVolume = ambientPlayer?.volume ?? 0
-        if let ap = ambientPlayer, ap.isPlaying {
-            ap.setVolume(savedAmbientVolume * 0.15, fadeDuration: 2.0)
-        }
 
-        // Activate low-pass filter on ALL engine-routed sounds
+        // Activate low-pass filter — start fully open (no filter)
         let band = stunEQ.bands[0]
         band.bypass = false
-        band.frequency = 200
+        band.frequency = 20_000  // Start with no filter — sounds are clear
 
-        // Activate reverb on ALL engine-routed sounds
-        effectReverb.wetDryMix = 85
+        // Activate reverb — start fully dry
+        stunReverb.loadFactoryPreset(.largeHall)
+        stunReverb.wetDryMix = 0  // Start with no reverb
+
+        // === CINEMATIC FADE-IN: 4.5 seconds ===
+        let fadeDuration = 4.5
+        let steps = 45  // 10 steps per second — smooth
+        for step in 1...steps {
+            try? await Task.sleep(nanoseconds: UInt64((fadeDuration / Double(steps)) * 1_000_000_000))
+            let progress = Float(step) / Float(steps)
+
+            // Low-pass filter gradually closes: 20000 → 60 (sounds become heavily muffled)
+            band.frequency = interpolate(from: 20_000, to: 60, progress: progress)
+
+            // Reverb gradually increases: 0 → 90 (hall effect fades in)
+            stunReverb.wetDryMix = 90 * progress
+
+            // Heartbeat gradually fades in — synced with muffle
+            stunHeartbeatPlayer?.volume = AudioCueID.heartbeatFast.defaultVolume * progress
+
+            // Ambient volume gradually decreases: 100% → 5%
+            if let ap = ambientPlayer, ap.isPlaying {
+                ap.volume = savedAmbientVolume * (1.0 - 0.95 * progress)
+            }
+            setStunOutdoorDuckingMultiplier(1.0 - 0.95 * progress)
+        }
+
+        // Final state — full stun reached
+        band.frequency = 60
+        stunReverb.wetDryMix = 90
+        stunHeartbeatPlayer?.volume = AudioCueID.heartbeatFast.defaultVolume
+        if let ap = ambientPlayer {
+            ap.volume = savedAmbientVolume * 0.05
+        }
+        setStunOutdoorDuckingMultiplier(0.05)
     }
 
     /// Gradually recovers from stun effect over the specified duration.
-    /// - Parameter fastRecovery: If true, recovery takes 10 seconds instead of 60.
+    /// ALL effects (heartbeat, low-pass, reverb, ambient) sync to the same timeline.
+    /// - Parameter fastRecovery: If true, recovery takes 24 seconds instead of 75.
     func recoverFromStun(fastRecovery: Bool = false) async {
         guard isStunned else { return }
 
-        let duration: TimeInterval = fastRecovery ? 10.0 : 60.0
+        let duration: TimeInterval = fastRecovery ? 24.0 : 75.0
         let band = stunEQ.bands[0]
-        let startReverbMix = effectReverb.wetDryMix
-        let endReverbMix: Float = 0
+        let startReverbMix = stunReverb.wetDryMix
+        let startFrequency = band.frequency
+        let heartbeatVolume = stunHeartbeatPlayer?.volume ?? 0
+        let startOutdoorDucking = stunOutdoorDuckingMultiplier
 
-        // Stop heartbeat
-        if let heartbeat = stunHeartbeatPlayer {
-            heartbeat.setVolume(0, fadeDuration: duration * 0.3)
-            let heartbeatStopDelay = UInt64(duration * 0.3 * 1_000_000_000)
-            Task { @MainActor [weak heartbeat] in
-                try? await Task.sleep(nanoseconds: heartbeatStopDelay)
-                heartbeat?.stop()
-            }
-        }
-
-        // Animate recovery over the full duration
+        // Animate ALL effects over the full duration — fully synchronized
         let steps = Int(duration * 2) // 2 steps per second for smooth animation
         for step in 1...steps {
             try? await Task.sleep(nanoseconds: UInt64((duration / Double(steps)) * 1_000_000_000))
             let progress = Float(step) / Float(steps)
 
-            // Low-pass filter opens back up
-            band.frequency = interpolate(from: band.frequency, to: 20_000, progress: progress * 0.1)
+            // Low-pass filter gradually opens: 100 → 20000
+            band.frequency = interpolate(from: startFrequency, to: 20_000, progress: progress)
 
-            // Reverb returns to 0
-            effectReverb.wetDryMix = interpolate(from: startReverbMix, to: endReverbMix, progress: progress)
+            // Reverb gradually decreases
+            stunReverb.wetDryMix = interpolate(from: startReverbMix, to: 0, progress: progress)
 
-            // Restore ambient volume
+            // Heartbeat gradually fades out — synced with low-pass and reverb
+            stunHeartbeatPlayer?.volume = interpolate(from: heartbeatVolume, to: 0, progress: progress)
+
+            // Ambient volume gradually restores: 5% → 100%
             if let ap = ambientPlayer {
-                let targetAmbient = savedAmbientVolume * 0.15 + (savedAmbientVolume * 0.85 * progress)
-                ap.volume = targetAmbient
+                ap.volume = savedAmbientVolume * 0.05 + (savedAmbientVolume * 0.95 * progress)
             }
+            setStunOutdoorDuckingMultiplier(interpolate(from: startOutdoorDucking, to: 1.0, progress: progress))
         }
 
-        // Clean up
+        // Final cleanup — everything reaches zero at the same moment
         band.bypass = true
         band.frequency = 20_000
-        effectReverb.wetDryMix = 0
+        stunReverb.wetDryMix = 0
         stunHeartbeatPlayer?.stop()
         stunHeartbeatPlayer = nil
 
-        // Restore ambient volume fully
         if let ap = ambientPlayer {
             ap.volume = savedAmbientVolume
         }
+        setStunOutdoorDuckingMultiplier(1.0)
 
         isStunned = false
     }
@@ -99,10 +123,21 @@ extension AudioCoordinator {
         stunHeartbeatPlayer = nil
         stunEQ.bands[0].bypass = true
         stunEQ.bands[0].frequency = 20_000
-        effectReverb.wetDryMix = 0
+        stunReverb.wetDryMix = 0
         if let ap = ambientPlayer, isStunned {
             ap.volume = savedAmbientVolume
         }
+        setStunOutdoorDuckingMultiplier(1.0)
         isStunned = false
+    }
+
+    private func setStunOutdoorDuckingMultiplier(_ multiplier: Float) {
+        let safeMultiplier = max(0.0, min(1.0, multiplier))
+        let previousMultiplier = max(0.001, stunOutdoorDuckingMultiplier)
+        stunOutdoorDuckingMultiplier = safeMultiplier
+
+        if let parkedPlayer = parkedOwnedCarAudioRuntime.player {
+            parkedPlayer.volume *= safeMultiplier / previousMultiplier
+        }
     }
 }

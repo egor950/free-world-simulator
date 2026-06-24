@@ -23,6 +23,8 @@ final class AudioCoordinator {
     let effectEngine = AVAudioEngine()
     let environmentNode = AVAudioEnvironmentNode()
     let effectReverb = AVAudioUnitReverb()
+    let preStunMixer = AVAudioMixerNode()
+    let effectOnlyMixer = AVAudioMixerNode()
     let streetBedPlayer = AVAudioPlayerNode()
     let streetBedEQ = AVAudioUnitEQ(numberOfBands: 1)
 
@@ -52,9 +54,11 @@ final class AudioCoordinator {
     // MARK: - Stun Effect
     var isStunned: Bool = false
     var stunRecoveryTask: Task<Void, Never>?
+    let stunReverb = AVAudioUnitReverb()
     let stunEQ = AVAudioUnitEQ(numberOfBands: 1)
     var stunHeartbeatPlayer: AVAudioPlayer?
     var savedAmbientVolume: Float = 0
+    var stunOutdoorDuckingMultiplier: Float = 1.0
 
     init(isMuted: Bool = false) {
         self.isMuted = isMuted
@@ -62,6 +66,7 @@ final class AudioCoordinator {
         configureAudioEngine()
         streetTraffic = StreetTrafficCoordinator(
             effectEngine: effectEngine,
+            stunInputMixer: preStunMixer,
             resourceURLProvider: { [weak self] cue in
                 self?.resourceURL(for: cue)
             }

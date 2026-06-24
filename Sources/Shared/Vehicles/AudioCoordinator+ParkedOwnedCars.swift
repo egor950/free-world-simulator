@@ -89,7 +89,7 @@ extension AudioCoordinator {
         }
 
         player.pan = max(-1, min(1, dx / 18))
-        player.volume = min(0.52, cue.defaultVolume * 0.46 * distanceMix)
+        player.volume = min(0.52, cue.defaultVolume * 0.46 * distanceMix) * stunOutdoorDuckingMultiplier
     }
 
     private func parkedOwnedCarCue(for kind: DriveableVehicleKind) -> AudioCueID {

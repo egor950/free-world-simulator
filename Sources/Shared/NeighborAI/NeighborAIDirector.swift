@@ -14,6 +14,7 @@ protocol NeighborAIDelegate: AnyObject {
     var isPlayerOnStreet: Bool { get }
     var canPlayerEscapeToCar: Bool { get }
     var movementSpeedMultiplier: TimeInterval { get set }
+    var isPlayerMovementLocked: Bool { get set }
     var rooms: [RoomID: RoomDefinition] { get }
 
     func addLog(_ line: String)
@@ -58,6 +59,9 @@ final class NeighborAIDirector {
     private var neighborChaseTask: Task<Void, Never>?
     private var stunRecoveryTask: Task<Void, Never>?
     private var chaseDuration: TimeInterval = 0
+    private var streetChaseRuntime: NeighborStreetChaseRuntime?
+    private let stunnedMovementMultiplier: TimeInterval = 2.0
+    private let streetPushSecondHitChancePercent = 12
 
     init() {
         machine = GKStateMachine(states: [
@@ -110,6 +114,8 @@ final class NeighborAIDirector {
     func resetNeighborEncounterState() {
         cancelNeighborTasks()
         delegate?.audioCoordinator.cancelStunEffect()
+        delegate?.movementSpeedMultiplier = 1.0
+        delegate?.isPlayerMovementLocked = false
         debug.reset()
         doorMachine.reset()
         searchMachine.reset()
@@ -118,6 +124,7 @@ final class NeighborAIDirector {
         distractionSystem.reset()
         chaseMachine.reset()
         escapeSystem.reset()
+        streetChaseRuntime = nil
         _ = machine.enter(CalmState.self)
     }
 
@@ -248,9 +255,15 @@ final class NeighborAIDirector {
             self.delegate?.addLog(chaseStart)
             self.delegate?.announce(chaseStart, delay: 0.15)
 
-            // Chase loop — check every 0.5s
+            self.streetChaseRuntime = NeighborStreetChaseRuntime(
+                playerRoomID: self.delegate?.playerRoomID ?? .street,
+                playerPosition: self.delegate?.playerPosition ?? StreetRoom.spawnPosition
+            )
+
+            // Chase loop — neighbor has a real position and catches by distance.
+            let tickInterval: TimeInterval = 0.25
             while self.shouldContinueNeighborSequence && self.chaseMachine.isChasing {
-                await self.sleep(seconds: 0.5)
+                await self.sleep(seconds: tickInterval)
                 guard self.shouldContinueNeighborSequence else { return }
 
                 // Check if player escaped to car
@@ -289,10 +302,46 @@ final class NeighborAIDirector {
                     return
                 }
 
-                // Player still on street — neighbor catches up
-                // Simulate: after 5 seconds of chase, neighbor pushes player
-                self.chaseDuration += 0.5
-                if self.chaseDuration >= 5.0 {
+                guard let playerRoom = self.delegate?.playerRoomID,
+                      let playerPosition = self.delegate?.playerPosition,
+                      let room = self.delegate?.rooms[playerRoom] else {
+                    continue
+                }
+
+                if self.streetChaseRuntime == nil {
+                    self.streetChaseRuntime = NeighborStreetChaseRuntime(
+                        playerRoomID: playerRoom,
+                        playerPosition: playerPosition
+                    )
+                }
+
+                guard var runtime = self.streetChaseRuntime else { continue }
+                let snapshot = runtime.tick(
+                    deltaTime: tickInterval,
+                    playerRoomID: playerRoom,
+                    playerPosition: playerPosition,
+                    roomSize: (room.width, room.height)
+                )
+
+                if runtime.shouldPlayFootstep() {
+                    self.delegate?.audioCoordinator.playEffect(.neighborStepClose, volumeMultiplier: snapshot.footstepVolume)
+                }
+                self.streetChaseRuntime = runtime
+
+                if runtime.hasLostPlayer() {
+                    self.chaseMachine.playerLost()
+                    self.chaseMachine.giveUpChase()
+                    let giveUpLine = "Сосед отстал. Его шаги быстро растворились за спиной."
+                    self.delegate?.addLog(giveUpLine)
+                    self.delegate?.announce(giveUpLine, delay: 0.2)
+                    self.cancelNeighborTasks()
+                    self.doorMachine.reset()
+                    self.debug.doorHitsTarget = 0
+                    _ = self.machine.enter(CalmState.self)
+                    return
+                }
+
+                if runtime.hasCaughtPlayer(distance: snapshot.distance) {
                     self.streetPushPlayer()
                     return
                 }
@@ -310,166 +359,145 @@ final class NeighborAIDirector {
             self.delegate?.audioCoordinator.playEffect(.neighborEntersBuilding)
 
             // Walk into hallway with carpet footsteps
-            let entryStepCount = 2
-            for _ in 0..<entryStepCount {
-                await self.sleep(seconds: 0.45)
+            for _ in 0..<2 {
+                await self.sleep(seconds: 0.4)
                 guard self.shouldContinueNeighborSequence else { return }
                 self.delegate?.audioCoordinator.playEffect(.neighborFootstepsBuilding)
             }
 
-            await self.sleep(seconds: 0.3)
+            await self.sleep(seconds: 0.4)
             guard self.shouldContinueNeighborSequence else { return }
 
-            // Start BFS search from hallway (street excluded — handled separately)
-            let availableRooms = (self.delegate?.availableRoomIDs ?? []).filter { $0 != .street }
-            self.searchMachine.beginSearch(from: .hallway, availableRooms: availableRooms)
+            // "Listening" phase — neighbor pauses in hallway, listening for noise
+            let listenLine = "Сосед стоит в прихожей и слушает."
+            self.delegate?.addLog(listenLine)
+            self.delegate?.announce(listenLine, delay: 0.3)
+            await self.sleep(seconds: 1.5)
+            guard self.shouldContinueNeighborSequence else { return }
 
-            // Main search loop — driven by NeighborSearchMachine BFS
-            while self.shouldContinueNeighborSequence && self.searchMachine.isSearching {
-                // Distraction check before each room entry
+            // Pursuit-based search: neighbor goes directly to player's room
+            var neighborRoom: RoomID = .hallway
+            var hasEnteredCurrentRoom = true
+
+            // Main pursuit loop — check every 0.5s (slower, more deliberate)
+            while self.shouldContinueNeighborSequence {
+                // Distraction check
                 if self.distractionSystem.isDistracted {
-                    let distractLine = "Сосед остановился. Кажется, его отвлёк брошенный предмет. Он идёт проверять."
+                    let distractLine = "Сосед остановился. Кажется, его отвлёк брошенный предмет."
                     self.delegate?.addLog(distractLine)
-                    self.delegate?.announce(distractLine, delay: 0.2)
+                    self.delegate?.announce(distractLine, delay: 0.3)
 
                     while self.distractionSystem.isDistracted && self.shouldContinueNeighborSequence {
                         self.distractionSystem.update()
                         await self.sleep(seconds: 0.5)
                     }
 
-                    let resumeLine = "Сосед вернулся к поиску."
+                    let resumeLine = "Сосед вернулся к преследованию."
                     self.delegate?.addLog(resumeLine)
-                    self.delegate?.announce(resumeLine, delay: 0.15)
+                    self.delegate?.announce(resumeLine, delay: 0.2)
                 }
 
                 guard self.shouldContinueNeighborSequence else { return }
-                guard let currentRoom = self.searchMachine.currentRoom else { return }
 
-                // Announce entering
-                let roomName = self.roomDisplayName(currentRoom)
-                let enterLine = "Сосед входит в \(roomName)..."
-                self.delegate?.addLog(enterLine)
-                self.delegate?.announce(enterLine, delay: 0.15)
+                // Get player's current room — this is where the noise comes from
+                let playerRoom = self.delegate?.playerRoomID ?? .hallway
 
-                // Play door open sound (hallway has no door)
-                if let openSound = Self.doorOpenSound(for: currentRoom) {
-                    self.delegate?.audioCoordinator.playEffect(openSound)
+                // Player on street → switch to street chase
+                if playerRoom == .street || playerRoom == .mainStreet {
+                    self.searchMachine.reset()
+                    self.startChasePhase(chaseText: "Сосед тебя заметил на улице и бежит за тобой!")
+                    return
                 }
 
-                // Wait for door animation + footstep into room
-                await self.sleep(seconds: 0.5)
-                guard self.shouldContinueNeighborSequence else { return }
-                self.delegate?.audioCoordinator.playEffect(.neighborFootstepsBuilding)
-                self.delegate?.audioCoordinator.playStep(surfaceOverride: .carpet)
+                // Neighbor is in the same room as player
+                if neighborRoom == playerRoom && hasEnteredCurrentRoom {
+                    let onBed = self.delegate?.isPlayerOnBed ?? false
+                    let detectable = self.hidingSystem.isPlayerDetectable() && !onBed
 
-                // Mark entry complete → enters SearchingRoomState
-                self.searchMachine.enterRoomComplete()
-
-                // --- Cell-by-cell walk through the room ---
-                let roomDef = self.delegate?.rooms[currentRoom]
-                if let roomDef {
-                    // Collect door positions to skip them during the walk
-                    var doorPositions: [(Int, Int)] = []
-                    for node in roomDef.nodes {
-                        if case .door = node.target {
-                            doorPositions.append((node.position.x, node.position.y))
-                        }
-                    }
-
-                    // Walk every cell in the room grid, row by row
-                    for y in 0..<roomDef.height {
-                        for x in 0..<roomDef.width {
-                            guard self.shouldContinueNeighborSequence else { return }
-
-                            // Skip door positions — the neighbor entered through one
-                            if doorPositions.contains(where: { $0.0 == x && $0.1 == y }) {
-                                continue
-                            }
-
-                            // Footstep for this cell
-                            self.delegate?.audioCoordinator.playStep(surfaceOverride: roomDef.stepSurface)
-
-                            // Walking speed wait
-                            await self.sleep(seconds: Double.random(in: 0.3...0.5))
-                            guard self.shouldContinueNeighborSequence else { return }
-
-                            // Check if player is at this exact cell
-                            let playerRoom = self.delegate?.playerRoomID
-                            if let playerPos = self.delegate?.playerPosition {
-                                let playerAtCell = playerRoom == currentRoom && playerPos.x == x && playerPos.y == y
-                                let onBed = self.delegate?.isPlayerOnBed ?? false
-                                let detectable = self.hidingSystem.isPlayerDetectable() && !onBed
-
-                                if playerAtCell && detectable {
-                                    self.searchMachine.playerDetected()
-                                    self.resolveNeighborAttack(
-                                        text: "Сосед нашёл тебя и нанёс удар.",
-                                        logLine: "Сосед нашёл игрока в квартире"
-                                    )
-                                    return
-                                }
-
-                                // Player at this cell but hiding — announce and continue
-                                if playerAtCell && !detectable {
-                                    let hideLine = "Сосед прошёл мимо, но ты в последний момент спрятался."
-                                    self.delegate?.addLog(hideLine)
-                                    self.delegate?.announce(hideLine, delay: 0.15)
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // Room result announcement — all cells checked, player not found
-                let emptyLine: String
-                let playerRoomNow = self.delegate?.playerRoomID
-                if playerRoomNow == currentRoom && self.hidingSystem.isInBed {
-                    emptyLine = "Сосед осмотрел \(roomName). Ты спрятался в кровати — сосед не заметил тебя."
-                } else {
-                    emptyLine = "Сосед осмотрел \(roomName). Здесь пусто."
-                }
-                self.delegate?.addLog(emptyLine)
-                self.delegate?.announce(emptyLine, delay: 0.15)
-
-                // Play door close sound
-                if let closeSound = Self.doorCloseSound(for: currentRoom) {
-                    self.delegate?.audioCoordinator.playEffect(closeSound)
-                }
-
-                // After hallway, check if player is on street → chase instead of searching
-                if currentRoom == .hallway {
-                    let isOnStreet = self.delegate?.isPlayerOnStreet ?? false
-                    if isOnStreet {
-                        self.searchMachine.reset()
-                        self.startChasePhase(chaseText: "Сосед тебя заметил на улице и бежит за тобой!")
+                    if detectable {
+                        // FOUND — immediate attack
+                        self.searchMachine.playerDetected()
+                        self.resolveNeighborAttack(
+                            text: "Сосед нашёл тебя и нанёс удар.",
+                            logLine: "Сосед нашёл игрока в квартире"
+                        )
                         return
+                    } else {
+                        // Player hiding or on bed — continue pursuit, they might move
+                        await self.sleep(seconds: 0.5)
+                        continue
                     }
                 }
 
-                // Room clear → next room (BFS) or LostPlayerState if queue empty
-                self.searchMachine.roomClear()
+                // Neighbor needs to move to player's room — deliberate pursuit
+                if neighborRoom != playerRoom || !hasEnteredCurrentRoom {
+                    let roomName = self.roomDisplayName(playerRoom)
+
+                    // Announce pursuit direction
+                    let moveLine = neighborRoom == playerRoom
+                        ? "Сосед осматривает \(roomName)..."
+                        : "Сосед слышит шум и идёт к \(roomName)..."
+                    self.delegate?.addLog(moveLine)
+                    self.delegate?.announce(moveLine, delay: 0.2)
+
+                    // Play door open sound (hallway has no door)
+                    if let openSound = Self.doorOpenSound(for: playerRoom) {
+                        self.delegate?.audioCoordinator.playEffect(openSound)
+                    }
+
+                    // Update search machine state
+                    self.searchMachine.reset()
+                    self.searchMachine.beginSearch(from: playerRoom, availableRooms: [playerRoom])
+                    self.searchMachine.enterRoomComplete()
+                    neighborRoom = playerRoom
+
+                    // Transition wait — walking to room
+                    await self.sleep(seconds: 0.5)
+                    guard self.shouldContinueNeighborSequence else { return }
+
+                    // Footstep into room
+                    self.delegate?.audioCoordinator.playEffect(.neighborFootstepsBuilding)
+                    self.delegate?.audioCoordinator.playStep(surfaceOverride: .carpet)
+
+                    // Play door close sound
+                    if let closeSound = Self.doorCloseSound(for: playerRoom) {
+                        self.delegate?.audioCoordinator.playEffect(closeSound)
+                    }
+
+                    hasEnteredCurrentRoom = true
+                }
+
+                // Pause before next check — deliberate pacing
+                await self.sleep(seconds: 0.5)
             }
 
-            // All rooms searched — neighbor gives up
+            // Safety: neighbor gives up if pursuit loop exits
             guard self.shouldContinueNeighborSequence else { return }
-            await self.sleep(seconds: 0.5)
-            guard self.shouldContinueNeighborSequence else { return }
-
-            // Neighbor exits the building
             self.delegate?.audioCoordinator.playEffect(.neighborExitsBuilding)
 
-            let giveUpLine = "Сосед обошёл все комнаты. Похоже, ушёл."
+            let giveUpLine = "Сосед потерял след и ушёл."
             self.delegate?.addLog(giveUpLine)
             self.delegate?.announce(giveUpLine, delay: 0.2)
             self.delegate?.refreshScreenState()
 
-            // Reset to calm
             self.cancelNeighborTasks()
             self.searchMachine.reset()
             self.doorMachine.reset()
             self.debug.doorHitsTarget = 0
             _ = self.machine.enter(CalmState.self)
         }
+    }
+
+    // MARK: - Noise Notification
+
+    /// Called when the player moves to a new room or makes a loud noise.
+    /// The pursuit loop picks up delegate.playerRoomID every 0.2s naturally,
+    /// but this method provides explicit notification for immediate reactions.
+    func notifyPlayerMoved(to roomID: RoomID) {
+        guard !isResolved, !isCalm else { return }
+        // The pursuit loop checks delegate?.playerRoomID every 0.2s
+        // and redirects automatically. This API exists for explicit
+        // GameViewModel integration when a direct call is needed.
     }
 
     // MARK: - Door Sound Mapping
@@ -568,6 +596,8 @@ final class NeighborAIDirector {
 
         // Punch + fall sound sequence
         delegate?.audioCoordinator.playEffect(.punchLight)
+        delegate?.movementSpeedMultiplier = stunnedMovementMultiplier
+        delegate?.isPlayerMovementLocked = true
         delegate?.setInventoryOpen(false)
 
         stunRecoveryTask = Task { @MainActor [weak self] in
@@ -583,6 +613,7 @@ final class NeighborAIDirector {
 
             // Player lies on the street
             self.delegate?.setPlayerPose(.lying)
+            await self.delegate?.audioCoordinator.applyStunEffect()
 
             let fallText = "Ты шлёпнулся на асфальт. Голова раскалывается. Стоять не получается."
             self.delegate?.addLog(fallText)
@@ -599,15 +630,16 @@ final class NeighborAIDirector {
                 await self.sleep(seconds: 0.5)
                 guard self.shouldContinueNeighborSequence else { return }
 
-                // At 3s and 6s — chance of second hit → game over
+                // At 3s and 6s — small chance of second hit → game over.
+                // Most of the time the player should wake up on the bed.
                 if i == 6 || i == 12 {
-                    let hitChance = Bool.random()
-                    if hitChance {
+                    if Int.random(in: 1...100) <= self.streetPushSecondHitChancePercent {
                         let hitText = "Сосед нанёс ещё один удар, пока ты лежал."
                         self.delegate?.addLog(hitText)
                         self.delegate?.audioCoordinator.playEffect(.neighborPunch)
-                        self.delegate?.audioCoordinator.applyStunEffect()
-                        self.delegate?.movementSpeedMultiplier = 5.0
+                        await self.delegate?.audioCoordinator.applyStunEffect()
+                        self.delegate?.movementSpeedMultiplier = self.stunnedMovementMultiplier
+                        self.delegate?.isPlayerMovementLocked = true
 
                         self.cancelNeighborTasks()
                         self.chaseMachine.reset()
@@ -626,7 +658,7 @@ final class NeighborAIDirector {
                 }
             }
 
-            // Survived — wake up and teleport to bed
+            // Survived — recover right where the player fell.
             self.recoverFromStreetPush()
         }
     }
@@ -637,14 +669,39 @@ final class NeighborAIDirector {
         cancelNeighborTasks()
         chaseMachine.endPush()
 
-        delegate?.movePlayerTo(roomID: .bedroom, position: GridPosition(x: 3, y: 2))
-        delegate?.setPlayerPose(.lying)
-        delegate?.refreshScreenState()
+        // Hard stun: movement is locked, and any later movement is half speed.
+        delegate?.movementSpeedMultiplier = stunnedMovementMultiplier
+        delegate?.isPlayerMovementLocked = true
 
-        let wakeText = "Ты очнулся в своей кровати. Голова всё ещё гудит, но ты дома. Кажется, сосед оттащил тебя."
-        delegate?.addLog(wakeText)
-        delegate?.announce(wakeText, delay: 0.4)
-        _ = machine.enter(CalmState.self)
+        // Cinematic stun sequence
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+
+            // === PHASE 1: Stun fade-in on the street (4.5 seconds) ===
+            await self.delegate?.audioCoordinator.applyStunEffect()
+
+            // === PHASE 2: Drift into silence ===
+            let silenceText = "Темнота. Тишина. Только стук сердца в ушах."
+            self.delegate?.addLog(silenceText)
+            self.delegate?.announce(silenceText, delay: 0.5)
+            try? await Task.sleep(nanoseconds: 4_000_000_000) // 4s of silence
+
+            // === PHASE 3: Wake up on bed, with control returned ===
+            self.delegate?.movePlayerTo(roomID: .bedroom, position: GridPosition(x: 3, y: 2))
+            self.delegate?.setPlayerPose(.lying)
+            self.delegate?.isPlayerMovementLocked = false
+            self.delegate?.refreshScreenState()
+
+            let wakeText = "Ты очнулся в своей кровати. Голова всё ещё гудит, но теперь ты можешь двигаться по кровати и нажать E, чтобы встать."
+            self.delegate?.addLog(wakeText)
+            self.delegate?.announce(wakeText, delay: 0.4)
+
+            // === PHASE 4: Recovery — 24 seconds, movement stays slow ===
+            await self.delegate?.audioCoordinator.recoverFromStun(fastRecovery: true)
+            self.delegate?.movementSpeedMultiplier = 1.0
+            self.delegate?.refreshScreenState()
+            _ = self.machine.enter(CalmState.self)
+        }
     }
 
     func resolveNeighborAttack(text: String, logLine: String) {
@@ -654,41 +711,54 @@ final class NeighborAIDirector {
         delegate?.setInventoryOpen(false)
         delegate?.audioCoordinator.playEffect(.punchHit)
 
-        // Apply stun effect
-        delegate?.audioCoordinator.applyStunEffect()
-        delegate?.movementSpeedMultiplier = 5.0
+        // Hard stun: movement is locked, and any later movement is half speed.
+        delegate?.movementSpeedMultiplier = stunnedMovementMultiplier
+        delegate?.isPlayerMovementLocked = true
 
-        // Neighbor physically leaves with footsteps
-        let leavingText = "Сосед развернулся и ушёл. Слышно, как его шаги затихают в подъезде."
-        delegate?.addLog(leavingText)
-        delegate?.announce(leavingText, delay: 0.3)
-
-        // Play neighbor leaving footsteps (fading with distance)
+        // Cinematic stun sequence — everything happens in this Task
         Task { @MainActor [weak self] in
             guard let self else { return }
+
+            // === PHASE 1: Stun fade-in (4.5 seconds) — player frozen ===
+            self.delegate?.setPlayerPose(.lying)
+            self.delegate?.refreshScreenState()
+            await self.delegate?.audioCoordinator.applyStunEffect()
+
+            // === PHASE 2: Neighbor leaves while player is stunned ===
+            let leavingText = "Сосед развернулся и ушёл. Слышно, как его шаги затихают в подъезде."
+            self.delegate?.addLog(leavingText)
+            self.delegate?.announce(leavingText, delay: 0.3)
+
+            // Neighbor footsteps fading with distance
             for i in 0..<6 {
                 try? await Task.sleep(nanoseconds: 700_000_000)
-                let volume = Float(1.0 - Double(i) * 0.15)
                 self.delegate?.audioCoordinator.playEffect(.neighborFootstepsBuilding)
-                // Fade out each subsequent footstep
-                if let lastEffect = self.delegate?.audioCoordinator.activeEngineEffects.last {
-                    lastEffect.volume = max(0.1, volume * lastEffect.volume)
+                if let lastEffect = self.delegate?.audioCoordinator.activeEffects.last {
+                    lastEffect.volume = max(0.1, Float(1.0 - Double(i) * 0.15) * lastEffect.volume)
                 }
             }
-        }
 
-        // Schedule stun recovery → return to normal (NOT game over)
-        let onBed = delegate?.isPlayerOnBed ?? false
-        stunRecoveryTask = Task { @MainActor [weak self] in
-            guard let self else { return }
+            // === PHASE 3: Silence — player drifts into darkness ===
+            let silenceText = "Темнота. Тишина. Только стук сердца в ушах."
+            self.delegate?.addLog(silenceText)
+            self.delegate?.announce(silenceText, delay: 0.5)
+            try? await Task.sleep(nanoseconds: 2_500_000_000) // 2.5s of silence
 
-            // Recover from stun (60 seconds, or 10 if on bed)
-            await self.delegate?.audioCoordinator.recoverFromStun(fastRecovery: onBed)
+            // === PHASE 4: Wake up on bed, with control returned ===
+            self.delegate?.movePlayerTo(roomID: .bedroom, position: GridPosition(x: 3, y: 2))
+            self.delegate?.setPlayerPose(.lying)
+            self.delegate?.isPlayerMovementLocked = false
+            self.delegate?.refreshScreenState()
 
-            // Restore movement speed
+            let wakeText = "Ты очнулся в своей кровати. Голова всё ещё гудит, но теперь ты можешь двигаться по кровати и нажать E, чтобы встать."
+            self.delegate?.addLog(wakeText)
+            self.delegate?.announce(wakeText, delay: 0.3)
+
+            // === PHASE 5: Recovery — 75 seconds back to normal ===
+            await self.delegate?.audioCoordinator.recoverFromStun(fastRecovery: false)
+
+            // Restore movement
             self.delegate?.movementSpeedMultiplier = 1.0
-
-            // Return to calm state — game continues
             _ = self.machine.enter(CalmState.self)
             let recoverText = "Сознание прояснилось. Ты снова можешь двигаться."
             self.delegate?.addLog(recoverText)
@@ -710,6 +780,7 @@ final class NeighborAIDirector {
         stunRecoveryTask?.cancel()
         stunRecoveryTask = nil
         chaseDuration = 0
+        streetChaseRuntime = nil
     }
 
     /// Called when player throws an item to distract the neighbor

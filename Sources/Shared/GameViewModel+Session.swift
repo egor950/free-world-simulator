@@ -131,6 +131,11 @@ extension GameViewModel {
 
         // During stun, allow slow movement and actions (to lie on bed)
         if audioCoordinator.isStunned {
+            if isPlayerMovementLocked {
+                announce("Ты оглушён. Тело пока не слушается.")
+                return
+            }
+
             switch command {
             case .moveForward, .moveBackward, .moveLeft, .moveRight:
                 guard canMoveNow() else { return }
