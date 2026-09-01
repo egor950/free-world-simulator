@@ -23,6 +23,10 @@
 - добавлен более мягкий тормозной звук;
 - в проект добавлен `MCP`, через который можно вызывать игровые сцены и быстрее искать баги.
 
+## Архитектура
+
+Подробная документация по текущей архитектуре, игровому состоянию, миру, звуку, транспорту, AI и MCP находится в [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
 ## Планы
 
 Егор продумал такую идею для будущего развития игры:
@@ -39,7 +43,7 @@
 
 ### Главное
 
-- `Sources/Shared/GameViewModel.swift`
+- `Sources/Shared/GameViewModel/GameViewModel.swift`
   Основа игрового состояния.
 
 - `Sources/Shared/GameViewModel+Session.swift`
@@ -62,7 +66,7 @@
 
 ### Звук и улица
 
-- `Sources/Shared/AudioCoordinator.swift`
+- `Sources/Shared/Audio/AudioCoordinator.swift`
   Общая работа со звуком.
 
 - `Sources/Shared/SpeechCoordinator.swift`
@@ -84,10 +88,10 @@
 
 ### Отладка и проверка
 
-- `Sources/MCPServer/main.swift`
-  Сервер, через который можно управлять игрой извне.
+- `Sources/Shared/EmbeddedMCPServer/`
+  Встроенный MCP runtime и транспорт команд.
 
-- `Sources/Shared/LiveGameBridge.swift`
+- `Sources/Shared/LiveGameBridge/`
   Связь живой игры и внешнего управления.
 
 ## Что собирается
