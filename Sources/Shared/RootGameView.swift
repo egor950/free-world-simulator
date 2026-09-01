@@ -3,6 +3,7 @@ import SwiftUI
 struct RootGameView: View {
     @ObservedObject var viewModel: GameViewModel
     @ObservedObject var ui: GameUIState
+    @State private var showsKeyboardTrainer = false
 
     init(viewModel: GameViewModel) {
         self.viewModel = viewModel
@@ -41,6 +42,10 @@ struct RootGameView: View {
             #endif
         }
         .frame(minWidth: 720, minHeight: 680)
+        .sheet(isPresented: $showsKeyboardTrainer) {
+            KeyboardTrainerView()
+                .frame(minWidth: 720, minHeight: 650)
+        }
     }
 
     private var titleBlock: some View {
@@ -63,10 +68,19 @@ struct RootGameView: View {
 
             Text("В этой версии мы идем по комнате шаг за шагом, доходим до дверей и предметов, а длинные описания слушаем только по запросу.")
 
-            Button("ОК, продолжить") {
-                viewModel.continueFromWelcome()
+            HStack(spacing: 12) {
+                Button("ОК, продолжить") {
+                    viewModel.continueFromWelcome()
+                }
+                .buttonStyle(.borderedProminent)
+
+                Button("Клавиатурный тренажёр") {
+                    showsKeyboardTrainer = true
+                }
+                .buttonStyle(.bordered)
+                .accessibilityLabel("Открыть клавиатурный тренажёр")
+                .accessibilityHint("Открывает отдельный тренажёр печати")
             }
-            .buttonStyle(.borderedProminent)
         }
         .cardStyle()
     }
@@ -103,17 +117,17 @@ struct RootGameView: View {
     }
 
     private var explorationBlock: some View {
-            VStack(alignment: .leading, spacing: 18) {
-                if ui.isInventoryOpen {
-                    inventoryBlock
-                }
+        VStack(alignment: .leading, spacing: 18) {
+            if ui.isInventoryOpen {
+                inventoryBlock
+            }
 
-                if ui.isLocationMenuOpen {
-                    locationMenuBlock
-                }
+            if ui.isLocationMenuOpen {
+                locationMenuBlock
+            }
 
-                if ui.isTutorialVisible {
-                    VStack(alignment: .leading, spacing: 12) {
+            if ui.isTutorialVisible {
+                VStack(alignment: .leading, spacing: 12) {
                     Text("Обучение")
                         .font(.title3.bold())
                     Text(ui.tutorialText)
