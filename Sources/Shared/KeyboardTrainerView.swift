@@ -12,7 +12,6 @@ struct KeyboardTrainerView: View {
     @StateObject private var store = KeyboardTrainerStore()
     @State private var screen: Screen = .auth
     @State private var selectedLesson: KeyboardTrainerLesson?
-
     @State private var username = ""
     @State private var password = ""
     @State private var passwordConfirmation = ""
@@ -29,14 +28,10 @@ struct KeyboardTrainerView: View {
         NavigationStack {
             Group {
                 switch screen {
-                case .auth:
-                    authenticationView
-                case .dashboard:
-                    dashboardView
-                case .lesson:
-                    lessonView
-                case .settings:
-                    settingsView
+                case .auth: authenticationView
+                case .dashboard: dashboardView
+                case .lesson: lessonView
+                case .settings: settingsView
                 }
             }
             .navigationTitle("Клавиатурный тренажёр")
@@ -55,9 +50,7 @@ struct KeyboardTrainerView: View {
         }
         .font(largeTextEnabled ? .title3 : .body)
         .onAppear {
-            if store.isLoggedIn {
-                screen = .dashboard
-            }
+            if store.isLoggedIn { screen = .dashboard }
         }
     }
 
@@ -67,7 +60,7 @@ struct KeyboardTrainerView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Учимся печатать постепенно")
                         .font(.largeTitle.bold())
-                    Text("Сначала отдельные клавиши, затем слова, предложения и скорость. Всё сопровождается понятными подсказками и озвучкой.")
+                    Text("От отдельных клавиш к словам, предложениям и скорости. Подсказки можно слушать и видеть.")
                         .foregroundStyle(.secondary)
                 }
 
@@ -107,9 +100,8 @@ struct KeyboardTrainerView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
-                .accessibilityLabel(registrationMode ? "Зарегистрироваться" : "Войти")
 
-                Text("Профиль хранится локально на этом устройстве. Пароль в открытом виде не сохраняется.")
+                Text("Профиль хранится локально. Пароль сохраняется только как хеш.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -138,13 +130,10 @@ struct KeyboardTrainerView: View {
                 }
 
                 HStack {
-                    Text("Уроки")
-                        .font(.title2.bold())
+                    Text("Уроки").font(.title2.bold())
                     Spacer()
-                    Button("Настройки") {
-                        screen = .settings
-                    }
-                    .accessibilityLabel("Настройки доступности")
+                    Button("Настройки") { screen = .settings }
+                        .accessibilityLabel("Настройки доступности")
                 }
 
                 ForEach(KeyboardTrainerLesson.all) { lesson in
@@ -170,14 +159,12 @@ struct KeyboardTrainerView: View {
                     .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 5) {
-                    Text("Урок \(lesson.id). \(lesson.title)")
-                        .font(.headline)
+                    Text("Урок \(lesson.id). \(lesson.title)").font(.headline)
                     Text(lesson.description)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.leading)
                 }
-
                 Spacer(minLength: 8)
             }
             .padding(16)
@@ -214,18 +201,12 @@ struct KeyboardTrainerView: View {
                 Toggle("Озвучивать нажатые клавиши", isOn: $voiceEnabled)
                 Toggle("Озвучивать задания", isOn: $promptVoiceEnabled)
             }
-
             Section("Визуальные подсказки") {
                 Toggle("Показывать виртуальную клавиатуру", isOn: $visualHintsEnabled)
                 Toggle("Показывать рекомендуемый палец", isOn: $fingerHintsEnabled)
                 Toggle("Крупный текст", isOn: $largeTextEnabled)
             }
-
-            Section {
-                Button("Назад к урокам") {
-                    screen = .dashboard
-                }
-            }
+            Button("Назад к урокам") { screen = .dashboard }
         }
         .formStyle(.grouped)
         .padding(.horizontal)
@@ -233,23 +214,16 @@ struct KeyboardTrainerView: View {
 
     private func authenticate() {
         authMessage = ""
-
         let result: String?
         if registrationMode {
-            result = store.register(
-                username: username,
-                password: password,
-                confirmation: passwordConfirmation
-            )
+            result = store.register(username: username, password: password, confirmation: passwordConfirmation)
         } else {
             result = store.login(username: username, password: password)
         }
-
         if let result {
             authMessage = result
             return
         }
-
         password = ""
         passwordConfirmation = ""
         registrationMode = false
@@ -268,32 +242,30 @@ private struct KeyboardTrainerLessonView: View {
     let onFinish: () -> Void
     let onSettings: () -> Void
 
-    @State private var lessonIndex = 0
+    @State private var taskIndex = 0
+    @State private var taskCharacterIndex = 0
     @State private var inputBuffer = ""
     @State private var correct = 0
     @State private var errors = 0
     @State private var startedAt = Date()
     @State private var timeRemaining = 60
-    @State private var completedPasses = 0
     @State private var resultPresented = false
     @State private var speech = SpeechCoordinator()
     @State private var timer: Timer?
     @FocusState private var inputIsFocused: Bool
 
     private var task: String {
-        lesson.tasks[min(lessonIndex, lesson.tasks.count - 1)]
+        guard !lesson.tasks.isEmpty else { return "" }
+        return lesson.tasks[min(taskIndex, lesson.tasks.count - 1)]
     }
 
     private var nextCharacter: String {
-        guard !lesson.tasks.isEmpty else { return "" }
-        let offset = min(inputBuffer.count, task.count)
-        return String(task.dropFirst(offset).prefix(1))
+        String(task.dropFirst(taskCharacterIndex).prefix(1))
     }
 
     private var accuracy: Double {
         let total = correct + errors
-        guard total > 0 else { return 100 }
-        return Double(correct) / Double(total) * 100
+        return total == 0 ? 100 : Double(correct) / Double(total) * 100
     }
 
     private var speed: Double {
@@ -302,10 +274,7 @@ private struct KeyboardTrainerLessonView: View {
     }
 
     private var progressText: String {
-        if lesson.isTimed {
-            return "Осталось: \(timeRemaining) сек."
-        }
-        return "Задание \(lessonIndex + 1) из \(lesson.tasks.count)"
+        lesson.isTimed ? "Осталось: \(timeRemaining) сек." : "Задание \(taskIndex + 1) из \(lesson.tasks.count)"
     }
 
     var body: some View {
@@ -318,24 +287,19 @@ private struct KeyboardTrainerLessonView: View {
                     }
                     .accessibilityLabel("Вернуться к урокам")
                     Spacer()
-                    Button("Настройки") {
-                        onSettings()
-                    }
+                    Button("Настройки") { onSettings() }
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Урок \(lesson.id). \(lesson.title)")
-                        .font(.title.bold())
-                    Text(progressText)
-                        .foregroundStyle(.secondary)
+                    Text("Урок \(lesson.id). \(lesson.title)").font(.title.bold())
+                    Text(progressText).foregroundStyle(.secondary)
                     ProgressView(value: progressValue)
                         .accessibilityLabel("Прогресс урока")
                         .accessibilityValue(progressAccessibilityValue)
                 }
 
                 VStack(alignment: .center, spacing: 14) {
-                    Text(lesson.isTimed ? "Печатайте текст" : "Введите")
-                        .font(.headline)
+                    Text(lesson.isTimed ? "Печатайте текст" : "Введите").font(.headline)
                     Text(task)
                         .font(.system(size: lesson.isTimed ? 30 : 38, weight: .bold, design: .rounded))
                         .multilineTextAlignment(.center)
@@ -349,9 +313,10 @@ private struct KeyboardTrainerLessonView: View {
                     }
 
                     if fingerHintsEnabled, !nextCharacter.isEmpty {
-                        Text("Нажимайте: \(KeyboardTrainerKeyboard.finger(for: nextCharacter))")
+                        let finger = KeyboardTrainerKeyboard.finger(for: nextCharacter)
+                        Text("Нажимайте: \(finger)")
                             .foregroundStyle(.secondary)
-                            .accessibilityLabel("Рекомендуемый палец: \(KeyboardTrainerKeyboard.finger(for: nextCharacter))")
+                            .accessibilityLabel("Рекомендуемый палец: \(finger)")
                     }
 
                     TextField("Поле ввода", text: $inputBuffer)
@@ -360,9 +325,7 @@ private struct KeyboardTrainerLessonView: View {
                         .frame(maxWidth: 560)
                         .accessibilityLabel("Поле ввода тренажёра")
                         .accessibilityHint("Введите показанный текст или нажмите показанную клавишу")
-                        .onChange(of: inputBuffer) { _, newValue in
-                            consumeInput(newValue)
-                        }
+                        .onChange(of: inputBuffer) { _, newValue in consumeInput(newValue) }
 
                     if visualHintsEnabled {
                         TrainerKeyboardView(highlight: nextCharacter)
@@ -380,45 +343,30 @@ private struct KeyboardTrainerLessonView: View {
                 }
 
                 if lesson.isTimed {
-                    Button("Завершить раньше") {
-                        finishLesson()
-                    }
-                    .buttonStyle(.bordered)
-                    .accessibilityLabel("Завершить тренировку раньше времени")
+                    Button("Завершить раньше") { finishLesson() }
+                        .buttonStyle(.bordered)
+                        .accessibilityLabel("Завершить тренировку раньше времени")
                 }
             }
             .padding()
             .frame(maxWidth: 1000, alignment: .leading)
         }
-        .onAppear {
-            startLesson()
-        }
-        .onDisappear {
-            stopTimer()
-        }
-        .sheet(isPresented: $resultPresented) {
-            resultView
-        }
+        .onAppear { startLesson() }
+        .onDisappear { stopTimer() }
+        .sheet(isPresented: $resultPresented) { resultView }
     }
 
     private var progressValue: Double {
-        if lesson.isTimed {
-            return Double(60 - timeRemaining) / 60
-        }
-        return Double(lessonIndex) / Double(max(lesson.tasks.count, 1))
+        lesson.isTimed ? Double(60 - timeRemaining) / 60 : Double(taskIndex) / Double(max(lesson.tasks.count, 1))
     }
 
     private var progressAccessibilityValue: String {
-        if lesson.isTimed {
-            return "\(60 - timeRemaining) из 60 секунд"
-        }
-        return "\(min(lessonIndex, lesson.tasks.count)) из \(lesson.tasks.count) заданий"
+        lesson.isTimed ? "\(60 - timeRemaining) из 60 секунд" : "\(min(taskIndex, lesson.tasks.count)) из \(lesson.tasks.count) заданий"
     }
 
     private var resultView: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Урок завершён!")
-                .font(.title.bold())
+            Text("Урок завершён!").font(.title.bold())
             Text("Время: \(formattedDuration)")
             Text("Правильных нажатий: \(correct)")
             Text("Ошибок: \(errors)")
@@ -431,7 +379,6 @@ private struct KeyboardTrainerLessonView: View {
                     startLesson()
                 }
                 .buttonStyle(.bordered)
-
                 Button("К урокам") {
                     resultPresented = false
                     onFinish()
@@ -442,7 +389,6 @@ private struct KeyboardTrainerLessonView: View {
         .padding(24)
         .frame(minWidth: 360, alignment: .leading)
         .presentationDetents([.medium])
-        .accessibilityElement(children: .contain)
     }
 
     private var formattedDuration: String {
@@ -454,28 +400,23 @@ private struct KeyboardTrainerLessonView: View {
 
     private func startLesson() {
         stopTimer()
-        lessonIndex = 0
+        taskIndex = 0
+        taskCharacterIndex = 0
         inputBuffer = ""
         correct = 0
         errors = 0
-        completedPasses = 0
         timeRemaining = 60
         startedAt = Date()
         resultPresented = false
         inputIsFocused = true
 
-        if promptVoiceEnabled {
-            speech.speak(promptText)
-        }
+        if promptVoiceEnabled { speech.speak(promptText) }
 
         guard lesson.isTimed else { return }
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             Task { @MainActor in
-                guard timeRemaining > 0 else { return }
                 timeRemaining -= 1
-                if timeRemaining == 0 {
-                    finishLesson()
-                }
+                if timeRemaining <= 0 { finishLesson() }
             }
         }
     }
@@ -492,81 +433,46 @@ private struct KeyboardTrainerLessonView: View {
     }
 
     private func processCharacter(_ character: String) {
-        let normalized = character.lowercased()
-        let expected = nextCharacter.lowercased()
+        if voiceEnabled { speech.speak(spokenName(for: character)) }
 
-        if voiceEnabled {
-            speech.speak(spokenName(for: character))
-        }
-
-        guard !expected.isEmpty else { return }
-
-        if normalized == expected {
+        guard !nextCharacter.isEmpty else { return }
+        if character.lowercased() == nextCharacter.lowercased() {
             correct += 1
-            inputBuffer = ""
-            advanceAfterCorrectCharacter()
+            taskCharacterIndex += 1
+            if taskCharacterIndex >= task.count { finishCurrentTask() }
         } else {
             errors += 1
             if promptVoiceEnabled {
-                speech.speak("Ошибка. Нужно \(spokenName(for: expected))")
+                speech.speak("Ошибка. Нужно \(spokenName(for: nextCharacter))")
             }
         }
     }
-
-    private func advanceAfterCorrectCharacter() {
-        let typedLength = inputBuffer.count
-        if typedLength == 0 {
-            // The input field is cleared immediately, so compare completed work against the task length.
-            let expectedLength = task.count
-            if correctForCurrentTask >= expectedLength {
-                finishCurrentTask()
-            }
-        }
-    }
-
-    @State private var correctForCurrentTask = 0
 
     private func finishCurrentTask() {
-        correctForCurrentTask = 0
-
+        taskCharacterIndex = 0
         if lesson.isTimed {
-            completedPasses += 1
-            lessonIndex = 0
-            if promptVoiceEnabled {
-                speech.speak("Продолжайте")
-            }
+            taskIndex = 0
+            if promptVoiceEnabled { speech.speak("Продолжайте") }
             return
         }
-
-        if lessonIndex + 1 >= lesson.tasks.count {
+        if taskIndex + 1 >= lesson.tasks.count {
             finishLesson()
         } else {
-            lessonIndex += 1
-            if promptVoiceEnabled {
-                speech.speak(promptText)
-            }
+            taskIndex += 1
+            if promptVoiceEnabled { speech.speak(promptText) }
         }
     }
 
     private var promptText: String {
-        if lesson.kind == .key {
-            return "Нажмите клавишу \(spokenName(for: nextCharacter))"
-        }
-        return "Введите: \(task)"
+        lesson.kind == .key ? "Нажмите клавишу \(spokenName(for: nextCharacter))" : "Введите: \(task)"
     }
 
     private func finishLesson() {
         guard !resultPresented else { return }
         stopTimer()
         let duration = max(Date().timeIntervalSince(startedAt), 0.1)
-        store.recordResult(
-            lesson: lesson,
-            duration: duration,
-            correct: correct,
-            errors: errors,
-            characters: correct
-        )
-        speech.speak("Урок завершён")
+        store.recordResult(lesson: lesson, duration: duration, correct: correct, errors: errors, characters: correct)
+        if promptVoiceEnabled { speech.speak("Урок завершён") }
         resultPresented = true
     }
 
@@ -632,8 +538,7 @@ private struct StatView: View {
             Text(title)
                 .font(.caption)
                 .foregroundStyle(.secondary)
-            Text(value)
-                .font(.headline)
+            Text(value).font(.headline)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 10)
